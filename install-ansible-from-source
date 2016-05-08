@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo "Make sure git and python-setuptools are installed!"
+
+mkdir -p /opt/ansible-installation
+
+cd /opt/ansible-installation
+git clone git://github.com/ansible/ansible.git --recursive
+
+cd ansible
+
+source ./hacking/env-setup
+
+sudo easy_install pip
+sudo pip install paramiko PyYAML Jinja2 httplib2 six
+
+echo "127.0.0.1" > ~/ansible_hosts
+

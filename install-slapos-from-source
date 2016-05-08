@@ -1,0 +1,42 @@
+mkdir -p /opt/slapos/log/
+cd /opt/slapos/ 
+
+echo "[buildout]
+extends = http://git.erp5.org/gitweb/slapos.git/blob_plain/refs/tags/1.0.17:/component/slapos/buildout.cfg
+" > buildout.cfg 
+
+unset PYTHONPATH
+unset PYTHONDONTWRITEBYTECODE
+unset CONFIG_SITE
+# Bootstrap SlapOS
+python -S -c 'import urllib2;print urllib2.urlopen("https://raw.github.com/buildout/buildout/1/bootstrap/bootstrap.py").read()' | python -S -
+
+Warning:Depending on your distribution you might need to
+replace python by python2 in the last command. This happens when your 
+distribution considers that the standard python is the 3.x branch.
+
+bin/buildout
+
+
+cat < EOF > /etc/cron.d/slapos
+MAILTO=""
+
+# Run "Installation/Destruction of Software Releases" and "Deploy/Start/Stop Partitions" once per minute
+* * * * * root /opt/slapos/bin/slapos node software --verbose --logfile=/opt/slapos/log/slapos-node-software.log > /dev/null 2>&1
+* * * * * root /opt/slapos/bin/slapos node instance --promise-timeout 20 --verbose --logfile=/opt/slapos/log/slapos-node-instance.log > /dev/null 2>&1
+
+# Run "Destroy Partitions to be destroyed" once per hour
+0 * * * * root /opt/slapos/bin/slapos node report --maximal_delay=3600 --verbose --logfile=/opt/slapos/log/slapos-node-report.log > /dev/null 2>&1
+
+# Run "Check/add IPs and so on" once per hour
+0 * * * * root /opt/slapos/bin/slapos node format >> /opt/slapos/log/slapos-node-format.log 2>&1 
+
+# Run "Booting" on every system start
+@reboot root /opt/slapos/bin/slapos node boot >> /opt/slapos/log/slapos-node-format.log  2>&1 
+
+# Run "Collect" once a minute
+* * * * * root /opt/slapos/bin/slapos node collect >> /opt/slapos/log/slapos-node-collect.log  2>&1
+
+EOF
+
+

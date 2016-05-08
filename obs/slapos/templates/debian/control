@@ -21,6 +21,7 @@ Depends: ${misc:Depends},
          uml-utilities,
 # slapgrid-sr needed by most recipes
 	 libc6-dev | libc-dev,
+         libssl-dev,
          gcc | c-compiler,
          g++ | c++-compiler,
          make,

@@ -37,7 +37,7 @@ function prepare_template_files
 function prepare_download_cache
 {
     cd $CURRENT_DIRECTORY/$SLAPOS_DIRECTORY/slapos/
-    rm -rf build/
+    #rm -rf build/
     bash offline.sh || (echo "Impossible to build SlapOS, exiting." && exit 1)
     # Go back to starting point
     cd $CURRENT_DIRECTORY
@@ -100,12 +100,13 @@ function obs_upload
 
 }
 
-prepare_template_files
+#prepare_template_files
 
-prepare_download_cache
+#prepare_download_cache
 
 prepare_tarball
 
 prepare_deb_packaging
 
 obs_upload
+

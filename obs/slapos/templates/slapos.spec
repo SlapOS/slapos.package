@@ -1,0 +1,131 @@
+##############################################################################
+#
+# Copyright (c) 2010 Vifib SARL and Contributors. All Rights Reserved.
+#
+# WARNING: This program as such is intended to be used by professional
+# programmers who take the whole responsibility of assessing all potential
+# consequences resulting from its eventual inadequacies and bugs
+# End users who are looking for a ready-to-use solution with commercial
+# guarantees and support are strongly adviced to contract a Free Software
+# Service Company
+#
+# This program is Free Software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 3
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+##############################################################################
+%define slapversion 1.0.20
+%define version 1.3.15
+%define unmangled_version 1.3.15
+%define unmangled_version 1.3.15
+%define release_number 4
+
+
+Summary:Client-side to deploy applications with SlapOS
+Name: slapos.node
+Version:%{slapversion}
+Release:%{release_number}
+License:GPL
+Group: Application/Network
+Source0: slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}.tar.gz
+URL: http://www.slapos.org/ 
+Vendor: Vifib
+Packager: Arnaud Fontaine <arnaud.fontaine@nexedi.com>, Cédric Le Ninivin <cedric.leninivin@tiolive.com>, Cédric de Saint Martin <cedric.dsm@nexedi.com>, Rafael Monnerat <rafael@nexedi.com>
+
+%if 0%{?suse_version}
+%if 0%{?suse_version} == 1210
+BuildRequires: gcc-c++, make, patch, wget, python, python-devel, chrpath, python-distribute, openssl-devel, python-xml
+
+Requires: bridge-utils, python, gcc-c++, make, patch, wget, python-distribute, python-xml
+%else
+BuildRequires: gcc-c++, make, patch, wget, python, python-devel, chrpath, python-setuptools, openssl-devel, python-xml
+
+Requires: bridge-utils, python, gcc-c++, make, patch, wget, python-setuptools, python-xml
+%endif
+%else
+BuildRequires: gcc-c++, make, patch, wget, python, python-devel, chrpath, python-setuptools, openssl-devel
+
+Requires: bridge-utils, python, gcc-c++, make, patch, wget, python-setuptools
+%endif
+
+AutoReqProv: no
+
+Conflicts: firewalld
+
+%description
+ Client-side to deploy applications with SlapOS 
+ SlapOS allows one to turn any application into SaaS (Service as a System),
+ PaaS (Platform as a Service) or IaaS (Infrastructure as a Service) without
+ loosing your freedom. SlapOS defines two types of servers: SlapOS server and
+ SlapOS node.
+ .
+ This package contains libraries and tools to deploy a node.
+ .
+ Slapformat prepares a SlapOS node before running slapgrid. It then generates
+ a report and sends the information to the configured SlapOS master.
+ .
+ Slapgrid allows you to easily deploy instances of software based on buildout
+ profiles.
+
+
+%prep
+rm -rf $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}
+zcat $RPM_SOURCE_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}.tar.gz | tar -xvf -
+
+
+%build
+cd $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}
+make
+
+%install
+cd $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}/
+make DESTDIR=$RPM_BUILD_ROOT install 
+mkdir -p $RPM_BUILD_ROOT/etc/cron.d/
+cp $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}/template/slapos-node.cron.d $RPM_BUILD_ROOT/etc/cron.d/slapos-node
+mkdir -p $RPM_BUILD_ROOT/etc/logrotate.d/
+cp $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}/template/slapos-node.logrotate $RPM_BUILD_ROOT/etc/logrotate.d/slapos.logrotate.conf
+mkdir -p $RPM_BUILD_ROOT/etc/systemd/system/
+mkdir -p $RPM_BUILD_ROOT/opt/slapos/log
+rm -rf $RPM_BUILD_ROOT/opt/slapos/eggs/setuptools-*.egg/setuptools/tests/test_easy_install.py
+
+%files
+/opt/slapos
+/etc/cron.d/slapos-node
+/etc/logrotate.d/slapos.logrotate.conf
+/etc/opt
+/etc/systemd
+/etc/systemd/system
+/etc/firewalld
+/usr/bin/slapos
+/usr/sbin/slapos-tweak
+%defattr(-,root,root)
+
+%pre
+if [ -f /etc/openvpn/vifib.conf ]; then
+    cp -f /etc/openvpn/vifib.conf /etc/openvpn/vifib.backup.conf
+    mkdir -p /etc/openvpn/vifib-keys
+    cp -rf /etc/openvpn/vifib-keys /etc/openvpn/vifib-backup-keys
+    sed -i "s/\/etc\/openvpn\/vifib-keys/\/etc\/openvpn\/vifib-backup-keys/g"  /etc/openvpn/vifib.backup.conf
+fi
+
+%post
+echo """To generate slapos configuration run 'slapos node register'"""
+
+%preun
+if [ -f /etc/openvpn/vifib.conf ]; then 
+    cp -f /etc/openvpn/vifib.conf /etc/openvpn/vifib.backup.conf
+    cp -rf /etc/openvpn/vifib-keys/ /etc/openvpn/vifib-backup-keys
+    sed -i "s/\/etc\/openvpn\/vifib-keys/\/etc\/openvpn\/vifib-backup-keys/g"  /etc/openvpn/vifib.backup.conf
+fi
+
+%postun
