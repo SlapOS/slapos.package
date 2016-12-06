@@ -30,3 +30,5 @@
   - name: Mount /data{{ data_n }}
     mount: name=/data{{ data_n }} src=/dev/vd{{ vd_disk }}1 fstype=ext4 state=mounted
     when: partition_vd_created.stat.exists == True
+
+  - lineinfile: dest=/etc/opt/disks state=present line="vd{{ vd_disk }}" create=yes
