@@ -14,15 +14,15 @@
     when: mount_directory is defined and slapos_directory.stat.exists == True
 
   - name: mount srv/slapgrid directory
-    mount: name="{{ mount_directory }}/srv/slapgrid" src=/srv/slapgrid opts=bind state=mounted fstype=none
+    mount: src="{{ mount_directory }}/srv/slapgrid" name=/srv/slapgrid opts=bind state=mounted fstype=none
     when: mount_directory is defined and slapos_directory.stat.exists == True
 
   - name: mount opt/slapgrid directory
-    mount: name="{{ mount_directory }}/opt/slapgrid" src=/opt/slapgrid opts=bind state=mounted fstype=none
+    mount: src="{{ mount_directory }}/opt/slapgrid" name=/opt/slapgrid opts=bind state=mounted fstype=none
     when: mount_directory is defined and slapos_directory.stat.exists == True
 
   - name: mount srv/slapgrid directory
-    mount: name="{{ mount_directory }}/opt/slapos" src=/opt/slapos opts=bind state=mounted fstype=none
+    mount: src="{{ mount_directory }}/opt/slapos" name=/opt/slapos opts=bind state=mounted fstype=none
     when: mount_directory is defined and slapos_directory.stat.exists == True
 
   - name: stat slapos.cfg file
