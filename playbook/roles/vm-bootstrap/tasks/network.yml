@@ -1,7 +1,7 @@
 ---
 
   - name: Download network geteway ip
-    get_url: url=http://10.0.2.100/gateway dest=/etc/opt/gateway mode=666
+    get_url: url=http://10.0.2.100/gateway dest=/etc/opt/gateway mode=666 force=yes
     ignore_errors: True
 
   - name: stat /etc/opt/gateway
