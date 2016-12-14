@@ -1,4 +1,3 @@
-
   - include: uploadlog.yml
     when: is_playbook_ok == "False"
 
@@ -9,7 +8,7 @@
     file: dest=/etc/opt mode=775 state=directory
 
   - name: Download configuration
-    get_url: url=http://10.0.2.100/netconfig.sh dest=/etc/opt/netconfig.sh mode=755
+    get_url: url=http://10.0.2.100/netconfig.sh dest=/etc/opt/netconfig.sh mode=755 force=yes
     ignore_errors: True
 
   - name: stat /etc/opt/netconfig.sh
