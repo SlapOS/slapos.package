@@ -95,7 +95,7 @@ def sdist_version(egg):
     MTIME = os.stat(egg).st_mtime
     VERSION = "%s+slapos%s.g%s" % (
         egg.rsplit("-", 1)[1].split(".tar.")[0],
-        os.getenv("SLAPOS_EPOCH", ""),
+        os.getenv("SLAPOS_EPOCH", "1"),
         check_output(("git", "rev-parse", "--short", "HEAD"),
                      cwd="slapos").strip())
     tarball.provides = "%s/%s_%s.tar.gz" % (DIST, PACKAGE, VERSION),
