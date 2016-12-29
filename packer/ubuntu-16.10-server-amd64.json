@@ -3,15 +3,15 @@
         "user": "slapos",
         "password": "slapos",
         "domain": "",
-        "disk_size": "200",
+        "disk_size": "100",
         "name": "image",
-        "custom_script": ""
+        "custom_script": "scripts/empty.sh"
     },
 
     "builders":
     [
         {
-            "name": "ubuntu-16-server-amd64-{{ user `disk_size`}}G-{{ user `name`}}",
+            "name": "ubuntu-16-server-{{ user `disk_size`}}G-{{ user `name`}}",
 
             "type": "qemu",
             "format": "qcow2",

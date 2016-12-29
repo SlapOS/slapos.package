@@ -3,9 +3,9 @@
         "user": "slapos",
         "password": "slapos",
         "domain": "",
-        "disk_size": "200",
+        "disk_size": "100",
         "name": "image",
-        "custom_script": ""
+        "custom_script": "scripts/empty.sh"
     },
 
     "builders":

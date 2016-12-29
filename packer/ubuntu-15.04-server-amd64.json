@@ -2,13 +2,16 @@
     "variables": {
         "user": "slapos",
         "password": "slapos",
-        "disk_size": "100"
+        "domain": "",
+        "disk_size": "100",
+        "name": "image",
+        "custom_script": "scripts/empty.sh"
     },
 
     "builders":
     [
         {
-            "name": "ubuntu-15-04-server",
+            "name": "ubuntu-15-server-{{ user `disk_size`}}G-{{ user `name`}}",
 
             "type": "qemu",
             "format": "qcow2",
@@ -53,7 +56,8 @@
             "scripts": [
                 "scripts/update-ubuntu.sh",
                 "scripts/packages-ubuntu.sh",
-                "scripts/network-ubuntu.sh"
+                "scripts/network-ubuntu.sh",
+                "{{ user `custom_script` }}"
             ]
         }
     ]

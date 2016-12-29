@@ -9,32 +9,32 @@
 
     - shell: PATH=$PATH:/opt/packer/ packer build debian7.json >> log/debian7.log
       args:
-        creates: output-debian7
+        creates: output-debian7-100G-image
       ignore_errors: True
 
     - shell: PATH=$PATH:/opt/packer/ packer build debian8.json >> log/debian8.log
       args:
-        creates: output-debian8
+        creates: output-debian8-100G-image
       ignore_errors: True
 
     - shell: PATH=$PATH:/opt/packer/ packer build ubuntu-14.04-server-amd64.json >> log/ubuntu-14.04-server-amd64.log
       args:
-        creates: output-ubuntu-14-04-server
+        creates: output-ubuntu-14-server-100G-image
       ignore_errors: True
 
     - shell: PATH=$PATH:/opt/packer/ packer build ubuntu-15.04-server-amd64.json >> log/ubuntu-15.04-server-amd64.log
       args:
-        creates: output-ubuntu-15-04-server
+        creates: output-ubuntu-15-server-100G-image
       ignore_errors: True
 
     - shell: PATH=$PATH:/opt/packer/ packer build centos-6.7.json >> log/centos-6.7.log
       args:
-        creates: output-centos67
+        creates: output-centos6-100G-image
       ignore_errors: True
 
     - shell: PATH=$PATH:/opt/packer/ packer build centos-7.2.json >> log/centos-7.2.log
       args:
-        creates: output-centos72
+        creates: output-centos7.2-100G-image
       ignore_errors: True
 
     - shell: PATH=$PATH:/opt/packer/ packer build debian7-testing-version.json >> log/debian7-testing-version.log
@@ -82,67 +82,37 @@
         creates: output-debian8-webrunner
       ignore_errors: True
 
-    - shell: PATH=$PATH:/opt/packer/ packer build debian7-vm-bootstrap.json >> log/debian7-vm-bootstrap.log
-      args:
-        creates: output-debian7-vm-bootstrap
-      ignore_errors: True
-
-    - shell: PATH=$PATH:/opt/packer/ packer build debian8-vm-boostrap.json >> log/debian8-vm-boostrap.log
-      args:
-        creates: output-debian8-vm-bootstrap
-      ignore_errors: True
-
-    - shell: PATH=$PATH:/opt/packer/ packer build ubuntu-14.04-server-amd64-vm-bootstrap.json >> log/ubuntu-14.04-server-amd64-vm-bootstrap.log
-      args:
-        creates: output-ubuntu-14-04-server-vm-bootstrap
-      ignore_errors: True
-
-    - shell: PATH=$PATH:/opt/packer/ packer build ubuntu-15.04-server-amd64-vm-bootstrap.json >> log/ubuntu-15.04-server-amd64-vm-bootstrap.log
-      args:
-        creates: output-ubuntu-15-04-server-vm-bootstrap
-      ignore_errors: True
-
-    - shell: PATH=$PATH:/opt/packer/ packer build centos-6.7-vm-boostrap.json >> log/centos-6.7-vm-boostrap.log
-      args:
-        creates: output-centos68-vm-bootstrap
-      ignore_errors: True
-
-    - shell: PATH=$PATH:/opt/packer/ packer build centos-7.2-vm-bootstrap.json >> log/centos-7.2-vm-bootstrap.log
-      args:
-        creates: output-centos72-vm-bootstrap
-      ignore_errors: True
-
 #### Genetation of images are over.
 #### Start compress everything
 
-    - shell: gzip output-debian8/packer-debian8 
+    - shell: gzip output-debian8-100G-image/packer-debian8-100G-image 
       args:
-        creates: output-debian8/packer-debian8.gz
+        creates: output-debian8-100G-image/packer-debian8-100G-image.gz
       ignore_errors: True
 
-    - shell: gzip output-debian7/packer-debian7 
+    - shell: gzip output-debian7-100G-image/packer-debian7-100G-image 
       args:
-        creates: output-debian7/packer-debian7.gz
+        creates: output-debian7-100G-image/packer-debian7-100G-image.gz
       ignore_errors: True
 
-    - shell: gzip output-ubuntu-14-04-server/packer-ubuntu-14-04-server 
+    - shell: gzip output-ubuntu-14-server-100G-image/packer-ubuntu-14-server-100G-image 
       args:
-        creates: output-ubuntu-14-04-server/packer-ubuntu-14-04-server.gz
+        creates: output-ubuntu-14-server-100G-image/packer-ubuntu-14-server-100G-image.gz
       ignore_errors: True
 
-    - shell: gzip output-ubuntu-15-04-server/packer-ubuntu-15-04-server 
+    - shell: gzip output-ubuntu-15-server-100G-image/packer-ubuntu-15-server-100G-image 
       args:
-        creates: output-ubuntu-15-04-server/packer-ubuntu-15-04-server.gz
+        creates: output-ubuntu-15-server-100G-image/packer-ubuntu-15-server-100G-image.gz
       ignore_errors: True
 
-    - shell: gzip output-centos67/packer-centos67 
+    - shell: gzip output-centos6-100G-image/packer-centos6-100G-image 
       args:
-        creates: output-centos67/packer-centos67.gz
+        creates: output-centos6-100G-image/packer-centos6-100G-image.gz
       ignore_errors: True
 
-    - shell: gzip output-centos72/packer-centos72 
+    - shell: gzip output-centos7.2-100G-image/packer-centos7.2-100G-image 
       args:
-        creates: output-centos72/packer-centos72.gz
+        creates: output-centos7.2-100G-image/packer-centos7.2-100G-image.gz
       ignore_errors: True
 
     - shell: gzip output-debian8-testing-version/packer-debian8-testing-version
@@ -190,36 +160,6 @@
         creates: output-debian8-webrunner/packer-debian8-webrunner.gz
       ignore_errors: True
 
-    - shell: gzip output-debian8-vm-bootstrap/packer-debian8-vm-bootstrap
-      args:
-        creates: output-debian8-vm-bootstrap/packer-debian8-vm-bootstrap.gz 
-      ignore_errors: True
-
-    - shell: gzip output-debian7-vm-bootstrap/packer-debian7-vm-bootstrap
-      args:
-        creates: output-debian7-vm-bootstrap/packer-debian7-vm-bootstrap.gz
-      ignore_errors: True
-
-    - shell: gzip output-ubuntu-14-04-server-vm-bootstrap/packer-ubuntu-14-04-server-vm-bootstrap
-      args:
-        creates: output-ubuntu-14-04-server-vm-bootstrap/packer-ubuntu-14-04-server-vm-bootstrap.gz
-      ignore_errors: True
-
-    - shell: gzip output-ubuntu-15-04-server-vm-bootstrap/packer-ubuntu-15-04-server-vm-bootstrap
-      args:
-        creates: output-ubuntu-15-04-server-vm-bootstrap/packer-ubuntu-15-04-server-vm-bootstrap.gz
-      ignore_errors: True
-
-    - shell: gzip output-centos68-vm-bootstrap/packer-centos68-vm-bootstrap
-      args:
-        creates: output-centos68-vm-bootstrap/packer-centos68-vm-bootstrap.gz
-      ignore_errors: True
-
-    - shell: gzip output-centos72-vm-bootstrap/packer-centos72-vm-bootstrap 
-      args:
-        creates: output-centos72-vm-bootstrap/packer-centos72-vm-bootstrap.gz
-      ignore_errors: True
-
 #### Gzip is over, start to upload to shacache
 #### Build SHA512SUM.txt of every file.
 
@@ -227,12 +167,12 @@
 
     - shell: sha512sum {{ item }} >> SHA512SUM.txt
       with_items:
-           - output-debian8/packer-debian8.gz
-           - output-debian7/packer-debian7.gz
-           - output-ubuntu-14-04-server/packer-ubuntu-14-04-server.gz
-           - output-ubuntu-15-04-server/packer-ubuntu-15-04-server.gz
-           - output-centos72/packer-centos72.gz
-           - output-centos67/packer-centos67.gz
+           - output-debian8/packer-debian8-100G-image.gz
+           - output-debian7/packer-debian7-100G-image.gz
+           - output-ubuntu-14-server-100G-image/packer-ubuntu-14-server-100G-image.gz
+           - output-ubuntu-15-server-100G-image/packer-ubuntu-15-server-100G-image.gz
+           - output-centos72/packer-centos7.2-100G-image.gz
+           - output-centos67/packer-centos6-100G-image.gz
            - output-debian8-testing-version/packer-debian8-testing-version.gz
            - output-debian7-testing-version/packer-debian7-testing-version.gz
            - output-ubuntu-15-04-server-testing-version/packer-ubuntu-15-04-server-testing-version.gz
@@ -242,12 +182,7 @@
            - output-debian8-webrunner/packer-debian8-webrunner.gz
            - output-debian8-erp5-standalone/packer-debian8-erp5-standalone.gz
            - output-debian8-wendelin/packer-debian8-wendelin.gz
-           - output-debian8-vm-bootstrap/packer-debian8-vm-bootstrap.gz 
-           - output-debian7-vm-bootstrap/packer-debian7-vm-bootstrap.gz
-           - output-ubuntu-14-04-server-vm-bootstrap/packer-ubuntu-14-04-server-vm-bootstrap.gz
-           - output-ubuntu-15-04-server-vm-bootstrap/packer-ubuntu-15-04-server-vm-bootstrap.gz
-           - output-centos68-vm-bootstrap/packer-centos68-vm-bootstrap.gz
-           - output-centos72-vm-bootstrap/packer-centos72-vm-bootstrap.gz
 #### End of build SHA512SUM.txt
+
 
 
