@@ -2,20 +2,21 @@
     "variables": {
         "user": "slapos",
         "password": "slapos",
-        "disk_size": "100000",
-        "domain": ""
+        "domain": "",
+        "disk_size": "200",
+        "name": "image",
+        "custom_script": ""
     },
 
     "builders":
     [
         {
-            "name": "centos72",
+            "name": "centos7.2-{{ user `disk_size`}}G-{{ user `name`}}",
 
             "type": "qemu",
             "format": "qcow2",
             "accelerator": "kvm",
-            "disk_size": "{{ user `disk_size`}}",
-
+            "disk_size": "{{ user `disk_size`}}000",
 
             "iso_url": "http://mirrors.kernel.org/centos/7.2.1511/isos/x86_64/CentOS-7-x86_64-NetInstall-1511.iso",
             "iso_checksum": "9ed9ffb5d89ab8cca834afce354daa70a21dcb410f58287d6316259ff89758f5",
@@ -46,8 +47,11 @@
             "scripts": [
                 "scripts/update-centos.sh",
                 "scripts/packages-centos.sh",
-                "scripts/cleanup-centos.sh"
+                "scripts/cleanup-centos.sh",
+                "scripts/centos7-install-base.sh",
+                "{{ user `custom_script` }}"
             ]
         }
     ]
 }
+

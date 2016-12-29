@@ -11,7 +11,7 @@
     "builders":
     [
         {
-            "name": "ubuntu-14-server-amd64-{{ user `disk_size`}}G-{{ user `name`}}",
+            "name": "ubuntu-16-server-amd64-{{ user `disk_size`}}G-{{ user `name`}}",
 
             "type": "qemu",
             "format": "qcow2",
@@ -19,8 +19,8 @@
             "disk_size": "{{ user `disk_size`}}000",
             "headless": true,
 
-            "iso_url": "http://releases.ubuntu.com/14.04/ubuntu-14.04.4-server-amd64.iso",
-            "iso_checksum": "2ac1f3e0de626e54d05065d6f549fa3a",
+            "iso_url": "http://releases.ubuntu.com/16.10/ubuntu-16.10-server-amd64.iso",
+            "iso_checksum": "7d6de832aee348bacc894f0a2ab1170d",
             "iso_checksum_type": "md5",
 
             "http_directory": "http",

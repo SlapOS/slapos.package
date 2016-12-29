@@ -2,22 +2,24 @@
     "variables": {
         "user": "slapos",
         "password": "slapos",
-        "disk_size": "100000",
-        "domain": ""
+        "domain": "",
+        "disk_size": "200",
+        "name": "image",
+        "custom_script": ""
     },
 
     "builders":
     [
         {
-            "name": "debian8",
+            "name": "debian8-{{ user `disk_size`}}G-{{ user `name`}}",
 
             "type": "qemu",
             "format": "qcow2",
             "accelerator": "kvm",
-            "disk_size": "{{ user `disk_size`}}",
+            "disk_size": "{{ user `disk_size`}}000",
 
-            "iso_url": "http://cdimage.debian.org/debian-cd/8.3.0/amd64/iso-cd/debian-8.3.0-amd64-netinst.iso",
-            "iso_checksum": "a9b490b4215d1e72e876b031dafa7184",
+            "iso_url": "http://cdimage.debian.org/debian-cd/8.6.0/amd64/iso-cd/debian-8.6.0-amd64-netinst.iso",
+            "iso_checksum": "e9f61bf327db6d8f7cee05a99f2353cc",
             "iso_checksum_type": "md5",
 
             "http_directory": "http",
@@ -33,7 +35,7 @@
                    "<esc><wait><wait>",
                    "install auto ",
                    "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian8.cfg ",
-                   "debian-installer=en_US locale=en_US keymap=us ",
+                   "debian-installer=en_US locale=en_US keymap=fr ",
                    "netcfg/get_hostname={{ .Name }} ",
                    "netcfg/get_domain={{ user `domain`}} ",
 
@@ -56,8 +58,10 @@
             "scripts": [
                 "scripts/update.sh",
                 "scripts/packages.sh",
-                "scripts/cleanup.sh"
+                "scripts/cleanup.sh",
+                "{{ user `custom_script` }}"
             ]
         }
     ]
 }
+

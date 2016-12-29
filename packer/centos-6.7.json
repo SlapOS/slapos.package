@@ -2,23 +2,25 @@
     "variables": {
         "user": "slapos",
         "password": "slapos",
-        "disk_size": "100000",
-        "domain": ""
+        "domain": "",
+        "disk_size": "200",
+        "name": "image",
+        "custom_script": ""
     },
 
     "builders":
     [
         {
-            "name": "centos67",
+            "name": "centos-6-{{ user `disk_size`}}G-{{ user `name`}}",
 
             "type": "qemu",
             "format": "qcow2",
             "accelerator": "kvm",
-            "disk_size": "{{ user `disk_size`}}",
+            "disk_size": "{{ user `disk_size`}}000",
 
-            "iso_url": "http://mirrors.kernel.org/centos/6.7/isos/x86_64/CentOS-6.7-x86_64-minimal.iso",
-            "iso_checksum": "9d3fec5897be6b3fed4d3dda80b8fa7bb62c616bbfd4bdcd27295ca9b764f498",
-            "iso_checksum_type": "sha256",
+            "iso_url": "http://mirrors.kernel.org/centos/6.8/isos/x86_64/CentOS-6.8-x86_64-minimal.iso",
+            "iso_checksum": "0ca12fe5f28c2ceed4f4084b41ff8a0b",
+            "iso_checksum_type": "md5",
 
 
             "http_directory": "http",
@@ -46,8 +48,11 @@
             "scripts": [
                 "scripts/update-centos.sh",
                 "scripts/packages-centos.sh",
-                "scripts/cleanup-centos.sh"
+                "scripts/cleanup-centos.sh",
+                "scripts/centos6-install-base.sh",
+                "{{ user `custom_script` }}"
             ]
         }
     ]
 }
+

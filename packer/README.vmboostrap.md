@@ -3,11 +3,49 @@ vm-bootstrap Image
 
 packer vm-boostrap image contain a vm-bootstrap script (see: scripts/vm-bootstrap.sh) which will run in specific bootstrap script when VM boot for the first time.
 
+How to build VM with differents images size?
+--------------------------------------------
 
-How it works
-------------
+1) Install Packer locally by https://www.packer.io/downloads.html, like (exemple):
 
-Boostrap script is downloaded from a static URL http://10.0.2.100/vm-bootstrap. The script will be executed until it succeed (exit with 0) or until the maximum execution count is reached. By default, the maximum exucution number is 10. To change this value you can write the new value in /root/bootstrap/bootstrap-max-retry.
+
+
+    mkdir /opt/packer/
+    cd /opt/packer/
+    wget https://releases.hashicorp.com/packer/0.10.1/packer_0.10.1_linux_amd64.zip
+    unzip packer_0.10.1_linux_amd64.zip
+
+2) Check and install qemu
+
+  Packer use qemu to build vm images, you need to install it first.
+
+  apt-get install qemu
+
+
+3) Use ansible to build all VMs and compress them in local folder
+
+  ansible-playbook build-vm-bootstrap.yml -i hosts
+
+
+  After build, images are generated in folder output-DISTRO-XXG-vm-boostrapn, they are gziped to reduce the size when downloading images.
+  The file SHA512SUM.txt contain the SHA512SUM of each vm image.
+  The file MD5SUM.txt contain the MD5SUM of each vm image.
+
+
+How to upload images to shacache
+--------------------------------
+
+  To build and upload images to shacache, use this ansible command
+  
+  UPLOAD=yes ansible-playbook build-vm-bootstrap.yml -i hosts
+  
+  A file URL.txt will be generated with url as well as MD5SUM to download each image from shacache.
+
+
+How to use Images
+-----------------
+
+Boostrap script is downloaded into the VM from a static URL http://10.0.2.100/vm-bootstrap. The script will be executed until it succeed (exit with 0) or until the maximum execution count is reached. By default, the maximum exucution number is 10. To change this value you can write the new value in /root/bootstrap/bootstrap-max-retry.
 
     #!/bin/bash
     echo 1 > /root/bootstrap/bootstrap-max-retry
@@ -35,3 +73,4 @@ Bootstrap script called 'vm-bootstrap' should be placed in and external http ser
     qemu -net 'user,guestfwd=tcp:10.0.2.100:80-cmd:netcat server_ip server_port'
 
 for more information, see qemu 'user network' documentation.
+

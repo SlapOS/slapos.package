@@ -22,3 +22,5 @@ archive.tar.gz*
 packer/shacache/*.crt
 packer/shacache/*.key
 packer/SHA512SUM.txt
+packer/URL.txt
+packer/MD5SUM.txt

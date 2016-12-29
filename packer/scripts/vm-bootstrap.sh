@@ -7,6 +7,8 @@ touch /root/bootstrap/start-bootstrap
 
 # Put cron task to bootstrap vm
 cat << EOF > /etc/cron.d/vm-boostrap
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
 # Bootstrap vm every minutes until it succeed
 * * * * * root bash -lc /root/bootstrap/vm-bootstrap >> /var/log/vm-bootstrap.log 2>&1
 EOF
