@@ -19,6 +19,11 @@
           job="WAIT_TIME=10 bash -lc /usr/local/bin/vm-bootstrap-update >> /var/log/vm-bootstrap.log"
           cron_file=ansible-vm-bootstrap user="root"
 
+  - name: Add PATH env variable to cron
+    lineinfile: dest=/etc/cron.d/ansible-vm-bootstrap
+          line=PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+          insertbefore=BOF state=present
+
   - name: Check if /opt/slapos.playbook already exists
     file: path=/opt/slapos.playbook/ state=directory
 
