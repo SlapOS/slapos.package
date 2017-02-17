@@ -123,5 +123,16 @@ configure-options =
 environment +=
  BISON_PKGDATADIR=${bison:location}/share/bison/
 
+[perl]
+configure-command =
+  sh Configure -des \
+    -Dprefix=${buildout:rootdir}/parts/${:_buildout_section_name_} \
+    -Dsiteprefix=${buildout:rootdir}/parts/site_${:_buildout_section_name_} \
+    -Dcflags=-I${gdbm:location}/include \
+    -Dldflags="-L${gdbm:location}/lib -Wl,-rpath=${gdbm:location}/lib" \
+    -Ui_db \
+    -Dnoextensions=ODBM_File \
+    -Dusethreads
+
 [versions]
 cliff = 1.4.5
