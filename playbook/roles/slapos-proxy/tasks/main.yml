@@ -15,6 +15,10 @@
     shell: "slapos configure local"
     when: slapos_cfg.stat.exists == False 
 
+  - name: Disable multimaster
+    shell: sed -i '/# Here goes the list of/,/\/some\/arbitrary\/local\/unix\/path/d' /etc/opt/slapos/slapos-proxy.cfg
+    ignore_errors: True
+
   - name: Wait for proxy
     wait_for: host=127.0.0.1 port=8080 delay=10
 

@@ -11,6 +11,7 @@ import ssl
 import urllib2
 from xml.dom import minidom
 import json
+import hashlib
 
 def fmt_date():
   return time.strftime("%Y%m%d")
@@ -20,39 +21,57 @@ def fmt_date():
 def discover_software():
   conn = sqlite3.connect("/opt/slapos/slapproxy.db")
   cur = conn.cursor()
-  qry = cur.execute("SELECT DISTINCT software_release FROM partition11")
+  qry = cur.execute("SELECT DISTINCT url FROM software11")
   return [row[0] for row in qry if row[0]]
 
 def get_connection_information(software_release):
   conn = sqlite3.connect("/opt/slapos/slapproxy.db")
   cur = conn.cursor()
-  qry = cur.execute("SELECT connection_xml FROM partition11 WHERE connection_xml IS NOT NULL AND software_release=?", (software_release,) )
+
+  if 'software/erp5' in software_release:
+    partition_reference = 'instance-of-erp5'
+  elif 'software/apache-frontend' in software_release:
+    partition_reference = 'apache-frontend-1'
+  else:
+    raise ValueError
+
+  qry = cur.execute("SELECT connection_xml FROM partition11 WHERE connection_xml IS NOT NULL AND software_release=? AND partition_reference=?", (software_release, partition_reference) )
   xml = None
   for row in qry:
     xml = str(row[0])
-    break 
+    break
 
   if xml is None:
-    print software_release
     return (None, None)
 
   instance = minidom.parseString(xml)
+  if partition_reference == 'instance-of-erp5':
+    try:
+      el = instance.getElementsByTagName('parameter')[0]
+      value = el.childNodes[0].nodeValue
+    except:
+      return "error"
 
-  try:
-    el = instance.getElementsByTagName('parameter')[0]
-    value = el.childNodes[0].nodeValue
-  except:
-    return "error"
-  if not value.startswith("{"):
-    value = "\"" + value + "\""
-  json_text = json.loads(value)
+    if not value.startswith("{"):
+      value = "\"" + value + "\""
+    json_text = json.loads(value)
 
-  if 'family-admin' in json_text:
-    return (json_text['family-admin'], json_text['inituser-password'])
-  elif 'insecure' in json_text:
-    return (json_text, None)
+    if 'family-admin' in json_text:
+      return (json_text['family-admin'], json_text['inituser-password'])
+    elif 'insecure' in json_text:
+      return (json_text, None)
+    else:
+      return (None, None)
+  elif partition_reference == 'apache-frontend-1':
+    ip = None
+    for el in instance.getElementsByTagName('parameter'):
+      if el.getAttribute('id') == 'private-ipv4':
+        if len(el.childNodes) > 0:
+          ip = str(el.childNodes[0].nodeValue) or None
+          break
+    return (ip, None)
   else:
-    return (None, None)
+    raise ValueError
 
 def check_tables():
   conn = sqlite3.connect("/opt/slapos/slapproxy.db")
@@ -63,16 +82,22 @@ def check_tables():
     print "tables aren't ready yet, your build may have failed, check logs in /opt/slapos/log/"
     sys.exit(0)
 
-def get_build_status():
+def get_build_status(software_release):
+  sr_hash = hashlib.md5(software_release).hexdigest()
   try:
-    f = open("/opt/slapos/log/slapos-node-software-" + fmt_date() + ".log")
-  except:
-    f = open("/opt/slapos/log/slapos-node-software.log")
-  lines = f.readlines()
-  if "Finished software releases" not in lines[-1]:
+    os.stat(os.path.join('/opt/slapgrid', sr_hash, '.completed'))
+  except OSError:
+    try:
+      f = open("/opt/slapos/log/slapos-node-software-" + fmt_date() + ".log")
+    except Exception:
+      try:
+        f = open("/opt/slapos/log/slapos-node-software.log")
+      except Exception:
+        return False
+    lines = f.readlines()
+    if "ERROR" in lines[-3]:
+      return "error"
     return False
-  if "ERROR" in lines[-3]:
-    return "error"
   return True
 
 # Check if the last two lines show the software finished building.
@@ -80,28 +105,56 @@ def get_build_status():
 # Otherwise it passed and we can move on.
 # We want to open today's log, as it is most up to date
 
-def status(software_release):
-  build = get_build_status()
+def status():
+  software_release_list = discover_software()
+  software_release_list_status = [get_build_status(software_release)
+          for software_release in software_release_list]
+  if len(software_release_list) == 2 and \
+      software_release_list_status == [True, True]:
+    build = True
+  else:
+    build = False
+
   if build:
-    zope_ip, pw = get_connection_information(software_release)
+    erp5_sr = [q for q in software_release_list if 'software/erp5' in q][0]
+    frn_sr = [q for q in software_release_list
+        if 'software/apache-frontend' in q][0]
+    zope_ip, pw = get_connection_information(erp5_sr)
+    try:
+      ip = open('/tmp/playbook-erp5-public-ipv4').read()
+    except Exception:
+      frontend = None
+    else:
+      if len(ip) == 0:
+        frontend = zope_ip
+      else:
+        frontend = 'https://' + ip
+
+    frontend_ip, _ = get_connection_information(frn_sr)
+
+    if zope_ip is None or frontend is None or frontend_ip is None:
+      print "Build successful, please wait for instantiation"
+      sys.exit(2)
+
     print ("Build successful, connect to:\n"
-           "  " + zope_ip)
+           "  " + frontend)
     if pw is not None:
       print (" with\n"
              "  username: zope  password: " + pw)
   elif not build:
-    print "Your software is still building, be patient it can take awhile"
-    sys.exit(2)
-  elif build == "error":
-    print "An error occurred while building, check /opt/slapos/log/slapos-node-software-" + \
-          fmt_date() + ".log for details"
-    sys.exit(2)
+    if 'error' in [software_release_list_status]:
+      print "An error occurred while building, check /opt/slapos/log/slapos-node-software-" + \
+            fmt_date() + ".log for details"
+      sys.exit(2)
+    else:
+      print "Your software is still building, be patient it can take a while"
+      sys.exit(2)
 
   ipv6 = None
   # check if the services are actually running (run slapos node and parse output)
   if pw is None:
     zope_ip = "https://" + zope_ip[zope_ip.index("@")+1:]
-  
+
   original_zope_ip = zope_ip
   if "[" in zope_ip and "]" in zope_ip:
     ipv6 = zope_ip[zope_ip.index("[")+1:zope_ip.index("]")]
@@ -122,7 +175,7 @@ def status(software_release):
     print ""
     print "DEBUG information: %s" % e
     sys.exit(2)
-  
+
   if r1.getcode() != 200:
     print "At least one of your services isn't running! Check with slapos node"
     print "restart a service with slapos node restart slappart:service"
@@ -133,18 +186,18 @@ def status(software_release):
     print "The URL above may require extra configuration if you want to access it"
     print "from another machine. You can install an apache locally and include the"
     print "the follow rewrite rule (http version):"
-    print """ 
+    print """
   RewriteRule ^/(.*) %s/VirtualHostBase/http/%%{HTTP_HOST}/VirtualHostRoot/$1 [L,P]
 
 or (https version):
 
   RewriteRule ^/(.*) %s/VirtualHostBase/https/%%{HTTP_HOST}/VirtualHostRoot/$1 [L,P]
 
-""" % (original_zope_ip, original_zope_ip) 
+""" % (original_zope_ip, original_zope_ip)
 
 
 def info(software_release):
-  if get_build_status():
+  if get_build_status(software_release):
     print get_connection_information(software_release)
   else:
     print "Information unavailable at this time, run " + sys.argv[0] + " -s for details"
@@ -153,9 +206,9 @@ def usage():
   print ("Get the status and information of your ERP5 build\n"
          "Usage:")
   print ("  --help    (-h):  Print this message and exit\n"
-         "  --status  (-s):  Print the status of the build\n"
-         "  --info    (-i):  Print the partition tables\n"
-         "  --dump    (-d):  Dump the entire database (alias for slapos proxy show)\n") 
+         "  --status  (-s):  Print the status of your ERP5 build\n"
+         "  --info    (-i):  Print the technical information about partition tables\n"
+         "  --dump    (-d):  Dump the entire database (alias for slapos proxy show)\n")
 
 def dump():
   subprocess.call(["slapos", "proxy", "show", "-u", "/opt/slapos/slapproxy.db"])
@@ -177,14 +230,13 @@ def main(argv):
        sys.exit()
     elif opt in ("-s", "--status"):
       check_tables()
-      for sr in discover_software():
-        status(sr)
+      status()
     elif opt in ("-i", "--info"):
       check_tables()
       for sr in discover_software():
         info(sr)
     elif opt in ("-d", "--dump"):
       dump()
- 
+
 if __name__ == "__main__":
   main(sys.argv[1:])
