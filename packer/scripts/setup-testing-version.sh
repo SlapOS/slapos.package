@@ -4,28 +4,28 @@ cat << EOF > /root/run-test
 
 BOOTSTRAP="/root/start-bootstrap"
 FILE="/etc/cron.d/ansible-vm-bootstrap"
-if [[ ! -f "$BOOTSTRAP" ]]
+if [[ ! -f "\$BOOTSTRAP" ]]
 then
   exit 1
 fi
 
 # Check if playbook has been correctly extracted
-COUNT=$(ls /opt/slapos.playbook | wc -l)
-if [[ ! $COUNT -gt 1 ]]
+COUNT=\$(ls /opt/slapos.playbook | wc -l)
+if [[ ! \$COUNT -gt 1 ]]
 then
-  rm -f $FILE
+  rm -f \$FILE
   rm -f /opt/slapos.playbook/playbook.tar.gz
 fi
 
 lf=/tmp/pidLockFile
-cat /dev/null >> $lf
-read lastPID < $lf
+cat /dev/null >> \$lf
+read lastPID < \$lf
 # if lastPID is not null and a process with that pid exists , exit
-[ ! -z "$lastPID" -a -d /proc/$lastPID ] && exit
+[ ! -z "\$lastPID" -a -d /proc/\$lastPID ] && exit
 # save my pid in the lock file
-echo $$ > $lf
+echo \$\$ > \$lf
 
-if [[ -f "$FILE" ]] && [[ -s "$FILE" ]] && [[ $COUNT -gt 1 ]]
+if [[ -f "\$FILE" ]] && [[ -s "\$FILE" ]] && [[ \$COUNT -gt 1 ]]
 then
   rm /etc/cron.d/vm-boostrap
 fi

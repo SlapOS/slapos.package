@@ -16,8 +16,8 @@
             "accelerator": "kvm",
             "disk_size": "{{ user `disk_size`}}",
 
-            "iso_url": "http://cdimage.debian.org/debian-cd/8.3.0/amd64/iso-cd/debian-8.3.0-amd64-netinst.iso",
-            "iso_checksum": "a9b490b4215d1e72e876b031dafa7184",
+            "iso_url": "http://cdimage.debian.org/debian-cd/8.7.1/amd64/iso-cd/debian-8.7.1-amd64-netinst.iso",
+            "iso_checksum": "453312bf56fc45669fec5ebc0f025ac7",
             "iso_checksum_type": "md5",
 
             "http_directory": "http",
