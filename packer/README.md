@@ -83,6 +83,16 @@ In order to test one image (after unzip), you can run:
     bash util/quick-test packer-centos72 "-display sdl"
     
 
+Watch out. quick-test will NOT write data into the image, so after exiting,
+the image will be reverted back to its original state.
+
+In order to have your work saved using quick test, please use information from
+qemu man page:
+
+       -snapshot
+           Write to temporary files instead of disk image files. In this case, the raw disk image you use is not written back. You can however force the write back by
+           pressing C-a s.
+
 Extra
 -----
 
