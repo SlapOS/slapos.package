@@ -1,0 +1,26 @@
+computer_id = 'local_computer'
+frontend_software_release_url = '{{ frontend_software_release_url }}'
+supply(frontend_software_release_url, computer_id)
+public_ipv4 = '{{ public_ipv4.stdout }}'
+# frontend master partition
+request(software_release=frontend_software_release_url, partition_reference='{{ frontend_master_reference }}')
+
+# frontend slave partition
+backend_url = None
+try:
+  backend_url = open('{{ backend_url_path }}', 'r').read()
+except Exception:
+  pass
+
+if backend_url is not None:
+  request(
+    software_release=frontend_software_release_url,
+    partition_reference='{{ frontend_slave_reference }}',
+    shared=True,
+    partition_parameter_kw={
+        'url': backend_url,
+        'type': 'zope',
+        'custom_domain': public_ipv4,
+        'server-alias': '*'
+    }
+  )

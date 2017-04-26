@@ -1,9 +1,43 @@
 ---
-  - name: create partition script
+  - name: Fetch public IPv4
+    shell: ifconfig `route -n | grep '^0\.0\.0\.0' | head -n 1 | awk '{print $NF}'` | { IFS=' :';read r;read r r a r;echo $a; }
+    register: public_ipv4
+
+  - name: Store public IPv4 for other scripts
+    shell: echo "{{ public_ipv4.stdout }}" > /tmp/playbook-{{ playbook_name }}-public-ipv4
+
+  - name: create instance request script
     template: src={{ request_instance_template }} dest=/tmp/playbook-request-{{ playbook_name }} mode=700
 
   - name: Supply and Request ERP5 Cluster
-    shell: cat /tmp/playbook-request-{{ playbook_name }} | slapos console
+    cron:
+      cron_file=ansible-{{ playbook_name }}-request
+      user=root
+      name="ERP5 Instance Request"
+      minute=*/5
+      job="/bin/echo 'execfile(\"/tmp/playbook-request-{{ playbook_name }}\")' | /usr/bin/slapos console > /dev/null 2>&1"
+
+  - name: create frontend request script
+    template: src={{ request_frontend_template }} dest=/tmp/playbook-request-frontend-{{ playbook_name }} mode=700
+
+  - name: Supply and Request ERP5 Frontend
+    cron:
+      cron_file=ansible-{{ playbook_name }}-request-frontend
+      user=root
+      name="ERP5 Frontend Request"
+      minute=*/5
+      job="/bin/echo 'execfile(\"/tmp/playbook-request-frontend-{{ playbook_name }}\")' | /usr/bin/slapos console > /dev/null 2>&1"
+
+  - name: Create firewall script
+    template: src={{ firewall_setup_template }} dest=/tmp/playbook-firewall-setup-{{ playbook_name }} mode=700
+
+  - name: Setup firewall
+    cron:
+      cron_file=ansible-{{ playbook_name }}-firewall
+      user=root
+      name="Setup firewall"
+      minute=*/5
+      job="/tmp/playbook-firewall-setup-{{ playbook_name }} > /dev/null 2>&1"
 
   - name: create erp5-show
     copy: src=erp5-show dest=/usr/local/bin/erp5-show mode=755
@@ -12,16 +46,27 @@
     template: src=start-script.j2 dest=/usr/local/bin/{{ playbook_name }}-startup mode=755
 
   - name: Include on reboot
-    cron: name="Start Up script" special_time=reboot job="/usr/local/bin/{{ playbook_name }}-startup >> /var/log/{{ playbook_name }}-startup.log 2>&1"
+    cron:
+      cron_file=ansible-{{ playbook_name }}-reboot
+      user=root
+      name="Start Up script"
+      special_time=reboot
+      job="/usr/local/bin/{{ playbook_name }}-startup >> /var/log/{{ playbook_name }}-startup.log 2>&1"
 
-  - name: Get slapos.playbook directory name
-    shell: cd /tmp/tmpplaybookerp5-standalone.*/slapos.playbook.git/playbook/; echo $(pwd)/
-    register: tmp_dir
-
-  - name: Check if /opt/slapos.playbook already exists
-    stat: path=/opt/slapos.playbook/
-    register: playbook_state
+  - name: Remove /opt/slapos.playbook
+    file:
+      path: /opt/slapos.playbook
+      state: absent
+    when: playbook_dir != '/opt/slapos.playbook'
 
   - name: Copy slapos.playbook
-    copy: src={{ tmp_dir.stdout }} dest=/opt/slapos.playbook/
-    when: playbook_state.stat.exists == False
+    copy: src={{ playbook_dir }}/ dest=/opt/slapos.playbook/
+    when: playbook_dir != '/opt/slapos.playbook'
+
+  - name: Check ERP5 state
+    shell: /usr/local/bin/erp5-show -s
+    register: erp5_state
+
+  - name: Expose ERP5
+    debug:
+      msg="{{ erp5_state.stdout_lines }}"
