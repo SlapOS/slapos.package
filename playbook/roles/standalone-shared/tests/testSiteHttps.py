@@ -27,3 +27,21 @@ class TestSiteHttps(unittest.TestCase):
     self.assertFalse(result.is_permanent_redirect)
     self.assertEqual(result.status_code, 302)
     self.assertTrue(result.headers['Location'].endswith('/erp5/login_form'))
+
+  @unittest.skip(
+      'Currently HTTPS will reply with "Hostname 172.16.0.9 provided via SNI '
+      'and hostname anyhost provided via HTTP are different"')
+  def test_https_erp5_anydomain(self):
+    """HTTPS: Checks that any domain can be used"""
+    result = requests.get(
+        self.https_url + '/erp5/', verify=False, allow_redirects=False,
+        headers={'Host': 'anyhost'}
+        )
+    self.assertTrue(result.ok)
+    self.assertTrue(result.is_redirect)
+    self.assertFalse(result.is_permanent_redirect)
+    self.assertEqual(result.status_code, 302)
+    self.assertEqual(
+        result.headers['Location'],
+        'https://anyhost/erp5/login_form'
+    )
