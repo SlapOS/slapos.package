@@ -20,3 +20,18 @@ class TestSiteHttp(unittest.TestCase):
     self.assertEqual(result.status_code, 302)
     self.assertTrue(result.headers['Location'].endswith('/erp5/login_form'))
     self.assertTrue(result.headers['Location'].startswith('https://'))
+
+  def test_http_erp5_anydomain(self):
+    """Checks that any domain can be used"""
+    result = requests.get(
+        self.http_url + '/erp5/', allow_redirects=False,
+        headers={'Host': 'anyhost'}
+        )
+    self.assertTrue(result.ok)
+    self.assertTrue(result.is_redirect)
+    self.assertFalse(result.is_permanent_redirect)
+    self.assertEqual(result.status_code, 302)
+    self.assertEqual(
+        result.headers['Location'],
+        'https://anyhost/erp5/'
+    )
