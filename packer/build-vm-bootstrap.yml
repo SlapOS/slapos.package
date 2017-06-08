@@ -37,6 +37,14 @@
         - { name: "vm-bootstrap", size: "50", script: "scripts/vm-bootstrap.sh"}
         - { name: "vm-bootstrap", size: "25", script: "scripts/vm-bootstrap.sh"}
 
+    - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' ubuntu-16.04-server-amd64.json >> log/ubuntu-16.04-server-amd64-{{ item.name }}.log
+      args:
+        creates: output-ubuntu-16.04-server-{{ item.size }}G-{{ item.name }}
+      with_items:
+        - { name: "vm-bootstrap", size: "200", script: "scripts/vm-bootstrap.sh"}
+        - { name: "vm-bootstrap", size: "50", script: "scripts/vm-bootstrap.sh"}
+        - { name: "vm-bootstrap", size: "25", script: "scripts/vm-bootstrap.sh"}
+
     - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' ubuntu-16.10-server-amd64.json >> log/ubuntu-16-server-amd64-{{ item.name }}.log
       args:
         creates: output-ubuntu-16-server-{{ item.size }}G-{{ item.name }}
@@ -85,6 +93,15 @@
     - shell: gzip output-ubuntu-14-server-{{ item.size }}G-{{ item.name }}/packer-ubuntu-14-server-{{ item.size }}G-{{ item.name }}
       args:
         creates: output-ubuntu-14-server-{{ item.size }}G-{{ item.name }}/packer-ubuntu-14-server-{{ item.size }}G-{{ item.name }}.gz 
+      with_items:
+        - { name: "vm-bootstrap", size: "200"}
+        - { name: "vm-bootstrap", size: "50"}
+        - { name: "vm-bootstrap", size: "25"}
+      ignore_errors: True
+
+    - shell: gzip output-ubuntu-16.04-server-{{ item.size }}G-{{ item.name }}/packer-ubuntu-16.04-server-{{ item.size }}G-{{ item.name }}
+      args:
+        creates: output-ubuntu-16.04-server-{{ item.size }}G-{{ item.name }}/packer-ubuntu-16.04-server-{{ item.size }}G-{{ item.name }}.gz
       with_items:
         - { name: "vm-bootstrap", size: "200"}
         - { name: "vm-bootstrap", size: "50"}
@@ -143,6 +160,9 @@
         - { name: "vm-bootstrap", size: "200", distro: "ubuntu-14-server"}
         - { name: "vm-bootstrap", size: "50", distro: "ubuntu-14-server"}
         - { name: "vm-bootstrap", size: "25", distro: "ubuntu-14-server"}
+        - { name: "vm-bootstrap", size: "200", distro: "ubuntu-16.04-server"}
+        - { name: "vm-bootstrap", size: "50", distro: "ubuntu-16.04-server"}
+        - { name: "vm-bootstrap", size: "25", distro: "ubuntu-16.04-server"}
         - { name: "vm-bootstrap", size: "200", distro: "ubuntu-16-server"}
         - { name: "vm-bootstrap", size: "50", distro: "ubuntu-16-server"}
         - { name: "vm-bootstrap", size: "25", distro: "ubuntu-16-server"}
@@ -176,6 +196,9 @@
         - { name: "vm-bootstrap", size: "200", distro: "ubuntu-14-server"}
         - { name: "vm-bootstrap", size: "50", distro: "ubuntu-14-server"}
         - { name: "vm-bootstrap", size: "25", distro: "ubuntu-14-server"}
+        - { name: "vm-bootstrap", size: "200", distro: "ubuntu-16.04-server"}
+        - { name: "vm-bootstrap", size: "50", distro: "ubuntu-16.04-server"}
+        - { name: "vm-bootstrap", size: "25", distro: "ubuntu-16.04-server"}
         - { name: "vm-bootstrap", size: "200", distro: "ubuntu-16-server"}
         - { name: "vm-bootstrap", size: "50", distro: "ubuntu-16-server"}
         - { name: "vm-bootstrap", size: "25", distro: "ubuntu-16-server"}
