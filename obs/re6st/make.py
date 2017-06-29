@@ -40,7 +40,7 @@
 # If this way of packaging is reused for other software, postinst scripts
 # should be implemented.
 
-import os, rfc822, shutil, time, urllib
+import os, rfc822, shutil, ssl, time, urllib
 from glob import glob
 from cStringIO import StringIO
 from subprocess import check_call
@@ -48,7 +48,7 @@ from make import *
 from debian.changelog import Changelog
 from debian.deb822 import Deb822
 
-BOOTSTRAP_URL = "http://downloads.buildout.org/1/bootstrap.py"
+BOOTSTRAP_URL = "https://bootstrap.pypa.io/bootstrap-buildout.py"
 PACKAGE = "re6st-node"
 
 BIN = "re6st-conf re6st-registry re6stnet".split()
@@ -65,6 +65,10 @@ re6stnet = git("re6stnet", "https://lab.nexedi.com/nexedi/re6stnet.git",
                "docs".__eq__)
 slapos = git("slapos", "https://lab.nexedi.com/nexedi/slapos.git",
              ctime=False) # ignore ctime due to hardlinks to *-cache
+
+# The built Python can't use its certificates because its capath
+# is already transformed to its installation value.
+os.environ["SSL_CERT_DIR"] = ssl.get_default_verify_paths().capath
 
 os.environ["TZ"] = "UTC"; time.tzset()
 
@@ -87,8 +91,12 @@ def bootstrap(task):
         with cwd(BUILD):
             rmtree("extends-cache")
             os.mkdir("extends-cache")
-            check_output((sys.executable, "-S"), input=bootstrap)
-            check_call(("bin/buildout", "buildout:parts=python"))
+            check_output((sys.executable, "-S", "-",
+                # XXX: By starting with an older version,
+                #      we'll have the wanted version in cache.
+                "--setuptools-version", "33.1.0"), input=bootstrap)
+            check_call(("bin/buildout", "buildout:extensions=",
+                "buildout:newest=true", "buildout:parts=python"))
 
 def sdist_version(egg):
     global MTIME, VERSION

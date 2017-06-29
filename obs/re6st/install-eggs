@@ -31,4 +31,7 @@ for x in path:
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    shutil.copytree(x, d, True)
+    if os.path.isdir(x):
+        shutil.copytree(x, d, True)
+    else:
+        shutil.copy2(x, d)

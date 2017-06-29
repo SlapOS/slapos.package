@@ -8,7 +8,7 @@ extends-cache = extends-cache
 download-cache = download-cache
 
 develop =
-extensions =
+extensions = slapos.rebootstrap
 newest = false
 
 parts += chrpath python
@@ -17,8 +17,8 @@ parts += chrpath python
 recipe = zc.recipe.egg
 interpreter = ${:_buildout_section_name_}
 eggs = setuptools
-python = buildout
-scripts =
+# https://lab.nexedi.com/nexedi/slapos.buildout/merge_requests/11
+scripts = dummy
 
 # Uguu, upstream buildout.cfg must be patched as it works the other way
 # around from a packager point of view at least, thus at the end static
