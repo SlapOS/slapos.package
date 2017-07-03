@@ -36,18 +36,8 @@
     - { role: vm-disks, vd_disk: i, data_n: 8, when: vd_list.stdout.find("vdi") != -1 }
     - { role: vm-disks, vd_disk: j, data_n: 9, when: vd_list.stdout.find("vdj") != -1 }
     - { role: vm-disks, vd_disk: k, data_n: 10, when: vd_list.stdout.find("vdk") != -1 }
-    - { role: vm-disks, vd_disk: l, data_n: 11, when: vd_list.stdout.find("vdl") != -1 }
-    - { role: vm-disks, vd_disk: m, data_n: 12, when: vd_list.stdout.find("vdm") != -1 }
-    - { role: vm-disks, vd_disk: n, data_n: 12, when: vd_list.stdout.find("vdn") != -1 }
-    - { role: vm-disks, vd_disk: o, data_n: 12, when: vd_list.stdout.find("vdo") != -1 }
-    - { role: vm-disks, vd_disk: p, data_n: 12, when: vd_list.stdout.find("vdp") != -1 }
-    - { role: vm-disks, vd_disk: q, data_n: 12, when: vd_list.stdout.find("vdq") != -1 }
-    - { role: vm-disks, vd_disk: r, data_n: 12, when: vd_list.stdout.find("vdr") != -1 }
-    - { role: vm-disks, vd_disk: s, data_n: 12, when: vd_list.stdout.find("vds") != -1 }
-    - { role: vm-disks, vd_disk: t, data_n: 12, when: vd_list.stdout.find("vdt") != -1 }
-    - { role: vm-disks, vd_disk: u, data_n: 12, when: vd_list.stdout.find("vdu") != -1 }
     - role: logrotate
-      logrotate_scripts: "{{logrotate_args}}"
+      logrotate_scripts: "{{ logrotate_args }}"
       when: ansible_completed.stat.exists == False
 
   tasks:
