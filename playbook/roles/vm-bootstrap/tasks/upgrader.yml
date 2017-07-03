@@ -9,11 +9,11 @@
 
   - file: path=/opt/upgrader/ state=directory mode=0755
 
-  - shell: rm -rf /opt/upgrader/playbook/
+  - file: path=/opt/upgrader/playbook/ state=absent
 
-  - shell: rm -rf /opt/upgrader/archive.tar.gz
+  - file: path=/opt/upgrader/archive.tar.gz state=absent
   
-  - shell: mkdir -p /opt/upgrader/playbook 
+  - file: path=/opt/upgrader/playbook state=directory mode=0755
 
   - name: Download the latest playbook 
     shell: slapcache-download --destination=/opt/upgrader/archive.tar.gz
@@ -30,10 +30,8 @@
     when: current_upgrade_signature.stat.exists == False
 
   - name: Copy slapos.playbook
-    shell: tar -xzvf /opt/upgrader/archive.tar.gz
+    unarchive: src=/opt/upgrader/archive.tar.gz dest=/opt/slapos.playbook
     when: (upgrade_after|int > lookup('file', '/opt/upgrader/last-upgrade')|int ) and (lookup('file', '/opt/upgrader/next-upgrade-signature') != lookup('file', '/opt/upgrader/current-upgrade-signature'))
-    args:
-      chdir: /opt/slapos.playbook
 
   - name: Upgrade Current Upgrade Signature
     shell: echo /opt/upgrader/next-upgrade-signature > /opt/upgrader/current-upgrade-signature && echo {{ ansible_date_time.epoch }} > /opt/upgrader/last-upgrade

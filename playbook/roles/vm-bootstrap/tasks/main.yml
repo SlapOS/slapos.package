@@ -33,18 +33,10 @@
     register: cluster_hash
 
   - name: get upgrade file if exists
-    shell: wget --no-check-certificate "{{ lookup('file', '/etc/opt/cluster.hash') }}/data" -O /etc/opt/upgrade.after
+    uri: url="{{ lookup('file', '/etc/opt/cluster.hash') }}/data" validate_certs=no status_code=200,304 return_content=yes
     when: cluster_hash.stat.exists == True
     ignore_errors: True
-
-  - name: stat file upgrade.after
-    stat: path=/etc/opt/upgrade.after
-    register: upgrade_set
-
-  - name: check if the plabook should be upgraded
-    shell: cat /etc/opt/upgrade.after
-    register: upgrade_time
-    when: upgrade_set.stat.exists == True
+    register: upgrade_needed
 
   - include: network.yml
   - include: hostname.yml
@@ -61,5 +53,5 @@
   - shell: echo 1 > /opt/upgrader/last-upgrade
     when: last_upgrade.stat.exists == False
 
-  - include: upgrader.yml upgrade_after={{ upgrade_time.stdout }}
-    when: upgrade_set.stat.exists == True and (upgrade_time.stdout|int > lookup('file', '/opt/upgrader/last-upgrade')|int)
+  - include: upgrader.yml upgrade_after={{ upgrade_needed.content }}
+    when: upgrade_needed.status in [200, 304] and (upgrade_needed.content|int > lookup('file', '/opt/upgrader/last-upgrade')|int)

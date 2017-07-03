@@ -36,8 +36,13 @@
     lineinfile: dest=/etc/hosts line="{{ lookup('file', '/etc/opt/ipv4') }}  {{ lookup('file', '/etc/opt/hostname') }}.tl.teralab-datascience.fr {{ lookup('file', '/etc/opt/hostname') }}" 
     when: hostname_file.stat.exists == True
 
-  - name: setting cluster 
-    shell: wget --no-check-certificate "{{ lookup('file', '/etc/opt/cluster.hash') }}/hosts" -O /tmp/hosts
+  - name: setting cluster
+    uri:
+      url: "{{ lookup('file', '/etc/opt/cluster.hash') }}/hosts"
+      validate_certs: no
+      dest: /tmp/hosts
+      follow_redirects: safe
+      status_code: 200, 304
     when: cluster_hash.stat.exists == True
 
   - name: stat /tmp/hosts
