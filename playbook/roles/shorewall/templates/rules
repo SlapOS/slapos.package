@@ -1,0 +1,12 @@
+#############################################################################################################
+#ACTION         SOURCE          DEST            PROTO   DEST    SOURCE          ORIGINAL        RATE            USER/
+#                                                       PORT    PORT(S)         DEST            LIMIT           GROUP
+Ping/ACCEPT     net             $FW
+# ssh (the most important thing...)
+ACCEPT          net             $FW             tcp     22
+ACCEPT          net             $FW             tcp     1194
+
+# Access local slapos services
+# slappart16
+DNAT            net            $FW:{{ local_ipv4 }}:4443  tcp   443
+DNAT            net            $FW:{{ local_ipv4 }}:8080  tcp    80

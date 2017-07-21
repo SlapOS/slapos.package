@@ -1,0 +1,12 @@
+ - name: Copy files
+   copy: src={{ item }} dest=/etc/shorewall/{{ item }} mode=660
+   with_items:
+     - interfaces
+     - policy
+     - zones
+
+ - name: copy templates
+   template: src={{ item }} dest=/etc/shorewall/{{ item }} mode=660
+   with_items:
+     - masq
+     - rules

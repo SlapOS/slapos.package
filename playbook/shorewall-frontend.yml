@@ -1,0 +1,17 @@
+- name: a play that runs entirely on the ansible host
+  hosts: 127.0.0.1
+  connection: local
+
+
+  vars_prompt:
+    - name: "local_ipv4"
+      prompt: "IPv4 of apache"
+      private: no
+
+    - name: "public_ipv4"
+      prompt: "IPv4 on eth0"
+      private: no
+
+
+  roles:
+    - shorewall

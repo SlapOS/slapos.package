@@ -1,0 +1,7 @@
+###############################################################################
+#SOURCE         DEST            POLICY          LOG LEVEL       LIMIT:BURST
+$FW             net             ACCEPT
+net             all             ACCEPT
+# The FOLLOWING POLICY MUST BE LAST
+all             all             ACCEPT
+#LAST LINE -- ADD YOUR ENTRIES ABOVE THIS LINE -- DO NOT REMOVE
