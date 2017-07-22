@@ -2,8 +2,29 @@
   hosts: 127.0.0.1
   connection: local
 
+  vars_prompt:
+    - name: "network_prefix"
+      prompt: "RADVD Adv. Network"
+      private: no
+
   roles:
-    - { role: package, package_name: radvd, package_state: present }
+    - { role: radvd }
     - { role: package, package_name: dnsmasq, package_state: present }
 
+  tasks:
 
+  - name: Check if configuration exists already
+    stat: path=/etc/re6stnet/re6stnet.conf
+    register: re6stnet_conf
+
+  - lineinfile: dest=/etc/re6stnet/re6stnet.conf line='interface eth0' state=present
+    notify: restart re6stnet
+    when: re6stnet_conf.stat.exists == True
+
+  - lineinfile: dest=/etc/re6stnet/re6stnet.conf line='main-interface eth0' state=present
+    notify: restart re6stnet
+    when: re6stnet_conf.stat.exists == True
+
+  - lineinfile: dest=/etc/re6stnet/re6stnet.conf line='daemon "/usr/sbin/radvd -n /etc/radvd.conf"' state=present
+    notify: restart re6stnet
+    when: re6stnet_conf.stat.exists == True

@@ -1,0 +1,3 @@
+---
+dependencies:
+    - { role: package, package_name: radvd, package_state: present }

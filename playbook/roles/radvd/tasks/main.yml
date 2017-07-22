@@ -1,0 +1,2 @@
+ - name: copy templates
+   template: src=radvd.conf.in dest=/etc/radvd.conf mode=660
