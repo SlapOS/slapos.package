@@ -14,5 +14,4 @@
 
 
   roles:
-    - { role: package, package_name: shorewall, package_state: present }
     - shorewall
