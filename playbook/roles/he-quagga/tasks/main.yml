@@ -1,0 +1,15 @@
+ - name: Check if configuration exists already
+   stat: path=/etc/re6stnet/re6stnet.conf
+   register: re6stnet_conf
+
+ - lineinfile: dest=/etc/re6stnet/re6stnet.conf line='gateway' state=present
+   notify: restart re6stnet
+   when: re6stnet_conf.stat.exists == True
+
+ - name: copy templates
+   copy: src={{ item }} dest=/etc/quagga/{{ item }} mode=660
+   with_items:
+     - bgpd.conf  
+     - daemons  
+     - vtysh.conf  
+     - zebra.conf
