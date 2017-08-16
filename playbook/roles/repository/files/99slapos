@@ -1,0 +1,4 @@
+# This file was included by ansible and it can be overwriten
+APT::Get::AllowUnauthenticated "true";
+APT::Get::AllowWeakRepositories "true";
+APT::Get::AllowInsecureRepositories "true";
