@@ -85,7 +85,7 @@ make-options =
 pre-configure =
   sed -i 's#!/opt/slapos/parts/python2.7/bin/python2.7#!${python2.7:location}/bin/python2.7#' ${python2.7:location}/bin/python-config
   libtoolize -c -f
-  aclocal -I${pkgconfig:location}/share/aclocal -I${gettext:location}/share/aclocal -I${libtool:location}/share/aclocal
+  aclocal -I${pkgconfig:location}/share/aclocal -I${gettext:location}/share/aclocal -I${libtool:location}/share/aclocal -I${glib:location}/share/aclocal
   ./autogen.sh
 configure-options +=
   --enable-shared
@@ -94,6 +94,8 @@ environment +=
   GIR_DIR=${buildout:parts-directory}/${:_buildout_section_name_}/share/gir-1.0
   CPPFLAGS=-I${glib:location}/include/glib-2.0 -I${glib:location}/lib/glib-2.0/include -I${python2.7:location}/include/python2.7
   LDFLAGS=-L${glib:location}/lib -Wl,-rpath=${glib:location}/lib -L${libffi:location}/lib -Wl,-rpath=${libffi:location}/lib -lffi -L${python2.7:location}/lib
+  ACLOCAL_PATH=${pkgconfig:location}/share/aclocal:${gettext:location}/share/aclocal:${libtool:location}/share/aclocal:${glib:location}/share/aclocal:${intltool:location}/share/aclocal
+  M4=${m4:location}/bin/m4
 
 post-install = 
   sed -i 's#!${python2.7:location}/bin/python2.7#!/opt/slapos/parts/python2.7/bin/python2.7#' ${python2.7:location}/bin/python-config
