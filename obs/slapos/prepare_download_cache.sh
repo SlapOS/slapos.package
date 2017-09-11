@@ -34,9 +34,7 @@ echo "$BUILD_ROOT_DIRECTORY" > $CURRENT_DIRECTORY/$SLAPOS_DIRECTORY/slapos/origi
 wget https://bootstrap.pypa.io/bootstrap-buildout.py --no-check-certificate -O bootstrap.py
 
 (python -S bootstrap.py --buildout-version $BUILDOUT_VERSION \
-                        --setuptools-version $SETUPTOOL_VERSION \
                         --setuptools-to-dir eggs \
-                        -f http://www.nexedi.org/static/packages/source/ \
                         -f http://www.nexedi.org/static/packages/source/slapos.buildout/ && \
     ./bin/buildout -v) || (./bin/buildout -v || (echo "Failed to run buildout, exiting." && exit 1))
 
@@ -56,8 +54,7 @@ rm -rfv ./{downloads,parts,eggs,develop-eggs,bin,rebootstrap}
 find . -type d -empty -prune -exec rmdir '{}' ';'
 
 mkdir -p $BUILD_DIRECTORY/eggs
-python -S bootstrap.py --setuptools-version $SETUPTOOL_VERSION \
-                       --buildout-version $BUILDOUT_VERSION \
+python -S bootstrap.py --buildout-version $BUILDOUT_VERSION \
                        --setuptools-to-dir eggs \
                        -f http://www.nexedi.org/static/packages/source/ \
                        -f http://www.nexedi.org/static/packages/source/slapos.buildout/ 
