@@ -3,7 +3,7 @@
 ####################################################
 
 # Edit for release
-VERSION=1.3.18
+VERSION=1.4.0
 # Edit for release
 RECIPE_VERSION=1.0.42
 # Edit for release
