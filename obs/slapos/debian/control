@@ -2,13 +2,11 @@ Source: slapos-node
 Maintainer: Arnaud Fontaine <arnaud.fontaine@nexedi.com>
 Section: net
 Priority: optional
-Build-Depends: debhelper (>= 4.1.16),
+Build-Depends: debhelper,
                chrpath,
-               po-debconf,
-               wget,
-               python,
-               python-dev
-Homepage: http://www.slapos.org
+#              po-debconf,
+               python
+Homepage: https://www.slapos.org
 
 Package: slapos-node
 Architecture: any
