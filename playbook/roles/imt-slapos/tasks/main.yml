@@ -43,6 +43,7 @@
     with_items:
      - { regexp: '^ipv4_global_network\s*=', line: 'ipv4_global_network = 10.32.0.0/13' }
      - { regexp: '^instance_storage_home\s*=', line: 'instance_storage_home = /data' }
+     - { regexp: '^manager_list\s*=', line: 'manager_list = prerm' }
     when: post_config is defined and slapos_cfg.stat.exists == True
 
   - modprobe: name=kvm state=present
