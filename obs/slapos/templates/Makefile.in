@@ -137,9 +137,9 @@ install: all
 		echo "No path to fix."
 
 	set -e; \
-	for f in `find $(INSTALL_DIRECTORY) \( -type f -o -type l \) \( -executable -o -name "*.so" \)`; do \
+	for f in `find $(INSTALL_DIRECTORY) -type f \( -executable -o -name "*.so" \)`; do \
 		if file -L $$f | grep -Eq '.*ELF.*(executable|shared).*'; then \
-			OLD_RPATH="`chrpath $$f|awk -F'RPATH=' '{print $$2}'|sed 's#$(BUILD_DIRECTORY)#$(TARGET_DIRECTORY)#g' 2> /dev/null`"; \
+			OLD_RPATH="`chrpath $$f|awk -F'R(UN)?PATH=' '{print $$2}'|sed 's#$(BUILD_DIRECTORY)#$(TARGET_DIRECTORY)#g' 2> /dev/null`"; \
 			if [ -n "$$OLD_RPATH" ]; then \
 				chrpath -r "$$OLD_RPATH" $$f; \
 			fi; \
