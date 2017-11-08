@@ -3,8 +3,8 @@
   connection: local
 
   vars:
-    software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.48/software/erp5/software.cfg
-    frontend_software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.48/software/apache-frontend/software.cfg
+    software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.56/software/erp5/software.cfg
+    frontend_software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.56/software/apache-frontend/software.cfg
     startup_playbook_id: erp5-standalone.yml 
     playbook_name: erp5
     request_instance_template: request-erp5.j2
