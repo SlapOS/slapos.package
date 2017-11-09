@@ -14,6 +14,6 @@
     frontend_slave_reference: slave-srn-{{ playbook_name }}
     backend_url_path: /tmp/playbook-{{ playbook_name }}-backend-url
     public_ipv4_path: /tmp/playbook-{{ playbook_name }}-public_ipv4
-
+    bt5_list: erp5_full_text_myisam_catalog erp5_configurator_standard
   roles:
     - standalone-shared

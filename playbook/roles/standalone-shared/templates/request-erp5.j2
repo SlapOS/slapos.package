@@ -10,7 +10,7 @@ supply(software_url, computer_id)
 parameter_dict = {
   "timezone": "UTC",
   "site-id": "erp5",
-  "bt5": "erp5_full_text_myisam_catalog erp5_configurator_standard",
+  "bt5": "{{ bt5_list }}",
   "zope-partition-dict": {
     "admin": {
       "family": "admin",
