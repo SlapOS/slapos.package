@@ -4,17 +4,9 @@
 
   vars:
     software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.55/software/wendelin/software.cfg
-    frontend_software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.48/software/apache-frontend/software.cfg
+    bt5_list: erp5_full_text_myisam_catalog erp5_configurator_standard erp5_wendelin_configurator
     startup_playbook_id: wendelin-standalone.yml
     playbook_name: wendelin
-    request_instance_template: request-erp5.j2
-    request_frontend_template: request-erp5-frontend.j2
-    firewall_setup_template: setup-firewall.j2
-    frontend_master_reference: master-frn-{{ playbook_name }}
-    frontend_slave_reference: slave-srn-{{ playbook_name }}
-    backend_url_path: /tmp/playbook-{{ playbook_name }}-backend-url
-    public_ipv4_path: /tmp/playbook-{{ playbook_name }}-public_ipv4
-    bt5_list: erp5_full_text_myisam_catalog erp5_configurator_standard erp5_wendelin_configurator
   roles:
     - standalone-shared
     - { role: package, package_name: socat, package_state: present }
