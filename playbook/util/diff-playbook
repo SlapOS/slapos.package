@@ -1,8 +1,6 @@
 HERE=`pwd`
-rm -rf /tmp/tmpplaybook_*
-DFILE="/tmp/tmpplaybook_unstable$(basename $0).$$/"
+DFILE=`mktemp -d`
 TFILE="archive.tar.gz"
-mkdir -p $DFILE
 cd $DFILE
 slapcache-download --destination=$TFILE
 tar -xzf $TFILE
