@@ -1,3 +1,8 @@
+function cleanup {
+  rm -fr "$DFILE"
+}
+trap cleanup EXIT
+
 HERE=`pwd`
 DFILE=`mktemp -d`
 TFILE="archive.tar.gz"
