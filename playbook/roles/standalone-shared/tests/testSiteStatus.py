@@ -13,9 +13,9 @@ class TestSiteStatus(unittest.TestCase):
     """Checks that site was correctly created"""
     # expose output for debugging
     print 'Standard output:'
-    print self.status_dict['stdout']
+    print self.status_dict['stdout'].encode('utf-8')
     print 'Standard error:'
-    print self.status_dict['stderr']
+    print self.status_dict['stderr'].encode('utf-8')
     # Assert success
     self.assertTrue(self.status_dict['success'])
 
