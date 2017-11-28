@@ -2,22 +2,24 @@
     "variables": {
         "user": "slapos",
         "password": "slapos",
-        "disk_size": "200000",
-        "domain": ""
+        "domain": "",
+        "disk_size": "100",
+        "name": "image",
+        "custom_script": "scripts/empty.sh"
     },
 
     "builders":
     [
         {
-            "name": "centos72-vm-bootstrap",
+            "name": "centos7-{{ user `disk_size`}}G-{{ user `name`}}",
 
             "type": "qemu",
             "format": "qcow2",
             "accelerator": "kvm",
-            "disk_size": "{{ user `disk_size`}}",
+            "disk_size": "{{ user `disk_size`}}000",
 
-            "iso_url": "http://mirrors.kernel.org/centos/7.2.1511/isos/x86_64/CentOS-7-x86_64-NetInstall-1511.iso",
-            "iso_checksum": "9ed9ffb5d89ab8cca834afce354daa70a21dcb410f58287d6316259ff89758f5",
+            "iso_url": "http://mirrors.kernel.org/centos/7/isos/x86_64/CentOS-7-x86_64-NetInstall-1708.iso",
+            "iso_checksum": "fe3d960cce4d2c1c9f1b66817fe87cc0ee1a1c6c5dd126204cb5c33d51a45620",
             "iso_checksum_type": "sha256",
 
             "http_directory": "http",
@@ -32,7 +34,7 @@
             "boot_command": [
               "<esc>",
               "<wait>",
-              "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos72-anaconda-ks.cfg biosdevname=0 net.ifnames=0",
+              "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos7-anaconda-ks.cfg biosdevname=0 net.ifnames=0",
               "<enter>"
             ]
         }
@@ -47,8 +49,9 @@
                 "scripts/packages-centos.sh",
                 "scripts/cleanup-centos.sh",
                 "scripts/centos7-install-base.sh",
-                "scripts/vm-bootstrap.sh"
+                "{{ user `custom_script` }}"
             ]
         }
     ]
 }
+
