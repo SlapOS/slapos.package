@@ -20,5 +20,5 @@ class TestSiteStatus(unittest.TestCase):
     self.assertTrue(self.status_dict['success'])
 
   def test_build_time(self):
-    """Asserts that site was built in less than 3h"""
-    self.assertLess(self.status_dict['duration'], (3600. * 3))
+    """Asserts that site was built in less than 9h"""
+    self.assertLess(self.status_dict['duration'], (3600. * 9))
