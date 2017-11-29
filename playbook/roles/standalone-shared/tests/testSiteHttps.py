@@ -38,7 +38,7 @@ class TestSiteHttps(unittest.TestCase):
         is_redirect=result.is_redirect,
         is_permanent_redirect=result.is_permanent_redirect,
         status_code=result.status_code,
-        location=result.headers['Location']
+        location=result.headers.get('Location')
       ),
       dict(
         ok=True,
@@ -64,7 +64,7 @@ class TestSiteHttps(unittest.TestCase):
         is_redirect=result.is_redirect,
         is_permanent_redirect=result.is_permanent_redirect,
         status_code=result.status_code,
-        location=result.headers['Location']
+        location=result.headers.get('Location')
       ),
       dict(
         ok=True,
