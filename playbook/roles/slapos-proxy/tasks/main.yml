@@ -1,4 +1,15 @@
-  
+  - name: Ensure software directory exists
+    file:
+      path: /opt/slapgrid
+      state: directory
+      mode: 0755
+
+  - name: Ensure instance directory exists
+    file:
+      path: /srv/slapgrid
+      state: directory
+      mode: 0755
+
   - name: Install packages using apt
     apt: name=slapos-node state=present update_cache=yes cache_valid_time=3600
     when: ansible_os_family == "Debian"
