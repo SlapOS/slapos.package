@@ -2,9 +2,15 @@
   - name: fetch shared vars
     include_vars: erp5-common.yml
 
-  - name: Fetch public IPv4
+  - name: Fetch public IPv4 (Debian)
     shell: ifconfig `route -n | grep '^0\.0\.0\.0' | head -n 1 | awk '{print $NF}'` | { IFS=' :';read r;read r r a r;echo $a; }
     register: public_ipv4
+    when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+
+  - name: Fetch public IPv4 (CentOS)
+    shell: ifconfig `route -n | grep '^0\.0\.0\.0' | head -n 1 | awk '{print $NF}'` | { IFS=' :';read r;read r a r r;echo $a; }
+    register: public_ipv4
+    when: ansible_distribution == "CentOS"
 
   - name: Store public IPv4 for other scripts
     shell: echo "{{ public_ipv4.stdout }}" > /tmp/playbook-{{ playbook_name }}-public-ipv4
