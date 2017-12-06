@@ -1,9 +1,8 @@
 
   - copy: dest=/etc/apt/apt.conf.d/99slapos src=99slapos
-    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
- 
+    when: (ansible_distribution == "Debian" and ansible_distribution_major_version == "9") or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "17")
+
   - name: Update repos for debian 9
     shell: apt update --allow-insecure-repositories
-    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
-
+    when: (ansible_distribution == "Debian" and ansible_distribution_major_version == "9") or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "17")
 
