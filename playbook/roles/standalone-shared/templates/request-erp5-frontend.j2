@@ -1,7 +1,6 @@
 computer_id = 'local_computer'
 frontend_software_release_url = '{{ frontend_software_release_url }}'
 supply(frontend_software_release_url, computer_id)
-public_ipv4 = '{{ public_ipv4.stdout }}'
 # frontend master partition
 request(software_release=frontend_software_release_url, partition_reference='{{ frontend_master_reference }}')
 
@@ -20,7 +19,7 @@ if backend_url is not None:
     partition_parameter_kw={
         'url': backend_url,
         'type': 'zope',
-        'custom_domain': public_ipv4,
+        'custom_domain': '{{ ansible_default_ipv4.address }}',
         'server-alias': '*',
         'https-only': 'true'
     }

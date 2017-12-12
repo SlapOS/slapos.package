@@ -16,8 +16,8 @@ if [ ! -z "$frontend_ipv4" ] ; then
   iptables -t nat -vnL OUTPUT | grep dpt:443 | grep -q "${local_access_comment}" && iptables -t nat -D OUTPUT `iptables -t nat -vnL OUTPUT --line-numbers | grep dpt:443 | grep "${local_access_comment}" | cut -d ' ' -f 1`
   iptables -t nat -vnL PREROUTING | grep dpt:80 | grep -q "${remote_access_comment}" && iptables -t nat -D PREROUTING `iptables -t nat -vnL PREROUTING --line-numbers | grep dpt:80 | grep "${remote_access_comment}" | cut -d ' ' -f 1`
   iptables -t nat -vnL OUTPUT | grep dpt:80 | grep -q "${local_access_comment}" && iptables -t nat -D OUTPUT `iptables -t nat -vnL OUTPUT --line-numbers | grep dpt:80 | grep "${local_access_comment}" | cut -d ' ' -f 1`
-  iptables -t nat -A OUTPUT -p tcp -d {{ public_ipv4.stdout }} --dport 443 -j DNAT --to $frontend_ipv4:4443 -m comment --comment "${local_access_comment}"
-  iptables -t nat -A PREROUTING -p tcp -d {{ public_ipv4.stdout }} --dport 443 -j DNAT --to-destination $frontend_ipv4:4443 -m comment --comment "${remote_access_comment}"
-  iptables -t nat -A OUTPUT -p tcp -d {{ public_ipv4.stdout }} --dport 80 -j DNAT --to $frontend_ipv4:8080 -m comment --comment "${local_access_comment}"
-  iptables -t nat -A PREROUTING -p tcp -d {{ public_ipv4.stdout }} --dport 80 -j DNAT --to-destination $frontend_ipv4:8080 -m comment --comment "${remote_access_comment}"
+  iptables -t nat -A OUTPUT -p tcp -d {{ ansible_default_ipv4.address }} --dport 443 -j DNAT --to $frontend_ipv4:4443 -m comment --comment "${local_access_comment}"
+  iptables -t nat -A PREROUTING -p tcp -d {{ ansible_default_ipv4.address }} --dport 443 -j DNAT --to-destination $frontend_ipv4:4443 -m comment --comment "${remote_access_comment}"
+  iptables -t nat -A OUTPUT -p tcp -d {{ ansible_default_ipv4.address }} --dport 80 -j DNAT --to $frontend_ipv4:8080 -m comment --comment "${local_access_comment}"
+  iptables -t nat -A PREROUTING -p tcp -d {{ ansible_default_ipv4.address }} --dport 80 -j DNAT --to-destination $frontend_ipv4:8080 -m comment --comment "${remote_access_comment}"
 fi
