@@ -9,6 +9,11 @@
   vars_files:
     - settings/vifib.yml
 
+  pre_tasks:
+    - name: Load dynamic variables
+      include_vars: "{{vars_file}}"
+      when: vars_file is defined and vars_file != ''
+
   roles:
     - ntp
     - { role: package, package_name: lm-sensors, package_state: latest }
@@ -27,3 +32,5 @@
     - vifib-server
     - rsyslogd
     - sysstat
+    - role: vifib-kernel
+      when: upgrade_kernel | default(False) == True

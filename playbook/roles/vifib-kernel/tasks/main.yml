@@ -4,6 +4,10 @@
     apt: name=linux-image-4.9.0-5-amd64  state=latest update_cache=yes
     when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
 
+  - name: Install Debian jessie-backports repository
+    lineinfile: dest='/etc/apt/sources.list' line='deb http://ftp.debian.org/debian jessie-backports main' state=present
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "8"
+
   - name: Install kernel 4.9 on debian 8.0
     apt: name=linux-image-4.9.0-0.bpo.5-amd64  state=latest default_release=jessie-backports update_cache=yes
     when: ansible_distribution == "Debian" and ansible_distribution_major_version == "8"        
