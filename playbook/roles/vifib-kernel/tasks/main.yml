@@ -1,6 +1,11 @@
 ---
-  - name: Install kernel 4.6 on debian 8.0
-    apt: name=linux-image-4.6.0-0.bpo.1-amd64  state=latest default_release=jessie-backports update_cache=yes
+
+  - name: Install kernel 4.9 on debian 9.0
+    apt: name=linux-image-4.9.0-5-amd64  state=latest update_cache=yes
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+
+  - name: Install kernel 4.9 on debian 8.0
+    apt: name=linux-image-4.9.0-0.bpo.5-amd64  state=latest default_release=jessie-backports update_cache=yes
     when: ansible_distribution == "Debian" and ansible_distribution_major_version == "8"        
 
   - name: Download kernel 4.6 from Debian8 repository to install on Debian 7
