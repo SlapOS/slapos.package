@@ -10,4 +10,4 @@
     - settings/vifib.yml
 
   roles:
-    - { role: vifib-upgrade }
+    - { role: vifib-upgrade, upgrade_kernel: True }
