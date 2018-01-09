@@ -58,7 +58,7 @@
       current_upgrade_signature
 
   - name: Do upgrade
-    shell: ansible-playbook {{ upgrader_playbook }} --extra-vars "vars_file={{vars_file | default('')}}" -i hosts 2>>/opt/upgrader/latest_upgrade.log  >> /opt/upgrader/latest_upgrade.log
+    shell: ansible-playbook {{ upgrader_playbook }} -i hosts 2>>/opt/upgrader/latest_upgrade.log  >> /opt/upgrader/latest_upgrade.log
     when: (upgrade_after > lookup('file', '/opt/upgrader/last-upgrade')|int ) and (lookup('file', '/opt/upgrader/next-upgrade-signature') != lookup('file', '/opt/upgrader/current-upgrade-signature'))
     args:
       chdir: /opt/upgrader/playbook-tmp/
