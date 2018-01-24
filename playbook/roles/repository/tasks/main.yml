@@ -96,12 +96,10 @@
     apt_repository: repo='deb {{ base_open_build_url }}/xUbuntu_17.10/ ./' state=present
     when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "17.10"
 
-  - name: Install CentOS 7 Repository
-    get_url: url=http://download.opensuse.org/repositories/home:/VIFIBnexedi/CentOS_7/home:VIFIBnexedi.repo dest=/etc/yum.repos.d/slapos.repo mode=0440
-    when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
-
   - name: Install CentOS 7 RPM Key
-    rpm_key: state=present key=http://download.opensuse.org/repositories/home:/VIFIBnexedi/CentOS_7/repodata/repomd.xml.key
+    # workarounded with https://github.com/marbu/ansible-modules-core-issue-1853-reproducer/commit/41727b465533717015d8d55904c5a102fe248bc4
+    # for https://github.com/ansible/ansible-modules-core/issues/1853
+    rpm_key: state=present key=roles/repository/files/VIFIBNexedi_CentOS_7.key
     when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
 
   - name: Install CentOS 6 Repository
