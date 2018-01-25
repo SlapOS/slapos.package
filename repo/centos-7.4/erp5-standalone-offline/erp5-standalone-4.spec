@@ -6,10 +6,10 @@ Summary:        ERP5 standalone - ERP5-4
 ERP5 provided with standalone package - ERP5-4.
 
 %install
-mkdir -p %{buildroot}/opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/parts
+mkdir -p %{buildroot}/opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/parts
 cp -a \
-  /opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/parts/[r-zR-Z]* \
-  %{buildroot}/opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/parts/
+  /opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/parts/[r-zR-Z]* \
+  %{buildroot}/opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/parts/
 %files
 %defattr(-,slapsoft,slapsoft)
-/opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/
+/opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/

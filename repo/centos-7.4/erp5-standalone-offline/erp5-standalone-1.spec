@@ -6,20 +6,20 @@ Summary:        ERP5 standalone - ERP5-1
 ERP5 provided with standalone package - ERP5-1.
 
 %install
-mkdir -p %{buildroot}/opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/parts
+mkdir -p %{buildroot}/opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/parts
 cp -a \
-  /opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/.completed \
-  /opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/*.cfg \
-  /opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/.installed.cfg \
-  /opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/.local \
-  /opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/bin \
-  /opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/eggs \
-  /opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/develop-eggs \
-  %{buildroot}/opt/slapgrid/bbfe03b53d279b4f595327f751d64e79
+  /opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/.completed \
+  /opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/*.cfg \
+  /opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/.installed.cfg \
+  /opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/.local \
+  /opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/bin \
+  /opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/eggs \
+  /opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/develop-eggs \
+  %{buildroot}/opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f
 cp -a \
-  /opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/parts/[a-dA-D]* \
-  %{buildroot}/opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/parts/
+  /opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/parts/[a-dA-D]* \
+  %{buildroot}/opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/parts/
 
 %files
 %defattr(-,slapsoft,slapsoft)
-/opt/slapgrid/bbfe03b53d279b4f595327f751d64e79/
+/opt/slapgrid/6a3090a7784f6d884fc47994c066fc4f/
