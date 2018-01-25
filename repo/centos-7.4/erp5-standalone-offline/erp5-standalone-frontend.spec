@@ -7,7 +7,7 @@ ERP5 provided with standalone package - frontend.
 
 %install
 mkdir -p %{buildroot}/opt/slapgrid
-cp -a /opt/slapgrid/b6fd6dcb9e71fdfbeafa00397fd803a5 %{buildroot}/opt/slapgrid
+cp -a /opt/slapgrid/57cca7c75d8a9e056dec471068619d3b %{buildroot}/opt/slapgrid
 %files
 %defattr(-,slapsoft,slapsoft)
-/opt/slapgrid/b6fd6dcb9e71fdfbeafa00397fd803a5
+/opt/slapgrid/57cca7c75d8a9e056dec471068619d3b
