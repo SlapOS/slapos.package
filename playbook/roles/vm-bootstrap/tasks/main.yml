@@ -46,11 +46,11 @@
   - include: ssh.yml
 
   - name: Enable hotplugged CPU and Memory automatically
-    lineinfile: dest=/lib/udev/rules.d/80-hotplug-cpu-mem.rules state=present create=yes line="{{ item }}"
+    lineinfile: dest=/etc/udev/rules.d/99-hotplug-cpu-mem.rules state=present create=yes line="{{ item }}"
     with_items:
-      - 'SUBSYSTEM=="cpu", ACTION=="add", TEST=="online", ATTR{online}=="0", ATTR{online}="1"'
-      - 'SUBSYSTEM=="memory", ACTION=="add", TEST=="state", ATTR{state}=="offline", ATTR{state}="online"'
-    when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+      - "SUBSYSTEM==\"cpu\",ACTION==\"add\",RUN+=\"/bin/sh -c '[ ! -e /sys$devpath/online ] || echo 1 > /sys$devpath/online'\""
+      - "SUBSYSTEM==\"memory\",ACTION==\"add\",RUN+=\"/bin/sh -c '[ ! -e /sys$devpath/online ] || echo online > /sys$devpath/state'\""
+    when: ansible_distribution == "Ubuntu" or (ansible_distribution == "Debian" and ansible_distribution_major_version|int > 7)
 
   - file: path=/opt/upgrader state=directory 
 
