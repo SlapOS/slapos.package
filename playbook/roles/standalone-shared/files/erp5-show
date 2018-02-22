@@ -12,6 +12,7 @@ import urllib2
 from xml.dom import minidom
 import json
 import hashlib
+import glob
 
 def fmt_date():
   return time.strftime("%Y%m%d")
@@ -120,22 +121,20 @@ def status():
     frn_sr = [q for q in software_release_list
         if 'software/apache-frontend' in q][0]
     zope_ip, pw = get_connection_information(erp5_sr)
-    if 'software/erp5' in erp5_sr:
-      filename = '/tmp/playbook-erp5-public-ipv4'
-    elif 'software/wendelin' in erp5_sr:
-      filename = '/tmp/playbook-wendelin-public-ipv4'
-    else:
-      raise ValueError
-    try:
-      ip = open(filename).read()
-    except Exception:
-      frontend = None
-    else:
-      if len(ip) == 0:
-        frontend = zope_ip
-      else:
-        frontend = 'https://' + ip
 
+    filename = glob.glob('/tmp/playbook-*-public-ipv4')
+    if len(filename) > 0:
+      try:
+        ip = open(filename[0]).read()
+      except Exception:
+        frontend = None
+      else:
+        if len(ip) == 0:
+          frontend = zope_ip
+        else:
+          frontend = 'https://' + ip
+    else:
+      frontend = None
     frontend_ip, _ = get_connection_information(frn_sr)
 
     if zope_ip is None or frontend is None or frontend_ip is None:
