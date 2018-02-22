@@ -28,16 +28,14 @@ def get_connection_information(software_release):
   conn = sqlite3.connect("/opt/slapos/slapproxy.db")
   cur = conn.cursor()
 
-  if 'software/erp5' in software_release:
-    partition_reference = 'instance-of-erp5'
-  elif  'software/wendelin' in software_release:
-    partition_reference = 'instance-of-wendelin'
+  if 'software/apache-frontend' not in software_release:
+    partition_reference = 'instance-of-%'
   elif 'software/apache-frontend' in software_release:
     partition_reference = 'apache-frontend-1'
   else:
     raise ValueError
 
-  qry = cur.execute("SELECT connection_xml FROM partition11 WHERE connection_xml IS NOT NULL AND software_release=? AND partition_reference=?", (software_release, partition_reference) )
+  qry = cur.execute("SELECT connection_xml FROM partition11 WHERE connection_xml IS NOT NULL AND software_release=? AND partition_reference LIKE ?", (software_release, partition_reference) )
   xml = None
   for row in qry:
     xml = str(row[0])
@@ -47,7 +45,7 @@ def get_connection_information(software_release):
     return (None, None)
 
   instance = minidom.parseString(xml)
-  if partition_reference in ['instance-of-erp5', 'instance-of-wendelin']:
+  if partition_reference.startswith('instance-of-'):
     try:
       el = instance.getElementsByTagName('parameter')[0]
       value = el.childNodes[0].nodeValue
@@ -118,7 +116,7 @@ def status():
     build = False
 
   if build:
-    erp5_sr = [q for q in software_release_list if 'software/erp5' in q or 'software/wendelin' in q][0]
+    erp5_sr = [q for q in software_release_list if 'software/apache-frontend' not in q][0]
     frn_sr = [q for q in software_release_list
         if 'software/apache-frontend' in q][0]
     zope_ip, pw = get_connection_information(erp5_sr)
