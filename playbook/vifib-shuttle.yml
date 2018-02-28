@@ -8,6 +8,7 @@
   vars_files:
     - settings/vifib.yml
     - settings/upgrader.yml
+    - settings/slapos-master.yml
 
   vars_prompt:
     - name: "computer_name"

@@ -4,6 +4,7 @@
 
   vars_files:
     - settings/vifib.yml
+    - settings/slapos-master.yml
 
   vars:
     interface_name: eth0
