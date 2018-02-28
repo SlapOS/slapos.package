@@ -1,6 +1,4 @@
 ---
-re6st_registry_url: http://re6stnet.nexedi.com/
-re6st_fingerprint: sha256:61a8f3ef4bdf12aca0dad5c17e8fadd15966bdd68b1400c91ef8ee53f17c0d65
 slapos_master_url: https://slap.vifib.com/
 slapos_web_master_url: https://slapos.vifib.com/
 interface_name: lo

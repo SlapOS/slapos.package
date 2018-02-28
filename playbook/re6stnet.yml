@@ -14,6 +14,16 @@
       private: no
       default: "noname"
 
+    - name: "re6st_registry_url"
+      prompt: "What is the url to the Re6st registry?"
+      private: no
+      default: "http://re6stnet.nexedi.com/"
+
+    - name: "re6st_fingerprint"
+      prompt: "What is the Registry fingerprint?"
+      private: no
+      default: "sha256:61a8f3ef4bdf12aca0dad5c17e8fadd15966bdd68b1400c91ef8ee53f17c0d65"
+
   roles:
     - { role: re6stnet, package_state: present }
 
