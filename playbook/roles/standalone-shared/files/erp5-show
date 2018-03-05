@@ -131,7 +131,24 @@ def status():
         frontend = 'https://' + ip
     frontend_ip, _ = get_connection_information(frn_sr)
 
-    if zope_ip is None or frontend is None or frontend_ip is None:
+    connected = False
+    if frontend is not None:
+      # as frontend is already up, check if all is ready to serve requests
+      # before providing the access url to the user
+      ctx = ssl.create_default_context()
+      ctx.check_hostname = False
+      ctx.verify_mode = ssl.CERT_NONE
+
+      try:
+        r1 = urllib2.urlopen(frontend, context=ctx)
+        if 'Zope Management Interface' in r1.read():
+          connected = True
+        else:
+          print 'URL %s ready, but does not reply with Zope' % frontend
+      except urllib2.URLError, e:
+        print "Zope not available yet: %s" % e
+
+    if zope_ip is None or frontend is None or frontend_ip is None or not connected:
       print "Build successful, please wait for instantiation"
       sys.exit(2)
 
