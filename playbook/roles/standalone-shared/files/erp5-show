@@ -121,7 +121,7 @@ def status():
     zope_ip, pw = get_connection_information(erp5_sr)
 
     try:
-      ip = open('/tmp/playbook-public-ipv4').read()
+      ip = open('/tmp/playbook-public-ipv4').read().strip()
     except Exception:
       frontend = None
     else:
