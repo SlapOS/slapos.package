@@ -11,4 +11,4 @@ slapcache-download --destination=$TFILE
 tar -xzf $TFILE
 rm $TFILE
 
-diff -ruw $HERE $DFILE
+diff -ruw $DFILE $HERE
