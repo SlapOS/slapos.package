@@ -12,15 +12,29 @@ except Exception:
   pass
 
 if backend_url is not None:
+  file_dict = dict(
+    ssl_crt='{{ frontend_ssl_crt_file }}',
+    ssl_key='{{ frontend_ssl_key_file }}',
+    ssl_ca_crt='{{ frontend_ssl_ca_crt_file }}'
+  )
+  partition_parameter_kw = {
+    'url': backend_url,
+    'type': 'zope',
+    'custom_domain': '{{ frontend_custom_domain }}',
+    'server-alias': '{{ frontend_server_alias }}',
+    'https-only': 'true',
+
+  }
+  for key in ['ssl_crt', 'ssl_key', 'ssl_ca_crt']:
+    try:
+      data = open(file_dict[key]).read().strip()
+      if data:
+        partition_parameter_kw[key] = data
+    except IOError:
+      pass
   request(
     software_release=frontend_software_release_url,
     partition_reference='{{ frontend_slave_reference }}',
     shared=True,
-    partition_parameter_kw={
-        'url': backend_url,
-        'type': 'zope',
-        'custom_domain': '{{ ansible_default_ipv4.address }}',
-        'server-alias': '*',
-        'https-only': 'true'
-    }
+    partition_parameter_kw=partition_parameter_kw
   )
