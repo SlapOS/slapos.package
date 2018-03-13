@@ -1,8 +1,8 @@
 ---
   - include: debian9-gcc-4.9.yml
 
-  - name: Store public IPv4 for other scripts
-    copy: content="{{ ansible_default_ipv4.address }}" dest=/tmp/playbook-public-ipv4 mode=0644
+  - name: Store domain for other scripts
+    copy: content="{{ frontend_custom_domain }}" dest=/tmp/playbook-frontend-custom-domain mode=0644
 
   - name: create instance request script
     template: src={{ request_instance_template }} dest=/tmp/playbook-request-{{ playbook_name }} mode=0700

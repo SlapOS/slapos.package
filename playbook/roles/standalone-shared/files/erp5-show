@@ -121,14 +121,19 @@ def status():
     zope_ip, pw = get_connection_information(erp5_sr)
 
     try:
-      ip = open('/tmp/playbook-public-ipv4').read().strip()
+      # by default try new apporach (domain based)...
+      hostname = open('/tmp/playbook-frontend-custom-domain').read().strip()
     except Exception:
-      frontend = None
+      try:
+        # ...and fall back to old one (IP based)
+        hostname = open('/tmp/playbook-public-ipv4').read().strip()
+      except Exception:
+        frontend = None
     else:
-      if len(ip) == 0:
+      if len(hostname) == 0:
         frontend = zope_ip
       else:
-        frontend = 'https://' + ip
+        frontend = 'https://' + hostname
     frontend_ip, _ = get_connection_information(frn_sr)
 
     connected = False
