@@ -8,7 +8,7 @@
     shell: echo "{{ ansible_default_ipv4.address }}" > /tmp/playbook-public-ipv4
 
   - name: create instance request script
-    template: src={{ request_instance_template }} dest=/tmp/playbook-request-{{ playbook_name }} mode=700
+    template: src={{ request_instance_template }} dest=/tmp/playbook-request-{{ playbook_name }} mode=0700
 
   - name: Supply and Request ERP5 Cluster
     cron:
@@ -19,7 +19,7 @@
       job="/bin/echo 'execfile(\"/tmp/playbook-request-{{ playbook_name }}\")' | /usr/bin/slapos console > /dev/null 2>&1"
 
   - name: create frontend request script
-    template: src={{ request_frontend_template }} dest=/tmp/playbook-request-frontend-{{ playbook_name }} mode=700
+    template: src={{ request_frontend_template }} dest=/tmp/playbook-request-frontend-{{ playbook_name }} mode=0700
 
   - name: Supply and Request ERP5 Frontend
     cron:
@@ -30,7 +30,7 @@
       job="/bin/echo 'execfile(\"/tmp/playbook-request-frontend-{{ playbook_name }}\")' | /usr/bin/slapos console > /dev/null 2>&1"
 
   - name: Create firewall script
-    template: src={{ firewall_setup_template }} dest=/tmp/playbook-firewall-setup-{{ playbook_name }} mode=700
+    template: src={{ firewall_setup_template }} dest=/tmp/playbook-firewall-setup-{{ playbook_name }} mode=0700
 
   - name: Setup firewall
     cron:
@@ -41,10 +41,10 @@
       job="/tmp/playbook-firewall-setup-{{ playbook_name }} > /dev/null 2>&1"
 
   - name: create erp5-show
-    copy: src=erp5-show dest=/usr/local/bin/erp5-show mode=755
+    copy: src=erp5-show dest=/usr/local/bin/erp5-show mode=0755
 
   - name: Add startup script
-    template: src=start-script.j2 dest=/usr/local/bin/{{ playbook_name }}-startup mode=755
+    template: src=start-script.j2 dest=/usr/local/bin/{{ playbook_name }}-startup mode=0755
 
   - name: Include on reboot
     cron:
