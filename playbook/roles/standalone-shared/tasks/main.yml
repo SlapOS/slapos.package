@@ -5,7 +5,7 @@
     include_vars: erp5-common.yml
 
   - name: Store public IPv4 for other scripts
-    shell: echo "{{ ansible_default_ipv4.address }}" > /tmp/playbook-public-ipv4
+    copy: content="{{ ansible_default_ipv4.address }}" dest=/tmp/playbook-public-ipv4 mode=0644
 
   - name: create instance request script
     template: src={{ request_instance_template }} dest=/tmp/playbook-request-{{ playbook_name }} mode=0700
