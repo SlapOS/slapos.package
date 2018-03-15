@@ -27,6 +27,9 @@ Building
 
 Compile ERP5 with erp5-standalone script.
 
+Note: You can modify `install.rc` and use different playbook, than keep in mind
+to use proper script or just a playbook in above step.
+
 Go to ``~/rpmbuild/SPECS``.
 
 Build all RPMs with:
@@ -40,7 +43,12 @@ Usage - instruction to user installing with RPMs
 
 Required machine is CentOS 7.4 with at least Netinstall.
 
-Provide all RPMs with `install.sh` in one directory (eg. tarball).
+Create tarball with:
+
+ * `install.sh`
+ * `install.rc`
+ * RPMs generated
+ * slapos.node RPM
 
 Ask user to run `install.sh` as `root`.
 
