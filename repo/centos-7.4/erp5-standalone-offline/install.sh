@@ -2,6 +2,60 @@
 
 source install.rc
 
+function check_file()
+{
+  f=$1
+  if [[ ! -z "${f// }" ]] ; then
+    if [[ ! -f ${f} ]] ; then
+      echo "The $2 file '$f' does not exists."
+      echo "Please provide file or leave it empty."
+      exit 1
+    else
+      check_file=`mktemp`
+      cat ${f} > ${check_file}
+    fi
+  else
+    check_file=''
+  fi
+}
+
+echo "It is possible to configure SSL key for the host"
+echo
+echo "Note: Domain name has to match certificate Common Name"
+echo
+echo "Important: Domain name HAVE TO point to public IP of this machine"
+echo "           in order for the installation to work"
+echo "           As a temporary workaround, you can put the proper line in"
+echo "           /etc/hosts, like:"
+echo "           IPV4.OF.THE.MACHINE DOMAIN.NAME"
+echo
+echo "Leave empty values for everything, than the automatically generated"
+echo "certificate will be used, for the public IP of this host."
+echo
+echo -n "Please type domain name: "
+read fqdn
+echo -n "Please type the path to SSL Certificate file: "
+read ssl_crt_file
+check_file "$ssl_crt_file" "SSL Certificate"
+frontend_ssl_crt_file=$check_file
+echo -n "Please type the path to SSL Key file: "
+read ssl_key_file
+check_file "$ssl_key_file" "SSL Key"
+frontend_ssl_key_file=$check_file
+echo -n "Please type path to the CA Certificate file: "
+read ssl_ca_crt_file
+check_file "$ssl_ca_crt_file" "SSL CA Certificate"
+frontend_ssl_ca_crt_file=$check_file
+
+cat > extra_vars.yml <<EOF
+frontend_ssl_crt_file: "$frontend_ssl_crt_file"
+frontend_ssl_key_file: "$frontend_ssl_key_file"
+frontend_ssl_ca_crt_file: "$frontend_ssl_ca_crt_file"
+EOF
+if [[ ! -z "${fqdn// }" ]] ; then
+  echo "frontend_custom_domain: \"$fqdn\"" >> extra_vars.yml
+fi
+
 LOG_FILE=install.log
 
 echo -n "Started at " >> $LOG_FILE 2>&1
@@ -34,7 +88,7 @@ echo "done."
 
 echo -n "Instantiating ERP5 instance..."
 for i in `seq 10` ; do
-  ansible-playbook /opt/slapos.playbook/$PLAYBOOK >> $LOG_FILE 2>&1
+  ansible-playbook --extra-vars @extra_vars.yml /opt/slapos.playbook/$PLAYBOOK >> $LOG_FILE 2>&1
   ANSIBLE_RESULT=$?
   if [ "$ANSIBLE_RESULT" == "0" ] ; then
     break
