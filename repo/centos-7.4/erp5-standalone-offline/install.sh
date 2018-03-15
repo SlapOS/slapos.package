@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/bin/bash
+
+source install.rc
+
 LOG_FILE=install.log
 
 echo -n "Started at " >> $LOG_FILE 2>&1
@@ -31,7 +34,7 @@ echo "done."
 
 echo -n "Instantiating ERP5 instance..."
 for i in `seq 10` ; do
-  ansible-playbook /opt/slapos.playbook/erp5-standalone.yml >> $LOG_FILE 2>&1
+  ansible-playbook /opt/slapos.playbook/$PLAYBOOK >> $LOG_FILE 2>&1
   ANSIBLE_RESULT=$?
   if [ "$ANSIBLE_RESULT" == "0" ] ; then
     break
