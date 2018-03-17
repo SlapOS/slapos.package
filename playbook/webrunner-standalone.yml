@@ -7,6 +7,6 @@
     startup_playbook_id: webrunner-standalone.yml
     playbook_name: webrunner
     request_instance_template: request-webrunner.j2
-
+    request_frontend_template: request-slapos-master-frontend.j2
   roles:
     - standalone-shared

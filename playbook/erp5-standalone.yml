@@ -7,5 +7,7 @@
     bt5_list: erp5_full_text_myisam_catalog erp5_configurator_standard
     startup_playbook_id: erp5-standalone.yml
     playbook_name: erp5
+    request_instance_template: request-erp5.j2
+    request_frontend_template: request-erp5-frontend.j2
   roles:
     - standalone-shared

@@ -8,9 +8,9 @@
     startup_playbook_id: slapos-master-standalone.yml
     playbook_name: slapos-master
     request_instance_template: request-slapos-master.j2
+    request_frontend_template: request-slapos-master-frontend.j2
 
   pre_tasks:
-
     - file: path=/etc/slapos-ssl owner=root group=root mode=0777 state=directory
 
   roles:
