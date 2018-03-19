@@ -1,9 +1,6 @@
 ---
   - include: debian9-gcc-4.9.yml
 
-  - name: fetch shared vars
-    include_vars: erp5-common.yml
-
   - name: Store public IPv4 for other scripts
     copy: content="{{ ansible_default_ipv4.address }}" dest=/tmp/playbook-public-ipv4 mode=0644
 
