@@ -1,0 +1,23 @@
+#!/bin/bash
+export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# This script is an workarround while slapos master cannot work without direct user connection
+# Once caucase is merged and used by the master the need of this workarround will be gone, and 
+# A better configuration can be proposes
+
+slap_ipv4=`/opt/slapos/parts/sqlite3/bin/sqlite3 /opt/slapos/slapproxy.db "select address from partition_network11 where partition_reference=(select reference from partition11 where requested_by = (select reference from partition11 where partition_reference='{{ backend_instance_reference }}')) and netmask='255.255.255.255';"`
+
+local_access_comment="Local {{ playbook_name }} IPv4 access"
+remote_access_comment="Remote {{ playbook_name }} IPv4 access"
+
+if [ ! -z "$slap_ipv4" ] ; then
+  local_count=`iptables -t nat -vnL | egrep "${local_access_comment}.*to:$slap_ipv4" | wc -l`
+  remote_count=`iptables -t nat -vnL | egrep "${remote_access_comment}.*to:$slap_ipv4" | wc -l`
+  if [ $local_count == "2" ] && [ $remote_count == "2" ] ; then
+    exit 0
+  fi
+  iptables -t nat -vnL PREROUTING | grep dpt:5443 | grep -q "${remote_access_comment}" && iptables -t nat -D PREROUTING `iptables -t nat -vnL PREROUTING --line-numbers | grep dpt:5443 | grep "${remote_access_comment}" | cut -d ' ' -f 1`
+  iptables -t nat -vnL OUTPUT | grep dpt:5443 | grep -q "${local_access_comment}" && iptables -t nat -D OUTPUT `iptables -t nat -vnL OUTPUT --line-numbers | grep dpt:5443 | grep "${local_access_comment}" | cut -d ' ' -f 1`
+  iptables -t nat -A OUTPUT -p tcp -d {{ ansible_default_ipv4.address }} --dport 5443 -j DNAT --to $frontend_ipv4:2157 -m comment --comment "${local_access_comment}"
+  iptables -t nat -A PREROUTING -p tcp -d {{ ansible_default_ipv4.address }} --dport 5443 -j DNAT --to-destination $frontend_ipv4:2157 -m comment --comment "${remote_access_comment}"
+fi

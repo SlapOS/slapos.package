@@ -8,6 +8,8 @@
     startup_playbook_id: slapos-master-standalone.yml
     playbook_name: slapos-master
     request_instance_template: request-slapos-master.j2
+    request_frontend_template: request-slapos-master-frontend.j2
+    backend_instance_reference: instance-of-slapos-master
 
   pre_tasks:
 
@@ -16,3 +18,16 @@
   roles:
     - standalone-shared
     - { role: package, package_name: socat, package_state: present }
+
+  tasks:
+    - name: Create firewall script for slapos master
+      template: src=roles/standalone-shared/templates/setup-firewall-direct.j2 dest=/tmp/playbook-firewall-setup-{{ playbook_name }}-service mode=0700
+
+    - name: Setup firewall
+      cron:
+        cron_file=ansible-{{ playbook_name }}-service-firewall
+        user=root
+        name="Setup firewall SlapOS Master"
+        minute=*/5
+        job="/tmp/playbook-firewall-setup-{{ playbook_name }}-service > /dev/null 2>&1"
+

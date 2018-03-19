@@ -53,7 +53,7 @@ ca_path = '/etc/slapos-ssl'
 parameter_dict["shared-certificate-authority-path"] = ca_path 
 
 # Choose a title
-title = "instance-of-{{ playbook_name }}"
+title = "{{ backend_instance_reference }}"
 
 erp5_instance = request(software_url,
   title,

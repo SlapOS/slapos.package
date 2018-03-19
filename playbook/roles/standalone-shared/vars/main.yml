@@ -4,5 +4,6 @@ request_frontend_template: request-erp5-frontend.j2
 firewall_setup_template: setup-firewall.j2
 frontend_master_reference: master-frn-{{ playbook_name }}
 frontend_slave_reference: slave-srn-{{ playbook_name }}
+backend_instance_reference: instance-of-{{ playbook_name }}
 backend_url_path: /tmp/playbook-{{ playbook_name }}-backend-url
 public_ipv4_path: /tmp/playbook-{{ playbook_name }}-public_ipv4
