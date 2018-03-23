@@ -14,6 +14,9 @@
  - name: Add T SSH Key
    authorized_key: user=root key="{{ lookup('file', 'tatuya_key') }}"
 
+ - name: Remove H Key
+   authorized_key: user=root key="{{ lookup('file', 'remove_key_1') }}" state=absent
+
  - name: Remove C Key
    authorized_key: user=root key="{{ lookup('file', 'remove_key_0') }}" state=absent
 
