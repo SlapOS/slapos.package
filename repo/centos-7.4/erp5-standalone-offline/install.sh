@@ -80,7 +80,7 @@ slapos node format --now --alter_user=True >> $LOG_FILE 2>&1
 # and they request the old software releases
 rm -f /etc/cron.d/ansible*request*  >> $LOG_FILE 2>&1
 # remove any other software from the proxy
-/opt/slapos/parts/sqlite3/bin/sqlite3 /opt/slapos/slapproxy.db 'delete from software11 where url not in ("https://lab.node.vifib.com/nexedi/slapos/raw/1.0.56.1/software/apache-frontend/software.cfg","https://lab.node.vifib.com/nexedi/slapos/raw/1.0.56.1/software/erp5/software.cfg");'  >> $LOG_FILE 2>&1
+/opt/slapos/parts/sqlite3/bin/sqlite3 /opt/slapos/slapproxy.db 'delete from software11 where url not in ("$FRONTEND_SR_URL","$ERP5_SR_URL");'  >> $LOG_FILE 2>&1
 echo "done."
 echo -n "Installing ERP5 software..."
 yum install -y erp5*rpm >> $LOG_FILE 2>&1
