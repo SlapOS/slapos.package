@@ -104,5 +104,9 @@ else
   echo "There was a problem with installation."
   echo "Please inspect 'install.log' for details."
   echo "While submitting support request, please attach 'install.log' file."
+  echo "/opt/slapos/log/slapos-node-software.log:" >> $LOG_FILE 2>&1
+  cat /opt/slapos/log/slapos-node-software.log >> $LOG_FILE 2>&1
+  echo "/opt/slapos/log/slapos-node-instance.log:" >> $LOG_FILE 2>&1
+  cat /opt/slapos/log/slapos-node-instance.log >> $LOG_FILE 2>&1
   exit 1
 fi
