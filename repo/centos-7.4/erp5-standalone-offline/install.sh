@@ -25,9 +25,8 @@ echo "Note: Domain name has to match certificate Common Name"
 echo
 echo "Important: Domain name HAVE TO point to public IP of this machine"
 echo "           in order for the installation to work"
-echo "           As a temporary workaround, you can put the proper line in"
-echo "           /etc/hosts, like:"
-echo "           IPV4.OF.THE.MACHINE DOMAIN.NAME"
+echo
+echo "Important: The SSL certificate and SSL Key have to match."
 echo
 echo "Leave empty values for everything, than the automatically generated"
 echo "certificate will be used, for the public IP of this host."
@@ -42,7 +41,7 @@ echo -n "Please type the path to SSL Key file: "
 read ssl_key_file
 check_file "$ssl_key_file" "SSL Key"
 frontend_ssl_key_file=$check_file
-echo -n "Please type path to the CA Certificate file: "
+echo -n "[OPTIONAL] Please type the path to the CA Certificate used to generate the key and certificate file: "
 read ssl_ca_crt_file
 check_file "$ssl_ca_crt_file" "SSL CA Certificate"
 frontend_ssl_ca_crt_file=$check_file
