@@ -14,8 +14,9 @@
     ignore_errors: True
 
   - name: Check interface eth1 exists
-    shell: /sbin/ifconfig | grep eth1 | wc -l
+    shell: /sbin/ifconfig eth1 | grep eth1 | wc -l
     register: iface_eth1
+    ignore_errors: True
 
   - name: Delete default route to eth0
     command: /sbin/ip route del default
