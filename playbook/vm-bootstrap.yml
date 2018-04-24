@@ -1,0 +1,47 @@
+- name: a play that runs entirely on the ansible host
+  hosts: 127.0.0.1
+  connection: local
+
+  pre_tasks:
+    - name: Get mounted disk list
+      script: roles/vm-bootstrap/files/mounted_disk
+      register: vd_list
+    - name: resgister completed variable
+      stat: path=/etc/opt/vm-bootstrap-completed
+      register: ansible_completed
+
+  vars:
+    is_playbook_ok: "{{ ansible_completed.stat.exists }}"
+    logrotate_args:
+      - name: vm-bootstrap
+        path: /var/log/vm-bootstrap.log
+        options:
+          - weekly
+          - compress
+          - rotate 5
+          - notifempty
+          - create
+          - dateext
+
+  roles:
+    - { role: vm-bootstrap, startup_playbook_id: imt-vm-bootstrap.yml }
+    - ntp
+    - { role: vm-disks, vd_disk: b, data_n: 1, when: vd_list.stdout.find("vdb") != -1 }
+    - { role: vm-disks, vd_disk: c, data_n: 2, when: vd_list.stdout.find("vdc") != -1 }
+    - { role: vm-disks, vd_disk: d, data_n: 3, when: vd_list.stdout.find("vdd") != -1 }
+    - { role: vm-disks, vd_disk: e, data_n: 4, when: vd_list.stdout.find("vde") != -1 }
+    - { role: vm-disks, vd_disk: f, data_n: 5, when: vd_list.stdout.find("vdf") != -1 }
+    - { role: vm-disks, vd_disk: g, data_n: 6 ,when: vd_list.stdout.find("vdg") != -1 }
+    - { role: vm-disks, vd_disk: h, data_n: 7, when: vd_list.stdout.find("vdh") != -1 }
+    - { role: vm-disks, vd_disk: i, data_n: 8, when: vd_list.stdout.find("vdi") != -1 }
+    - { role: vm-disks, vd_disk: j, data_n: 9, when: vd_list.stdout.find("vdj") != -1 }
+    - { role: vm-disks, vd_disk: k, data_n: 10, when: vd_list.stdout.find("vdk") != -1 }
+    - role: logrotate
+      logrotate_scripts: "{{ logrotate_args }}"
+      when: ansible_completed.stat.exists == False
+
+  tasks:
+    - name: Set tasks complete
+      file: path=/etc/opt/vm-bootstrap-completed state=touch
+      when: ansible_completed.stat.exists == False
+      changed_when: false
