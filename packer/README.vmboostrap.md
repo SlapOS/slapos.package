@@ -24,7 +24,7 @@ How to build VM with differents images size?
 
 3) Use ansible to build all VMs and compress them in local folder
 
-  ansible-playbook build-vm-bootstrap.yml -i hosts
+  /opt/slapos-ansible/bin/ansible-playbook build-vm-bootstrap.yml -i hosts
 
 
   After build, images are generated in folder output-DISTRO-XXG-vm-boostrapn, they are gziped to reduce the size when downloading images.
@@ -37,7 +37,7 @@ How to upload images to shacache
 
   To build and upload images to shacache, use this ansible command
   
-  UPLOAD=yes ansible-playbook build-vm-bootstrap.yml -i hosts
+  UPLOAD=yes /opt/slapos-ansible/bin/ansible-playbook build-vm-bootstrap.yml -i hosts
   
   A file URL.txt will be generated with url as well as MD5SUM to download each image from shacache.
 

@@ -12,7 +12,7 @@
           job="usr/local/bin/log-uploader"
 
   - name: run ansible playbook
-    shell: ansible-playbook "{{ lookup('file', '/tmp/playbook_software_name') }}" -i hosts
+    shell: "{{ ansible_env['_'] }} {{ lookup('file', '/tmp/playbook_software_name') }}" -i hosts
 
   # install dependencies
   - easy_install: name=pip

@@ -30,7 +30,7 @@ How to build all VMs?
 
 You can use ansible for build all VMs locally, and gzip them:
 
-    ansible-playbook build.yml -i localhost,
+    /opt/slapos-ansible/bin/ansible-playbook build.yml -i localhost,
 
 How to upload to shacache?
 --------------------------
@@ -42,7 +42,7 @@ eventually, update shacache/shacache.cfg.
 BE CAREFULL, every time you run this command you upload the files to shacache,
 even if the files are there already.
 
-    ansible-playbook upload.yml -i localhost,
+    /opt/slapos-ansible/bin/ansible-playbook upload.yml -i localhost,
  
 How can I check if all images are on shacache?
 ----------------------------------------------

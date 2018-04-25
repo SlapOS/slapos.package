@@ -87,7 +87,7 @@ echo "done."
 
 echo -n "Instantiating ERP5 instance..."
 for i in `seq 10` ; do
-  ansible-playbook --extra-vars @extra_vars.yml /opt/slapos.playbook/$PLAYBOOK >> $LOG_FILE 2>&1
+  /opt/slapos-ansible/bin/ansible-playbook --extra-vars @extra_vars.yml /opt/slapos.playbook/$PLAYBOOK >> $LOG_FILE 2>&1
   ANSIBLE_RESULT=$?
   if [ "$ANSIBLE_RESULT" == "0" ] ; then
     break

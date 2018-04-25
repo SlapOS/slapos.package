@@ -11,4 +11,4 @@ echo "Sleeping for $WAIT_TIME seconds..."
 sleep $WAIT_TIME
 
 # Reduce priority of Ansible rerun
-nice -19 chrt --idle 0 ionice -c3 ansible-playbook {{ startup_playbook_id }}  -i  hosts --connection=local
+nice -19 chrt --idle 0 ionice -c3 {{ ansible_env['_'] }} {{ startup_playbook_id }}  -i  hosts --connection=local

@@ -7,7 +7,7 @@ export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 for i in `seq 1 10`; do
   echo "Try $i"
-  ansible-playbook {{ startup_playbook_id }}  -i  hosts --connection=local
+  {{ ansible_env['_'] }} {{ startup_playbook_id }}  -i  hosts --connection=local
   if [ "$?" == 0 ]; then
     exit 0
   fi  
