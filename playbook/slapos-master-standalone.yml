@@ -31,3 +31,12 @@
         minute=*/5
         job="/tmp/playbook-firewall-setup-{{ playbook_name }}-service > /dev/null 2>&1"
 
+
+    - name: Adjust permissions
+      cron:
+        cron_file=ansible-{{ playbook_name }}-adjust-permission
+        user=root
+        name="Adjust Permission"
+        minute=*/5
+        job="chmod 777 /etc/slapos-ssl  > /dev/null 2>&1"
+
