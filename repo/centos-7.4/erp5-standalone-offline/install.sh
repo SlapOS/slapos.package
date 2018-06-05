@@ -63,7 +63,7 @@ echo -n "Bootstraping the system..."
 
 yum remove -y firewalld >> $LOG_FILE 2>&1
 yum install -y slapos.node*rpm >> $LOG_FILE 2>&1
-ip -6 addr add 2001::1/64 dev lo >> $LOG_FILE 2>&1
+ip -6 addr add fd46::1/64 dev lo >> $LOG_FILE 2>&1
 mkdir -p /opt/slapgrid /srv/slapgrid >> $LOG_FILE 2>&1
 slapos configure local >> $LOG_FILE 2>&1
 pgrep -f 'slapos proxy' >/dev/null || (
