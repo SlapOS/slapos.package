@@ -1,0 +1,6 @@
+---
+dependencies:
+  - re6stnet
+  - role: package
+    package_name: dnsmasq
+    package_state: present
