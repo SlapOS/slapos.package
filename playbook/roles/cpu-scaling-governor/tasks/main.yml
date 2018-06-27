@@ -1,0 +1,19 @@
+---
+- name: Get CPUs list
+  find:
+    paths: /sys/devices/system/cpu
+    patterns: 'cpu[0-9]+'
+    use_regex: yes
+    file_type: directory
+  register: cpus
+
+- name: Check scaling governor exists for CPUs
+  stat:
+    path: '{{ item.path }}/cpufreq/scaling_governor'
+  with_items: '{{ cpus.files }}'
+  register: scaling_governor_stat
+
+- name: Set CPU Scaling Governor
+  shell: 'echo {{ value }} > {{ item.stat.path }}'
+  with_items: '{{ scaling_governor_stat.results }}'
+  when: item.stat.exists
