@@ -1,19 +1,15 @@
 ---
 - name: Get CPUs list
-  find:
-    paths: /sys/devices/system/cpu
-    patterns: 'cpu[0-9]+'
-    use_regex: yes
-    file_type: directory
+  shell: find /sys/devices/system/cpu -type d -name 'cpu[0-9]*'
   register: cpus
 
 - name: Check scaling governor exists for CPUs
   stat:
-    path: '{{ item.path }}/cpufreq/scaling_governor'
-  with_items: '{{ cpus.files }}'
+    path: '{{ item }}/cpufreq/scaling_governor'
+  with_items: '{{ cpus.stdout_lines }}'
   register: scaling_governor_stat
 
 - name: Set CPU Scaling Governor
-  shell: 'echo {{ value }} > {{ item.stat.path }}'
+  shell: 'echo {{ value }} > {{ item.item }}/cpufreq/scaling_governor'
   with_items: '{{ scaling_governor_stat.results }}'
   when: item.stat.exists
