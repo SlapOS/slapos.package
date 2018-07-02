@@ -19,3 +19,4 @@ dependencies:
   - { role: sysstat }
   - { role: vifib-kernel, when: upgrade_kernel | default(False) == True }
   - { role: cpu-scaling-governor, value: performance }
+  - { role: fstrim }
