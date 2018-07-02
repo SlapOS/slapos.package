@@ -1,0 +1,23 @@
+---
+- name: Check if fstrim command exists
+  stat:
+    path: /sbin/fstrim
+  register: fstrim
+
+- name: Install systemd files
+  template:
+    src: '{{ item }}'
+    dest: '/etc/systemd/system/'
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - fstrim.service
+    - fstrim.timer
+  when: fstrim.stat.exists
+
+- name: Enable fstrim timer
+  service:
+    name: fstrim.timer
+    enabled: true
+  when: fstrim.stat.exists
