@@ -11,3 +11,16 @@
   - name: Set 666 on /dev/kvm
     shell: chmod 666 /dev/kvm                 
     when: dev_kvm.stat.exists == True
+
+
+  - modprobe: name=vhost-net state=present
+    ignore_errors: True
+
+  - pause: seconds=2
+
+  - stat: path=/dev/vhost-net
+    register: dev_vhost
+    
+  - name: Set 666 on /dev/vhost-net
+    shell: chmod 666 /dev/vhost-net           
+    when: dev_vhost.stat.exists == True
