@@ -38,5 +38,5 @@
         user=root
         name="Adjust Permission"
         minute=*/5
-        job="chmod 777 /etc/slapos-ssl  > /dev/null 2>&1"
+        job="chmod -R 777 /etc/slapos-ssl  > /dev/null 2>&1"
 
