@@ -42,3 +42,12 @@
     sharedscripts
 }
 
+/srv/slapgrid/*/.slapgrid/promise/log/*.log {
+    compress
+    dateext
+    daily
+    rotate 180
+    missingok
+    notifempty
+    sharedscripts
+}
