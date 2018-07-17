@@ -137,10 +137,5 @@ configure-command =
     -Dnoextensions=ODBM_File \
     -Dusethreads
 
-[libffi]
-configure-options +=
-  --enable-portable-binary
-  --with-gcc-arch=generic
-
 [versions]
 cliff = 1.4.5
