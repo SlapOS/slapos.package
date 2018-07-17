@@ -15,6 +15,10 @@
   - sysctl: name="net.ipv6.neigh.default.gc_thresh1" value=512 sysctl_set=yes state=present reload=yes
   - sysctl: name="net.ipv6.neigh.default.gc_thresh2" value=1024 sysctl_set=yes state=present reload=yes
   - sysctl: name="net.ipv6.neigh.default.gc_thresh3" value=2048 sysctl_set=yes state=present reload=yes
+  - sysctl: name="net.ipv6.conf.all.accept_ra" value=0 sysctl_set=yes state=present reload=yes
+  - sysctl: name="net.ipv6.conf.default.accept_ra" value=0 sysctl_set=yes state=present reload=yes
+  - sysctl: name="net.ipv6.conf.all.forwarding" value=1 sysctl_set=yes state=present reload=yes
+  - sysctl: name="net.ipv6.conf.default.forwarding" value=1 sysctl_set=yes state=present reload=yes
 
   - include: kvm.yml 
   - include: shuttle-modprobe.yml
