@@ -10,3 +10,19 @@
     job: /sbin/fstrim -a
     special_time: weekly
   when: fstrim.stat.exists
+
+- name: Disable systemd timer
+  service:
+    name: fstrim.timer
+    enabled: false
+  when: fstrim.stat.exists
+  ignore_errors: yes
+
+- name: Remove systemd timer/service files
+  file:
+    path: '/etc/systemd/system/{{item}}'
+    state: absent
+  with_items:
+    - fstrim.service
+    - fstrim.timer
+  when: fstrim.stat.exists
