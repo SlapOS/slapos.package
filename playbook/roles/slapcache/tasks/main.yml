@@ -1,0 +1,6 @@
+  # easy_install module for ansible version on debian 8 cannot upgrade package
+  - name: Install/Upgrade latest slapos.libnetworkcache 
+    shell: easy_install --upgrade slapos.libnetworkcache
+
+  - name: Instal/Upgrade latest slapcache
+    shell: easy_install --upgrade slapcache
