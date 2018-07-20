@@ -1,0 +1,11 @@
+---
+- name: Disable reverse name resolution for SSH
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^UseDNS"
+    line: "UseDNS no"
+    insertafter: EOF
+    state: present
+  register: ssh_config
+  notify:
+    - reload sshd
