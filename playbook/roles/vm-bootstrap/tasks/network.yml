@@ -8,6 +8,24 @@
     stat: path=/etc/opt/gateway
     register: gateway_file
 
+  - stat: path=/etc/sysconfig/network-scripts/ifcfg-eth0
+    register: ifcfg_eth0
+
+  - stat: path=/etc/network/interfaces
+    register: iface_config
+
+  - name: Disable network default route on interface eth0/CentOS
+    lineinfile: dest={{ ifcfg_eth0.stat.path }} state=present line="DEFROUTE=no"
+    when: ifcfg_eth0.stat.exists == True and gateway_file.stat.exists == True
+
+  - name: Disable network default route on interface eth0/Debian-Ubuntu
+    lineinfile:
+      dest: "{{ iface_config.stat.path }}"
+      state: present
+      line: "post-up route del default dev eth0"
+      insertafter: "iface eth0 inet dhcp"
+    when: iface_config.stat.exists == True and gateway_file.stat.exists == True
+
   - name: Check default route
     shell: /sbin/ip route list | grep default
     register: default_route
