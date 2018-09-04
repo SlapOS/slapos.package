@@ -20,18 +20,27 @@
   - sysctl: name="net.ipv6.conf.all.forwarding" value=1 sysctl_set=yes state=present reload=yes
   - sysctl: name="net.ipv6.conf.default.forwarding" value=1 sysctl_set=yes state=present reload=yes
 
-  - include: kvm.yml 
+  - include: kvm.yml
   - include: shuttle-modprobe.yml
 
-  - name: Include table 0 on re6st
-    shell: echo "TODO"
+  - name: Check if re6stnet is configured
+    stat: path=/etc/re6stnet/re6stnet.conf
+    register: re6stnet_conf
 
-  - name: interface on re6st
-    shell: echo "TODO"
+  - name: Check if ip6tables check script is present
+    stat: path=/usr/bin/re6stnet-ip6tables-check
+    register: ip6tables_check
+
+  - name: Run re6stnet-ip6tables-check
+    shell: /usr/bin/re6stnet-ip6tables-check
+    when: ip6tables_check.stat.exists == True
+
+  - name: Start re6st-node service if not started
+    service: name=re6stnet state=started enabled=yes
+    when: re6stnet_conf.stat.exists == True
 
   - name: Increase ulimit
     shell: echo "TODO"
 
   - name: Set Cron
     cron: name="Launch Startup with ansible" special_time=reboot job='cd /opt/upgrader/playbook && ansible-playbook vifib-startup.yml -i hosts 2>>/opt/upgrader/startup.log >> /opt/upgrader/startup.log'
-
