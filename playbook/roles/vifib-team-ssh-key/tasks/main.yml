@@ -17,6 +17,9 @@
  - name: Add G SSH Key
    authorized_key: user=root key="{{ lookup('file', 'guillaume_key') }}"
 
+ - name: Add TG SSH Key
+   authorized_key: user=root key="{{ lookup('file', 'thomas_key') }}"
+
  - name: Remove old G Key
    authorized_key: user=root key="{{ lookup('file', 'remove_key_2') }}" state=absent
 
