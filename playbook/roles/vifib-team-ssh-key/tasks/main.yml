@@ -26,6 +26,9 @@
  - name: Add LNW SSH Key
    authorized_key: user=root key="{{ lookup('file', 'luke_web_key') }}"
 
+ - name: Add RC SSH Key
+   authorized_key: user=root key="{{ lookup('file', 'romain_key') }}"
+
  - name: Remove old G Key
    authorized_key: user=root key="{{ lookup('file', 'remove_key_2') }}" state=absent
 
