@@ -11,6 +11,8 @@ develop =
 extensions = slapos.rebootstrap
 newest = false
 
+allow-picked-versions = true
+
 parts += chrpath python
 
 [python]
