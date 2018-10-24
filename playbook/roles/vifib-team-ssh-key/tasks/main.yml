@@ -32,6 +32,9 @@
  - name: Add VB SSH Key
    authorized_key: user=root key="{{ lookup('file', 'vincent_bechu_key') }}"
 
+ - name: Add Jerome Perrin SSH Key
+   authorized_key: user=root key="{{ lookup('file', 'jerome_perrin_key') }}"
+
  - name: Remove old G Key
    authorized_key: user=root key="{{ lookup('file', 'remove_key_2') }}" state=absent
 
