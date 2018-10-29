@@ -25,7 +25,7 @@
   - file: path=/etc/.gitignore state=touch mode=0660
 
   - lineinfile: 
-      path:/etc/.gitignore 
+      dest:/etc/.gitignore 
       line:{{ item }}
     when: etckeeper_configuration.stat.exists == False
     with_items:
@@ -38,11 +38,12 @@
       - re6stnet/cert.key
       - opt/slapos/ssl
 
-
-  - lineinfile: 
-      path:/etc/etckeeper/etckeeper.conf
-      line:VCS="git"
+  - lineinfile:
+      dest:/etc/etckeeper/etckeeper.conf
+      line:{{ item }}
     when: etckeeper_configuration.stat.exists == False 
+    with_items: 
+      - VCS="git"
 
   - shell: git config user.email `root@hostname`
     when: etckeeper_configuration.stat.exists == False
