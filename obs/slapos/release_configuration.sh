@@ -3,7 +3,7 @@
 ####################################################
 
 # Edit for release
-VERSION=1.4.8
+VERSION=`grep ^slapos.core slapos_repository/stack/slapos.cfg | cut -f3 -d\ `
 # Edit for release
 RECIPE_VERSION=1.0.67
 # Edit for release
