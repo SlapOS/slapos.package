@@ -1,6 +1,7 @@
 [buildout]
 rootdir = %TARGET_DIRECTORY%
 destdir = %BUILD_ROOT_DIRECTORY% 
+builddir = %BUILD_DIRECTORY%
 extends =
   %BUILD_ROOT_DIRECTORY%/../slapos_repository/component/slapos/obs.cfg
 
