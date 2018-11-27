@@ -10,6 +10,20 @@
     service: name=ntp state=started enabled=yes
     when: ansible_os_family == "Debian"
 
+  - name: check that system has timedatectl
+    shell: timedatectl --version >/dev/null 2>&1
+    register: timedatectl_exist
+    ignore_errors: yes
+
+  - name: Run timedatectl status
+    shell: timedatectl status | grep synchronized
+    register: timedatectl_result
+    when: timedatectl_exist.rc == 0
+
+  - name: enable synchronisation
+    shell: timedatectl set-ntp true
+    when: timedatectl_exist.rc == 0 and "yes" in timedatectl_result.stdout
+
   - name: ensure ntp is runing (RedHat)
     service: name=ntpd state=started enabled=yes
     when: ansible_os_family == "RedHat"
