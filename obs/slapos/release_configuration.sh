@@ -5,7 +5,7 @@
 # Edit for release
 VERSION=`grep ^slapos.core slapos_repository/stack/slapos.cfg | cut -f3 -d\ `
 # Edit for release
-RECIPE_VERSION=1.0.83
+RECIPE_VERSION=1.0.83.1
 # Edit for release
 RELEASE=1
 
