@@ -5,7 +5,7 @@ export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 # Once caucase is merged and used by the master the need of this workarround will be gone, and 
 # A better configuration can be proposes
 
-slap_ipv4=`/opt/slapos/parts/sqlite3/bin/sqlite3 /opt/slapos/slapproxy.db "select address from partition_network11 where partition_reference=(select reference from partition11 where software_type = 'balancer' and requested_by = (select reference from partition11 where partition_reference='{{ backend_instance_reference }}')) and netmask='255.255.255.255';"`
+slap_ipv4=`/opt/slapos/parts/sqlite3/bin/sqlite3 /opt/slapos/slapproxy.db "select address from partition_network12 where partition_reference=(select reference from partition12 where software_type = 'balancer' and requested_by = (select reference from partition12 where partition_reference='{{ backend_instance_reference }}')) and netmask='255.255.255.255';"`
 
 local_access_comment="Local {{ playbook_name }} IPv4 access"
 remote_access_comment="Remote {{ playbook_name }} IPv4 access"
