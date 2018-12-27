@@ -79,7 +79,10 @@ slapos node format --now --alter_user=True >> $LOG_FILE 2>&1
 # and they request the old software releases
 rm -f /etc/cron.d/ansible*request*  >> $LOG_FILE 2>&1
 # remove any other software from the proxy
-/opt/slapos/parts/sqlite3/bin/sqlite3 /opt/slapos/slapproxy.db 'delete from software11 where url not in ("$FRONTEND_SR_URL","$ERP5_SR_URL");'  >> $LOG_FILE 2>&1
+# first guess the software table name (slap proxy prefix tables by a version number)
+SLAPPROXY_SOFTWARE_TABLE=$(/opt/slapos/parts/sqlite3/bin/sqlite3 /opt/slapos/slapproxy.db ".table software__")
+# then delete from table XXX this should use a slapos API I guess
+/opt/slapos/parts/sqlite3/bin/sqlite3 /opt/slapos/slapproxy.db "delete from $SLAPPROXY_SOFTWARE_TABLE where url not in ('$FRONTEND_SR_URL', '$ERP5_SR_URL');"  >> $LOG_FILE 2>&1
 echo "done."
 echo -n "Installing ERP5 software..."
 yum install -y erp5*rpm >> $LOG_FILE 2>&1
