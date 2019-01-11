@@ -1,0 +1,2 @@
+- name : requesting CDN slave instance for ERP5
+  shell: echo "request('{{ frontend_software_release_url }}', '{{ frontend_instance_slave_name }}',filter_kw={'computer_guid':'{{ computer_id }}'},partition_parameter_kw={'custom_domain':'{{ custom_domain }}','enable_cache':'true','type':'zope','url':'{{ frontend_slave_backend_url }}',},shared='True', software_type='custom-personal',)" | slapos console 

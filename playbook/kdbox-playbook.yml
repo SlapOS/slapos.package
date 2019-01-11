@@ -1,0 +1,68 @@
+---
+
+- name: a play that runs entirely on the ansible host
+  hosts: 127.0.0.1
+  connection: local
+  vars_files:
+  - settings/kdbox.yml
+  vars:
+    - interface_name: lo
+    - computer_name: noname
+
+  vars_prompt:
+    - name: "re6sttoken"
+      prompt: "\n\n  You are running the Grandenet Installer\n\n
+            Please insert your token from Grandenet to configure your computer.\n
+            If you don't have a token, please access http://www.grandenet.cn/en \n
+            and request one. \n\n
+            Move informations at http://www.grandenet.cn/en/documentation/user \n\n 
+            Your token "
+
+      private: no 
+      default: "notoken"
+
+    - name: "slapos_master_url"
+      prompt: "What is the url to the SlapOS Master API?  (ignore if you already have a configured re6st and slapos):"
+      private: no
+      default: "https://slap.vifib.com/"
+
+    - name: "slapos_web_master_url"
+      prompt: "What is the url to the SlapOS Master Website?  (ignore if you already have a configured re6st and slapos):"
+      private: no
+      default: "https://slapos.vifib.com/"
+
+    - name: "computer_name"
+      prompt: "What is this computer name?  (ignore if you already have a configured re6st and slapos):"
+      private: no
+      default: "noname"
+
+    - name: "slapostoken"
+      prompt: "If you have slapos token if you have (ignore if you already have a configured slapos):"
+      private: no
+      default: "notoken"
+
+    - name : "Token"
+      prompt: "Credential account token"
+      private: no 
+      default: "notoken"
+
+    - name: "domain_name"
+      prompt: "enter domain name for CDN"
+      private: no
+      default: ""
+
+    - name: "custom_domain"
+      prompt: "enter custom domain name for CDN slave instance"
+      private: no
+      default: ""
+
+  roles:
+    - re6stnet
+    - role: routeadv
+    # desactiver le RADVD
+      when: enable_router_advertisement == True
+    - { role: slapos, package_state: present }
+    - { role: package, package_name: ntp, package_state: present }
+    - slapos-client
+    - kdbox
+

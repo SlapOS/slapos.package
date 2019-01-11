@@ -1,0 +1,11 @@
+#!/bin/bash
+ps aux | grep socat | grep TCP:$2:$3 > /dev/null
+if [ $? -eq 0 ]
+then 
+ echo "port forwarding process already running" 
+else 
+ echo "no process running ,executing port forwarding for selectet port"
+ socat TCP6-LISTEN:$1,fork TCP:$2:$3 & 
+fi
+
+#script for port forwarding 

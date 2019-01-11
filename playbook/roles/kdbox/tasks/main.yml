@@ -1,0 +1,46 @@
+---
+
+  - name: Check if client configuration exists already
+    stat: path=/etc/opt/slapos/slapos.cfg
+    register: slapos_cfg
+    failed_when: slapos_cfg.stat.exists == False
+    
+  - name: check if supply is done 
+    stat: path=/opt/supply_check_file
+    register: supply_check
+
+  - name: register computer ID
+    set_fact:
+      computer_id: "{{ lookup('ini','computer_id section=slapos file=/etc/opt/slapos/slapos.cfg') }}"
+   
+  # verify software supply 
+  - name: register supply status
+    set_fact:
+      supply_is_done: "{{ supply_check.stat.exists }}"
+
+  - include: webrunner.yml
+  - include: frontend.yml
+  - include: frontend-slave-instance.yml
+ 
+  # find Caddy ip to be used for port forwarding
+  - name: Get Caddy local IP
+    shell: grep bind /srv/slapgrid/slappart*/etc/Caddyfile | cut -d ' ' -f4 | head -n1 
+    register: caddy_ip
+    failed_when: caddy_ip.stdout == ""
+
+  # execute port-forwarding script in /files/port-forwarding
+  - name: "port 80 forwarding to {{ caddy_ip.stdout }}:8080"
+    shell: "{{ role_path }}/files/port-forwarding 80 {{ caddy_ip.stdout }} 8080"
+    register: forward_result
+    changed_when: forward_result.stdout != "port forwarding process already running"
+
+  - name: "port 443 forwarding to {{ caddy_ip.stdout }}:4443"
+    shell: "{{ role_path }}/files/port-forwarding 443 {{ caddy_ip.stdout }} 4443"
+    register: forward_result
+    changed_when: forward_result.stdout != "port forwarding process already running"
+
+  # file created when software supply is done
+  - name: "create software_supply_check_file"
+    file:   
+        path: "/opt/supply_check_file"
+        state: touch 
