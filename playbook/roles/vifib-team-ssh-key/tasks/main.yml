@@ -29,14 +29,14 @@
  - name: Add RC SSH Key
    authorized_key: user=root key="{{ lookup('file', 'romain_key') }}"
 
- - name: Add VB SSH Key
-   authorized_key: user=root key="{{ lookup('file', 'vincent_bechu_key') }}"
-
  - name: Add Jerome Perrin SSH Key
    authorized_key: user=root key="{{ lookup('file', 'jerome_perrin_key') }}"
 
  - name: Add Xiaowu Zhang SSH Key
    authorized_key: user=root key="{{ lookup('file', 'xiaowu_zhang_key') }}"
+
+ - name: Remove VB SSH Key
+   authorized_key: user=root key="{{ lookup('file', 'remove_key_3') }}" state=absent
 
  - name: Remove old G Key
    authorized_key: user=root key="{{ lookup('file', 'remove_key_2') }}" state=absent
