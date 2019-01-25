@@ -41,6 +41,14 @@
     copy: src=/etc/systemd/re6stnet.service dest=/etc/systemd/system/re6stnet.service
     when: ansible_distribution == 'CentOS' and ansible_distribution_version >= '7' and re6stnet.stat.exists == True and re6stnode.stat.exists == False
 
+  - name: Check if ip6tables check script is present
+    stat: path=/usr/bin/re6stnet-ip6tables-check
+    register: ip6tables_check
+
+  - name: Run re6stnet-ip6tables-check
+    shell: /usr/bin/re6stnet-ip6tables-check
+    when: ip6tables_check.stat.exists == True
+
   - include: daemon.yml
     
   - name: Create centos 6 init.d missing file
