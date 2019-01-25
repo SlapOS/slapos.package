@@ -1,0 +1,4 @@
+---
+
+  - name: Restart cron service
+    systemd: daemon_reload=yes name=cron state=restarted
