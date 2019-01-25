@@ -1,4 +1,6 @@
 ---
 
   - name: Update cron service definition
-    systemd: daemon_reload=yes name=cron state=started
+    # For ansible version < 2.4, state=restarted is mandatory to
+    # apply the changes (daemon_reload=yes only is not enough)
+    systemd: daemon_reload=yes name=cron state=restarted
