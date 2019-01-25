@@ -50,14 +50,8 @@
   - name: Add script for check ip6tables well configured
     copy: src=ip6tables dest=/usr/bin/re6stnet-ip6tables-check mode=755
 
-  - name: Run re6stnet-ip6tables-check
-    shell: /usr/bin/re6stnet-ip6tables-check
-
   - name: Include re6stnet-ip6tables-check at reboot on cron
     cron: name="ip6tables at reboot" special_time=reboot job="sleep 20 && /usr/bin/re6stnet-ip6tables-check"
 
   - include: tcp_nodelay.yml
 
-  - name: Start re6st-node service
-    service: name=re6stnet state=started enabled=yes
-    when: recheck_re6stnet_conf.stat.exists == True
