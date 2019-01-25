@@ -44,3 +44,16 @@
 
   - name: Set Cron
     cron: name="Launch Startup with ansible" special_time=reboot job='cd /opt/upgrader/playbook && ansible-playbook vifib-startup.yml -i hosts 2>>/opt/upgrader/startup.log >> /opt/upgrader/startup.log'
+
+  - name: Get systemd version
+    shell: systemd --version | head -n 1 | cut -d " " -f 2
+    register: systemd_version
+
+  - file: state=directory path="/etc/systemd/system/cron.service.d/"
+    when: systemd_version.stdout | int > 228
+
+  - name: Increase the maximum of subprocesses for cron
+    copy: src="etc_systemd_system_cron_service_d_override.conf" dest="/etc/systemd/system/cron.service.d/override.conf" mode=0644 owner=root group=root
+    when: systemd_version.stdout | int > 228
+    notify:
+      - "Update cron service definition"
