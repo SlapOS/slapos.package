@@ -23,22 +23,6 @@
   - include: kvm.yml
   - include: shuttle-modprobe.yml
 
-  - name: Check if re6stnet is configured
-    stat: path=/etc/re6stnet/re6stnet.conf
-    register: re6stnet_conf
-
-  - name: Check if ip6tables check script is present
-    stat: path=/usr/bin/re6stnet-ip6tables-check
-    register: ip6tables_check
-
-  - name: Run re6stnet-ip6tables-check
-    shell: /usr/bin/re6stnet-ip6tables-check
-    when: ip6tables_check.stat.exists == True
-
-  - name: Start re6st-node service if not started
-    service: name=re6stnet state=started enabled=yes
-    when: re6stnet_conf.stat.exists == True
-
   - name: Increase ulimit
     shell: echo "TODO"
 
@@ -48,6 +32,7 @@
   - name: Get systemd version
     shell: systemd --version | head -n 1 | cut -d " " -f 2
     register: systemd_version
+    check_mode: no
 
   - file: state=directory path="/etc/systemd/system/cron.service.d/"
     when: systemd_version.stdout | int > 228

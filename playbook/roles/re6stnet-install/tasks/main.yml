@@ -1,5 +1,5 @@
 ---
-  - name: Check if configuration exists already
+  - name: Check if configuration already exists
     stat: path=/etc/re6stnet/re6stnet.conf
     register: re6stnet_conf
 
@@ -25,7 +25,7 @@
     shell: "re6st-conf --registry {{ re6st_registry_url }} --token {{ re6sttoken }} -r title {{ re6sttoken }} -d /etc/re6stnet"
     when: re6st_annon == False and re6stnet_conf.stat.exists == False and "{{ re6sttoken }}" != "notoken" and "{{ re6st_fingerprint }}" == "nofingerprint"
 
-  - name: Check if configuration exists already
+  - name: Recheck if configuration already exists (after running re6st-conf)
     stat: path=/etc/re6stnet/re6stnet.conf
     register: recheck_re6stnet_conf
 
@@ -50,14 +50,8 @@
   - name: Add script for check ip6tables well configured
     copy: src=ip6tables dest=/usr/bin/re6stnet-ip6tables-check mode=755
 
-  - name: Run re6stnet-ip6tables-check
-    shell: /usr/bin/re6stnet-ip6tables-check
-
   - name: Include re6stnet-ip6tables-check at reboot on cron
     cron: name="ip6tables at reboot" special_time=reboot job="sleep 20 && /usr/bin/re6stnet-ip6tables-check"
 
   - include: tcp_nodelay.yml
 
-  - name: Start re6st-node service
-    service: name=re6stnet state=started enabled=yes
-    when: recheck_re6stnet_conf.stat.exists == True
