@@ -48,6 +48,7 @@
   - name: Get systemd version
     shell: systemd --version | head -n 1 | cut -d " " -f 2
     register: systemd_version
+    check_mode: no
 
   - file: state=directory path="/etc/systemd/system/cron.service.d/"
     when: systemd_version.stdout | int > 228
