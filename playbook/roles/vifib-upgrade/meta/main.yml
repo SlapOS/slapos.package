@@ -12,7 +12,7 @@ dependencies:
   - { role: package, package_name: exim4-base, package_state: absent }
   - { role: package, package_name: slapos-node, package_state: latest }
   - { role: package, package_name: re6st-node, package_state: latest }
-  - { role: package, package_name: apt, package_state: latest }
+  - { role: upgrade-apt, when: is_debian_or_ubuntu }
   - { role: re6stnet-ensure-running }
   - { role: etckeeper }
   - { role: vifib-team-ssh-key }
