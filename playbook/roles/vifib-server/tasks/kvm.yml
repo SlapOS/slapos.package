@@ -1,6 +1,6 @@
 ---
 
-  - modprobe: name=kvm_intel state=present
+  - modprobe: name=kvm_intel state=present params='nested=Y'
     ignore_errors: True
 
   - pause: seconds=2
@@ -24,3 +24,11 @@
   - name: Set 666 on /dev/vhost-net
     shell: chmod 666 /dev/vhost-net           
     when: dev_vhost.stat.exists == True
+
+  - name: Check if configuration exists already
+    stat: path=/etc/opt/slapos/slapos.cfg
+    register: xslapos_cfg
+
+  - name: Force create_tap to be true
+    shell: sed -i 's/^create_tap =.*/create_tap = True/' /etc/opt/slapos/slapos.cfg
+    when: xslapos_cfg.stat.exists == True 
