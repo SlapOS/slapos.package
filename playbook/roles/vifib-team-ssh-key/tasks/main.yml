@@ -35,8 +35,8 @@
  - name: Add Xiaowu Zhang SSH Key
    authorized_key: user=root key="{{ lookup('file', 'xiaowu_zhang_key') }}"
 
-   name: Add KW SSH Key
-   authorized key: user=root key="{{ lookup('file', 'klaus_key') }}"
+ - name: Add KW SSH Key
+   authorized_key: user=root key="{{ lookup('file', 'klaus_key') }}"
 
  - name: Remove VB SSH Key
    authorized_key: user=root key="{{ lookup('file', 'remove_key_3') }}" state=absent
