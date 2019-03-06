@@ -38,5 +38,4 @@ environment +=
 
 [openssl]
 prefix = %(TARGET)s/parts/${:_buildout_section_name_}
-environment +=
-  INSTALL_PREFIX=%(ROOT)s
+make-install-extra = DESTDIR=%(ROOT)s
