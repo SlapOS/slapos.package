@@ -18,7 +18,7 @@ parts += chrpath python
 [python]
 recipe = zc.recipe.egg
 interpreter = ${:_buildout_section_name_}
-eggs = setuptools
+eggs = slapos.libnetworkcache
 # https://lab.nexedi.com/nexedi/slapos.buildout/merge_requests/11
 scripts = dummy
 
