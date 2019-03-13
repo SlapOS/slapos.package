@@ -11,12 +11,11 @@
 
   vars_prompt:
     - name: "re6sttoken"
-      prompt: "\n\n  You are running the Grandenet Installer\n\n
-            Please insert your token from Grandenet to configure your computer.\n
-            If you don't have a token, please access http://www.grandenet.cn/en \n
-            and request one. \n\n
-            Move informations at http://www.grandenet.cn/en/documentation/user \n\n 
-            Your token "
+      prompt: "\n\n  You are running the KDBox Installer\n\n
+              Please request a re6stnet token on https://slapos.vifib.com. \n\n
+              You will also need computer and account token, please get them on https://slapos.vifib.com. \n\n
+              A domain name will be required for kdbox slave frontend, to access erp5 later. \n\n
+              Enter your re6stnet token: "
 
       private: no 
       default: "notoken"
@@ -37,24 +36,33 @@
       default: "noname"
 
     - name: "slapostoken"
-      prompt: "If you have slapos token if you have (ignore if you already have a configured slapos):"
+      prompt: "What is the server token ?:"
       private: no
       default: "notoken"
 
-    - name : "Token"
-      prompt: "Credential account token"
+    - name: "Token"
+      prompt: "What is your credential account token"
       private: no 
       default: "notoken"
 
     - name: "domain_name"
-      prompt: "enter domain name for CDN"
+      prompt: "Enter domain name for CDN main instance"
+      private: no
+      default: "kdbox.slapos-example.com"
+
+    - name: "custom_domain"
+      prompt: "Enter custom domain name for CDN slave instance"
       private: no
       default: ""
 
-    - name: "custom_domain"
-      prompt: "enter custom domain name for CDN slave instance"
-      private: no
-      default: ""
+  pre_tasks:
+    - file: path=/opt/kdbox state=directory mode=0755
+    - copy: content="{{ domain_name }}" dest=/opt/kdbox/cdn_domain_name
+      when:
+        domain_name != ""
+    - copy: content="{{ custom_domain }}" dest=/opt/kdbox/cdn_custom_domain
+      when:
+        custom_domain != ""
 
   roles:
     - re6stnet
