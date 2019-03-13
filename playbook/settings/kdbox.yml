@@ -9,5 +9,5 @@ re6st_registry_url: http://re6stnet.gnet.erp5.cn/
 webrunner_software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.75/software/slaprunner/software.cfg
 frontend_instance_name: FRONTEND-kdboxtest
 webrunner_instance_name: webrunner-1
-frontend_instance_slave_name : My-ERP5
+frontend_instance_slave_name : KDBox-
 

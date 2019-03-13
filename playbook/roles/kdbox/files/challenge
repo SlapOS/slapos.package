@@ -1,0 +1,12 @@
+#!/bin/bash
+
+pwd=$2
+domain=$1
+
+curl -X POST -d "id=.well-known&submit=Add" http://zope:$pwd@$domain/portal_skins/custom/manage_addProduct/OFSP/manage_addFolder
+code=$?
+
+if [ "$code" == 0 ]; then
+  touch /opt/kdbox/dehydrated/well-know-done
+fi
+exit $code

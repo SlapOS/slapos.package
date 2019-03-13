@@ -1,0 +1,54 @@
+---
+
+  - stat: path=/opt/kdbox/dehydrated
+    register: dehydrated
+
+  - stat: path=/opt/kdbox/dehydrated/zope-hook.sh
+    register: hook_file
+
+  - name: Get Dehydrated
+    shell: "git clone https://github.com/lukas2511/dehydrated.git /opt/kdbox/dehydrated"
+    when: dehydrated.stat.exists == False
+
+  - copy: content="{{ custom_domain}}" dest=/opt/kdbox/dehydrated/domain.txt
+
+  - template: src=config.j2 dest=/opt/kdbox/dehydrated/config mode=644
+
+  - name: Get Dehydrated zope hook
+    get_url:
+      url: https://lab.nexedi.com/nexedi/dehydrated-zope-hook/raw/master/zope-hook.sh
+      dest: /opt/kdbox/dehydrated/zope-hook.sh
+      mode: 0755
+    when: hook_file.stat.exists == False
+
+  - shell: "{{ role_path }}/files/kdbox-param '{{ webrunner_instance_name }}' pwd"
+    register: erp5_pwd
+
+  - name: Add .netrc file
+    blockinfile:
+      dest: "~/.netrc"
+      mode: 0600
+      create: yes
+      state: present
+      block: |
+        machine {{ custom_domain }}
+        login zope
+        password {{ erp5_pwd.stdout }} 
+
+  - stat: path=/opt/kdbox/dehydrated/well-know-done
+    register: well_know_done
+
+  - name: Create .well-know folder on erp5 site
+    shell: "{{ role_path }}/files/challenge {{ custom_domain}} {{ erp5_pwd.stdout }}"
+    when: well_know_done.stat.exists == False
+
+  - stat: path="/opt/kdbox/dehydrated/certs/{{ custom_domain }}"
+    register: cert_folder
+
+  - name: Get signed certificate for slave instance
+    shell: /opt/kdbox/dehydrated/dehydrated -c --accept-terms
+    when: cert_folder.stat.exists == False
+    args:
+      chdir: /opt/kdbox/dehydrated
+    register: result
+    failed_when: '"Failed" in result.stdout'

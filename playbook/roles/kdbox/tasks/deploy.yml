@@ -1,0 +1,45 @@
+---
+
+  - stat: path=/opt/slapos.playbook/
+    register: playbook_folder
+
+  - name: Download playbook
+    shell: git clone https://lab.nexedi.com/nexedi/slapos.package.git /tmp/kdbox-playbook
+    when: playbook_folder.stat.exists == False
+
+  - name: Copy slapos.playbook
+    shell: cp -ax /tmp/kdbox-playbook/playbook /opt/slapos.playbook/
+    when: playbook_folder.stat.exists == False
+
+  - stat: path=/usr/local/bin/kdbox-deploy
+    register: bin_file
+
+  - name: Set deploy script
+    copy:
+      content: "cd /opt/slapos.playbook; ansible-playbook kdbox-deploy.yml -i  hosts --connection=local"
+      dest: /usr/local/bin/kdbox-deploy
+      mode: 0755
+    when: bin_file.stat.exists == False
+
+  - name: Remove kdbox deploy
+    file: path=/usr/local/bin/kdbox-deploy state=absent
+    when: kdbox_ok == True
+
+  - name: Start deploy cron
+    cron: job="bash -lc /usr/local/bin/kdbox-deploy >> /var/log/kdbox.log 2>&1"
+          cron_file=ansible-kdbox-deploy user="root"
+          name="Start kdbox deploy"
+          minute="*/1"
+
+  - name: Remove cron task
+    cron: name="Start kdbox deploy"
+          job="echo 1"
+          state=absent
+    when: kdbox_ok == True
+
+  - stat: path=/usr/local/bin/kdbox-state
+    register: kdbox_state
+
+  - name: Add check state script
+    template: src=kdbox-state.j2 dest=/usr/local/bin/kdbox-state mode=755
+    when: kdbox_state.stat.exists == False

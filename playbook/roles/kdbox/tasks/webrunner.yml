@@ -1,9 +1,18 @@
-- name: webrunner supply 
-  shell: slapos supply {{ webrunner_software_release_url }} {{ computer_id }}
-  when : slapos_cfg.stat.exists == True
-  args: 
-    creates: /opt/supply_check_file
+---
 
-- name: requesting webrunner instance 
-  shell: echo "request('{{ webrunner_software_release_url }}', '{{ webrunner_instance_name }}', partition_parameter_kw={'-sla-runner0-computer_guid':'{{ computer_id }}','-sla-runner1-computer_guid':'{{ computer_id }}',}, software_type='resilient',)" | slapos console
-  when: supply_is_done == True
+ - stat: path=/opt/kdbox/webrunner_requested
+   register: webrunner_requested
+
+ - name: webrunner supply 
+   shell: slapos supply {{ webrunner_software_release_url }} {{ computer_id }}
+   when : slapos_cfg.stat.exists == True
+   args: 
+     creates: /opt/kdbox/supply_check_file
+
+ - name: requesting webrunner instance
+   shell: echo "request('{{ webrunner_software_release_url }}', '{{ webrunner_instance_name }}', partition_parameter_kw={'-sla-runner0-computer_guid':'{{ computer_id }}','-sla-runner1-computer_guid':'{{ computer_id }}', 'auto-deploy':'true', 'auto-deploy-instance':'true', 'autorun':'true', 'slapos-software':'software/erp5',}, software_type='resilient',)" | slapos console
+   when: supply_is_done == True and webrunner_requested.stat.exists == False
+   register: output
+
+ - name: webrunner is requested
+   file: path=/opt/kdbox/webrunner_requested state=touch
