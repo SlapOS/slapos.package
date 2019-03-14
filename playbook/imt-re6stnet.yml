@@ -40,4 +40,5 @@
       service: name=re6st-node state=restarted enabled=yes
 
   roles:
-    - re6stnet
+    - { role: re6stnet-install }
+    - { role: re6stnet-ensure-running }
