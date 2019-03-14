@@ -7,4 +7,5 @@
   register: packages_to_upgrade
 
 - name: Upgrade all apt related packages
-  apt: name={{ packages_to_upgrade.stdout.split('\n') }} state=latest
+  apt: name={{ item }} state=latest
+  with_items: "{{ packages_to_upgrade.stdout.split('\n') }}"
