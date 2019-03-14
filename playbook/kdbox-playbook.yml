@@ -38,7 +38,7 @@
       private: no
       default: "notoken"
 
-    - name : "Token"
+    - name: "Token"
       prompt: "What is your credential account token"
       private: no 
       default: "notoken"
@@ -46,7 +46,7 @@
     - name: "domain_name"
       prompt: "Enter domain name for CDN main instance"
       private: no
-      default: ""
+      default: "kdbox.slapos-example.com"
 
     - name: "custom_domain"
       prompt: "Enter custom domain name for CDN slave instance"

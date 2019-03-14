@@ -35,12 +35,9 @@
         login zope
         password {{ erp5_pwd.stdout }} 
 
-  - stat: path=/opt/kdbox/dehydrated/well-know-done
-    register: well_know_done
-
   - name: Create .well-know folder on erp5 site
-    shell: "{{ role_path }}/files/challenge {{ custom_domain}} {{ erp5_pwd.stdout }}"
-    when: well_know_done.stat.exists == False
+    shell: "{{ role_path }}/files/challenge {{ custom_domain}}"
+    register: well_know
 
   - stat: path="/opt/kdbox/dehydrated/certs/{{ custom_domain }}"
     register: cert_folder

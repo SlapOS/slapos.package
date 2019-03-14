@@ -1,13 +1,9 @@
-frontend_software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.82/software/caddy-frontend/software.cfg
-frontend_slave_backend_url: https://[2401:5180:0:38::7377]:2152
-#recupuration de frontend_slave_backend_url à automatiser
+frontend_software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.95.2/software/caddy-frontend/software.cfg
 re6st_annon: False
 #variable crée pour desactiver le RADVD 
 enable_router_advertisement: False
 re6st_fingerprint: sha256:499a44702d687e968c047d28e33f59e5c3bae71a38619dc730152a3557c20301
 re6st_registry_url: http://re6stnet.gnet.erp5.cn/
-webrunner_software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.75/software/slaprunner/software.cfg
-frontend_instance_name: FRONTEND-kdboxtest
-webrunner_instance_name: webrunner-1
-frontend_instance_slave_name : KDBox-
-
+webrunner_software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.97/software/slaprunner/software.cfg
+frontend_instance_name: kdbox-main-FRONTEND
+webrunner_instance_name: kdbox-resilient-webrunner

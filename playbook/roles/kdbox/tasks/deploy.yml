@@ -3,13 +3,24 @@
   - stat: path=/opt/slapos.playbook/
     register: playbook_folder
 
+  # temp part to use playbook from branch
   - name: Download playbook
     shell: git clone https://lab.nexedi.com/nexedi/slapos.package.git /tmp/kdbox-playbook
+    when: playbook_folder.stat.exists == False
+
+  - shell: cd /tmp/kdbox-playbook/; git checkout alain-kdbox
     when: playbook_folder.stat.exists == False
 
   - name: Copy slapos.playbook
     shell: cp -ax /tmp/kdbox-playbook/playbook /opt/slapos.playbook/
     when: playbook_folder.stat.exists == False
+
+  # part to use
+  #- name: Download the playbook 
+  #  shell: slapcache-download --destination=/opt/kdbox/archive.tar.gz
+
+  #- name: Copy slapos.playbook
+  #  unarchive: src=/opt/kdbox/archive.tar.gz dest=/opt/slapos.playbook
 
   - stat: path=/usr/local/bin/kdbox-deploy
     register: bin_file
@@ -27,12 +38,14 @@
 
   - name: Start deploy cron
     cron: job="bash -lc /usr/local/bin/kdbox-deploy >> /var/log/kdbox.log 2>&1"
-          cron_file=ansible-kdbox-deploy user="root"
+          cron_file=ansible-kdbox-deploy
+          user="root"
           name="Start kdbox deploy"
           minute="*/1"
 
   - name: Remove cron task
     cron: name="Start kdbox deploy"
+          cron_file=ansible-kdbox-deploy
           job="echo 1"
           state=absent
     when: kdbox_ok == True
