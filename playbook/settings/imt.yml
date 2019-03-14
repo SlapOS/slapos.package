@@ -1,5 +1,6 @@
 ---
 re6st_registry_url: http://slapos.tl.teralab-datascience.fr:8088/
+re6st_fingerprint: sha256:19f072ec13ae08bb9b3b2a9ff6cd21811fb4fc306f9046b548ea48ec1f38ab93
 slapos_master_url: https://slap.imt.vifib.com/
 slapos_web_master_url: https://slapos.tl.teralab-datascience.fr/
 interface_name: lo
