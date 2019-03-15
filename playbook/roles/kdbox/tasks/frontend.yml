@@ -3,15 +3,21 @@
  - stat: path=/opt/kdbox/frontend_requested
    register: frontend_requested
 
+ - stat: path=/opt/kdbox/frontend_supplied
+   register: frontend_supplied
+
  - name: Caddy frontend supply 
    shell: slapos supply {{ frontend_software_release_url }} {{ computer_id }}
-   when: slapos_cfg.stat.exists == True
-   args:
-     creates: /opt/supply_check_file
+   when: slapos_cfg.stat.exists == True  and frontend_supplied.stat.exists == False
 
- - name: Requesting Caddy frontend istance
+ - name: Frontend is supplied
+   file: path=/opt/kdbox/frontend_supplied state=touch
+
+ - name: Requesting Caddy frontend instance
    shell: echo "request('{{ frontend_software_release_url }}', '{{ frontend_instance_name }}', filter_kw={'computer_guid':'{{ computer_id}}'}, partition_parameter_kw={'-sla-1-computer_guid':'{{ computer_id }}','domain':'{{ domain_name }}','public-ipv4':'{{ ansible_default_ipv4.address }}',}, software_type='custom-personal',)" | slapos console
-   when: supply_is_done == True and frontend_requested.stat.exists == False
+   when: frontend_supplied.stat.exists == True and frontend_requested.stat.exists == False
+   register: output
+   failed_when: "'error' in output.stderr.lower()"
 
  - name: Frontend is requested
    file: path=/opt/kdbox/frontend_requested state=touch

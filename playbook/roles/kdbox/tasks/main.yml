@@ -2,10 +2,6 @@
 
   - file: path=/opt/kdbox state=directory mode=0755
 
-  - name: check if supply is done
-    stat: path=/opt/kdbox/supply_check_file
-    register: supply_check
-
   - stat: path="/opt/kdbox/kdbox_ok"
     register: kdbox_is_ok
 
@@ -14,7 +10,6 @@
       computer_id: "{{ lookup('ini','computer_id section=slapos file=/etc/opt/slapos/slapos.cfg') }}"
       domain_name: "{{ lookup('file', '/opt/kdbox/cdn_domain_name') }}"
       custom_domain: "{{ lookup('file', '/opt/kdbox/cdn_custom_domain') }}"
-      supply_is_done: "{{ supply_check.stat.exists }}"
       kdbox_ok: "{{ kdbox_is_ok.stat.exists }}"
 
   - include: deploy.yml
@@ -32,12 +27,6 @@
   - include: frontend.yml
   - include: frontend-slave-instance.yml
 
-  # file created when software supply is done
-  - name: Software Release are supplied
-    file:
-        path: "/opt/kdbox/supply_check_file"
-        state: touch
- 
   # find Caddy ip to be used for port forwarding
   - name: Get Caddy local IP
     shell: grep bind /srv/slapgrid/slappart*/etc/Caddyfile | cut -d ' ' -f4 | head -n1 
