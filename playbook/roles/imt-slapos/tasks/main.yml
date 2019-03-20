@@ -36,6 +36,7 @@
       - { regexp: '^create_tap\s*=', line: 'create_tap = True' }
       - { regexp: '^tap_gateway_interface\s*=', line: 'tap_gateway_interface = re6stnet-tcp' }
       - { regexp: '^partition_amount\s*=', line: 'partition_amount = 126' }
+      - { regexp: '^tap_ipv6\s*=', line: 'tap_ipv6 = False' }
     when: post_config is defined and slapos_cfg.stat.exists == True
 
   - name: update slapos.cfg configuration storage/network
