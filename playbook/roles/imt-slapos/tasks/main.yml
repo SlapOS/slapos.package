@@ -1,4 +1,5 @@
 ---
+  - file: path=/opt/upgrader state=directory mode=0755
 
   - name: stat directory {{ mount_directory }}
     stat: path={{ mount_directory }}
@@ -24,6 +25,20 @@
   - name: mount srv/slapgrid directory
     mount: src="{{ mount_directory }}/opt/slapos" name=/opt/slapos opts=bind state=mounted fstype=none
     when: mount_directory is defined and slapos_directory.stat.exists == True
+
+  - stat: path=/opt/upgrader/playbook
+    register: playbook
+
+  - name: Download the playbook
+    shell: /usr/local/bin/slapcache-download --destination=/opt/upgrader/archive.tar.gz
+    when: playbook.stat.exists == False
+
+  - name: Copy slapos.playbook
+    unarchive: src=/opt/upgrader/archive.tar.gz dest=/opt/upgrader/playbook
+    when: playbook.stat.exists == False
+
+  - name: Set Startup Cron
+    cron: name="Launch Startup with ansible" special_time=reboot job='cd /opt/upgrader/playbook && ansible-playbook imt-startup.yml -i hosts 2>>/opt/upgrader/startup.log >> /opt/upgrader/startup.log'
 
   - name: stat slapos.cfg file
     stat: path=/etc/opt/slapos/slapos.cfg
