@@ -97,6 +97,8 @@ def bootstrap(task):
                 "--setuptools-version", "33.1.0"), input=bootstrap)
             check_call(("bin/buildout", "buildout:extensions=",
                 "buildout:newest=true", "buildout:parts=python"))
+            check_call(("bin/python.tmp", "bin/buildout", "bootstrap"))
+            os.rename("bin/python.tmp", "bin/python")
 
 def sdist_version(egg):
     global MTIME, VERSION
