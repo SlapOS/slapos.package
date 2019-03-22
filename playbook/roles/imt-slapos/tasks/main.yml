@@ -33,6 +33,8 @@
     shell: /usr/local/bin/slapcache-download --destination=/opt/upgrader/archive.tar.gz
     when: playbook.stat.exists == False
 
+  - file: path=/opt/upgrader/playbook state=directory mode=0755
+
   - name: Copy slapos.playbook
     unarchive: src=/opt/upgrader/archive.tar.gz dest=/opt/upgrader/playbook
     when: playbook.stat.exists == False
@@ -52,7 +54,7 @@
       - { regexp: '^tap_gateway_interface\s*=', line: 'tap_gateway_interface = re6stnet-tcp' }
       - { regexp: '^partition_amount\s*=', line: 'partition_amount = 126' }
       - { regexp: '^tap_ipv6\s*=', line: 'tap_ipv6 = False' }
-    when: post_config is defined and slapos_cfg.stat.exists == True
+    when: post_config is defined and slapos_cfg.stat.exists == True and startup is not defined
 
   - name: update slapos.cfg configuration storage/network
     lineinfile: dest=/etc/opt/slapos/slapos.cfg regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes insertafter="^instance_root ="
@@ -60,7 +62,7 @@
      - { regexp: '^ipv4_global_network\s*=', line: 'ipv4_global_network = 10.32.0.0/13' }
      - { regexp: '^instance_storage_home\s*=', line: 'instance_storage_home = /data' }
      - { regexp: '^manager_list\s*=', line: 'manager_list = prerm' }
-    when: post_config is defined and slapos_cfg.stat.exists == True
+    when: post_config is defined and slapos_cfg.stat.exists == True  and startup is not defined
 
   - name: Check whether firewall is enabled
     shell: grep -Fxq "[firewall]" /etc/opt/slapos/slapos.cfg
@@ -81,7 +83,7 @@
       - { regexp: '^log_file\s*=*firewalld*', line: 'log_file = /opt/slapos/log/firewalld.log' }
       - { regexp: '^dbus_log_file\s*=', line: 'dbus_log_file = /opt/slapos/log/dbus.log' }
       - { regexp: '^reload_config_cmd\s*=', line: 'reload_config_cmd = slapos node restart firewall' }
-    when: post_config is defined and slapos_cfg.stat.exists == True
+    when: post_config is defined and slapos_cfg.stat.exists == True and startup is not defined
 
   - modprobe: name=kvm state=present
     when: post_config is defined
@@ -97,4 +99,4 @@
 
   - name: Run slapos format for update configs
     shell: "slapos node format -v --now"  
-    when: post_config is defined and slapos_cfg.stat.exists == True
+    when: post_config is defined and slapos_cfg.stat.exists == True and startup is not defined
