@@ -198,7 +198,7 @@ def deb(task):
     d["Version"] = VERSION
     d["Architecture"] = b["Architecture"] = "any"
     d["Build-Depends"] = s["Build-Depends"] = \
-        "python (>= 2.6), debhelper (>= 8)"
+        "python (>= 2.6), debhelper (>= 8), iproute2 | iproute"
     b["Depends"] = "${shlibs:Depends}, iproute2 | iproute"
     b["Conflicts"] = b["Provides"] = b["Replaces"] = "re6stnet"
     patched_control = StringIO(str("%s\n%s" % (s, b))) # BBB: cast to str for Python 2.6
@@ -229,7 +229,7 @@ s/^(Name:\s*).*/\1%s/
 s/^(Version:\s*).*/\1%s/
 s/^(Release:\s*).*/\11/
 /^BuildArch:/cAutoReqProv: no\
-BuildRequires: gcc-c++, make, python\
+BuildRequires: gcc-c++, make, python, iproute\
 #!BuildIgnore: rpmlint-Factory\
 Source: %%{name}_%%{version}.tar.gz
 /^Requires:/{
