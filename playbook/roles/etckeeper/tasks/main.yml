@@ -7,25 +7,25 @@
     register: gitignore_file
 
   - name: Install git
-    apt: name=git state=latest update_cache=no 
+    apt: name=git state=latest update_cache=no
     when: ansible_os_family == "Debian"
 
   - name: Install git
-    yum: name=git state=latest update_cache=no  
+    yum: name=git state=latest update_cache=no
     when: ansible_os_family == "RedHat"
 
   - name: Install etckeeper
-    apt: name=etckeeper state=latest update_cache=no 
+    apt: name=etckeeper state=latest update_cache=no
     when: ansible_os_family == "Debian"
 
   - name: Install etckeeper
-    yum: name=etckeeper state=latest update_cache=no  
+    yum: name=etckeeper state=latest update_cache=no
     when: ansible_os_family == "RedHat"
 
   - file: path=/etc/.gitignore state=touch mode=0660
 
-  - lineinfile: 
-      dest=/etc/.gitignore 
+  - lineinfile:
+      dest=/etc/.gitignore
       line={{ item }}
     when: etckeeper_configuration.stat.exists == True
     with_items:
