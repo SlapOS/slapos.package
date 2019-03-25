@@ -43,7 +43,7 @@
       line="VCS=\"git\""
     when: etckeeper_configuration.stat.exists == True
 
-  - shell: git config user.email `root@hostname`
+  - shell: git config user.email root@`hostname`
     when: etckeeper_configuration.stat.exists == False
     args:
       chdir: /etc
