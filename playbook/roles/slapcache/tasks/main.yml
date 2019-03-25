@@ -1,4 +1,16 @@
-  # easy_install module for ansible version on debian 8 cannot upgrade package
+  # first install pip with easy_install if pip is not present on the system
+  # we cannot use the python-pip package as it is too old in many OS
+  - name: Register pip installation status
+    command: which pip
+    changed_when: false
+    failed_when: false
+    register: pip_installed
+
+  - name: Make sure pip is installed
+    shell: easy_install pip
+    when: pip_installed|failed
+
+  # install module with pip so that on debian 8 we can download the playbook in shacache
   - name: Install/Upgrade latest slapos.libnetworkcache 
     shell: pip install --upgrade slapos.libnetworkcache
 
