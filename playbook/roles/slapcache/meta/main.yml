@@ -1,5 +1,0 @@
----
-dependencies:
-  - role: package
-    package_name: python-pip 
-    package_state: present
