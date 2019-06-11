@@ -37,7 +37,9 @@
     when: hosts_file.stat.exists == True
 
   - name: Save new archive MD5
-    stat: path=/opt/upgrader/archive.tar.gz
+    stat:
+      path=/opt/upgrader/archive.tar.gz
+      get_md5=yes
     register:
       archive
 
