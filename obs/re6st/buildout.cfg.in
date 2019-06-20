@@ -15,6 +15,13 @@ allow-picked-versions = true
 
 parts += chrpath python
 
+[babeld-repository]
+git-executable =
+location = ${buildout:directory}/babeld
+
+[babeld]
+post-install = make clean
+
 [python]
 recipe = zc.recipe.egg
 interpreter = ${:_buildout_section_name_}.tmp

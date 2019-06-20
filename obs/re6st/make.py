@@ -52,7 +52,7 @@ BOOTSTRAP_URL = "https://bootstrap.pypa.io/bootstrap-buildout.py"
 PACKAGE = "re6st-node"
 
 BIN = "re6st-conf re6st-registry re6stnet".split()
-BUILD_KEEP = "buildout.cfg", "extends-cache", "download-cache"
+BUILD_KEEP = "babeld", "buildout.cfg", "download-cache", "extends-cache"
 NOPART = "chrpath flex glib lunzip m4 patch perl popt site_perl xz-utils".split()
 TARGET = "opt/re6st"
 
@@ -178,8 +178,10 @@ def tarball(task):
         t.add("re6stnet/daemon")
         for x in upstream.outputs:
             t.add(x)
+        def exclude(path):
+            return path.endswith('/.git')
         for x in BUILD_KEEP:
-            t.add(BUILD + "/" + x)
+            t.add(BUILD + "/" + x, exclude=exclude)
 
 @task(sdist, "debian/changelog")
 def dch(task):
