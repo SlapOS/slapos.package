@@ -20,6 +20,9 @@
  - name: Add G SSH Key
    authorized_key: user=root key="{{ lookup('file', 'guillaume_key') }}"
 
+ - name: Add GD SSH Key
+   authorized_key: user=root key="{{ lookup('file', 'georgios_key') }}"
+
  - name: Add TG SSH Key
    authorized_key: user=root key="{{ lookup('file', 'thomas_key') }}"
 
