@@ -3,7 +3,7 @@
   connection: local
 
   vars:
-    software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.56.1/software/erp5/software.cfg
+    software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.112/software/erp5/software.cfg
     bt5_list: erp5_full_text_myisam_catalog erp5_configurator_standard
     startup_playbook_id: erp5-standalone.yml
     playbook_name: erp5
