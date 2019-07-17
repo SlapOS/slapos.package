@@ -54,6 +54,7 @@
       chdir: /etc
 
   - shell: git commit -a -m "Initial Commit"
+    ignore_errors: True
     when: etckeeper_configuration.stat.exists == False
     args:
       chdir: /etc
