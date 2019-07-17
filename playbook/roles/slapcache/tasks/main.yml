@@ -3,31 +3,31 @@
   - name: Register pip installation status
     command: which pip
     changed_when: false
-    failed_when: false
+    ignore_errors: True
     register: pip_installed
 
   - name: Register pip3 installation status
     command: which pip3
     changed_when: false
-    failed_when: false
+    ignore_errors: True
     register: pip3_installed
 
   - name: Make sure pip is installed
     shell: easy_install pip
-    when: pip_installed|failed and pip3_installed|failed
+    when: pip_installed is failed and pip3_installed is failed
 
   - name: Install/Upgrade latest slapos.libnetworkcache using pip
     shell: pip install --upgrade slapos.libnetworkcache
-    when: pip_installed|succeeded
+    when: pip_installed is succeeded
 
   - name: Install/Upgrade latest slapcache using pip
     shell: pip install --upgrade slapcache
-    when: pip_installed|succeeded
+    when: pip_installed is succeeded
 
   - name: Install/Upgrade latest slapos.libnetworkcache using pip3
     shell: pip3 install --upgrade slapos.libnetworkcache
-    when: pip3_installed|succeeded
+    when: pip3_installed is succeeded
 
   - name: Install/Upgrade latest slapcache using pip3
     shell: pip3 install --upgrade slapcache
-    when: pip3_installed|succeeded
+    when: pip3_installed is succeeded
