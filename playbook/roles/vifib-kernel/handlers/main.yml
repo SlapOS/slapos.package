@@ -1,0 +1,7 @@
+---
+
+- name: Mark to reboot
+  file: 
+    path: /opt/upgrader/REBOOT_REQUIRED 
+    state: touch
+    mode: u=rw,g=r,o=r
