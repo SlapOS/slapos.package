@@ -33,3 +33,11 @@
 
   - name: create trigger reboot script
     copy: src=slapos-trigger-reboot.sh dest=/usr/local/bin/slapos-trigger-reboot.sh mode=700
+
+  - name: Stat AUTOREBOOT
+    stat: path=/opt/upgrader/AUTOREBOOT
+    register: autoreboot
+
+  - name: Setup auto-reboot cron
+    cron: name="Launch Reboot when REBOOT is Required" minute="*/30" job='/usr/local/bin/slapos-trigger-reboot.sh'
+    when: autoreboot.stat.exists == True
