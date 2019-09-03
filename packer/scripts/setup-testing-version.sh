@@ -32,7 +32,7 @@ fi
 
 export TERM=xterm
 sleep 5
-wget -O /root/launch-test http://deploy.erp5.cn/launch-test
+wget -O /root/launch-test http://deploy.erp5.net/launch-test
 chmod +x /root/launch-test
 bash -lc /root/launch-test
 

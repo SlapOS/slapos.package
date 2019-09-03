@@ -3,16 +3,31 @@
   - name: Register pip installation status
     command: which pip
     changed_when: false
-    failed_when: false
+    ignore_errors: True
     register: pip_installed
+
+  - name: Register pip3 installation status
+    command: which pip3
+    changed_when: false
+    ignore_errors: True
+    register: pip3_installed
 
   - name: Make sure pip is installed
     shell: easy_install pip
-    when: pip_installed|failed
+    when: pip_installed is failed and pip3_installed is failed
 
-  # install module with pip so that on debian 8 we can download the playbook in shacache
-  - name: Install/Upgrade latest slapos.libnetworkcache 
+  - name: Install/Upgrade latest slapos.libnetworkcache using pip
     shell: pip install --upgrade slapos.libnetworkcache
+    when: pip_installed is success
 
-  - name: Instal/Upgrade latest slapcache
+  - name: Install/Upgrade latest slapcache using pip
     shell: pip install --upgrade slapcache
+    when: pip_installed is success
+
+  - name: Install/Upgrade latest slapos.libnetworkcache using pip3
+    shell: pip3 install --upgrade slapos.libnetworkcache
+    when: pip3_installed is success
+
+  - name: Install/Upgrade latest slapcache using pip3
+    shell: pip3 install --upgrade slapcache
+    when: pip3_installed is success

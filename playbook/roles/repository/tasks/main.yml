@@ -16,6 +16,10 @@
 
   - include: fedora_init.yml 
 
+  - name: Install Debian 10 repository key
+    apt_key: url={{ base_open_build_url }}/Debian_10/Release.key state=present
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "10"
+
   - name: Install Debian 9 repository key
     apt_key: url={{ base_open_build_url }}/Debian_9.0/Release.key state=present
     when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
@@ -31,6 +35,10 @@
   - name: Install Debian 6 repository key
     apt_key: url={{ base_open_build_url }}/Debian_6.0/Release.key state=present
     when: ansible_distribution == "Debian" and ansible_distribution_major_version == "6"
+
+  - name: Install Debian 10 repository
+    apt_repository: repo='deb {{ base_open_build_url }}/Debian_10/ ./' state=present
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "10"
 
   - name: Install Debian 9 repository
     apt_repository: repo='deb {{ base_open_build_url }}/Debian_9.0/ ./' state=present
