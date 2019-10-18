@@ -21,7 +21,9 @@ Depends: ${misc:Depends},
          gcc | c-compiler,
          g++ | c++-compiler,
          make,
-         patch
+         patch,
+# slapos node collect
+         lm-sensors
 Conflicts: firewalld
 Description: Client-side to deploy applications with SlapOS 
  SlapOS allows one to turn any application into SaaS (Service as a System),
