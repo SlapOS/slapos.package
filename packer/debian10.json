@@ -32,13 +32,14 @@
       "headless": true,
       "boot_wait": "2s",
       "boot_command": [
-        "<esc><wait>",
+        "<esc><wait><wait><wait><wait>",
         "auto preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian10.cfg ",
-        "debian-installer=en_US.UTF-8 locale=en_US keymap=fr",
+        "debian-installer=en_US.UTF-8 locale=en_US keymap=fr ",
         "netcfg/get_hostname={{ .Name }} ",
         "netcfg/get_domain={{ user `domain`}} ",
 
         "fb=false debconf/frontend=noninteractive ",
+
         "passwd/user-fullname={{user `user`}} ",
         "passwd/user-password={{user `password`}} ",
         "passwd/user-password-again={{user `password`}} ",
@@ -47,7 +48,6 @@
         "<enter>"
       ]
     }
-
   ],
 
   "provisioners": [
@@ -57,7 +57,7 @@
       "scripts": [
         "scripts/update.sh",
         "scripts/packages.sh",
-        "scripts/network-debian9.sh",
+        "scripts/network-debian.sh",
         "scripts/cleanup.sh",
         "{{ user `custom_script` }}"
       ]

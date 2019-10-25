@@ -58,7 +58,7 @@
       "scripts": [
         "scripts/update.sh",
         "scripts/packages.sh",
-        "scripts/network-debian9.sh",
+        "scripts/network-debian.sh",
         "scripts/cleanup.sh",
         "{{ user `custom_script` }}"
       ]
