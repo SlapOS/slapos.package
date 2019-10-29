@@ -51,3 +51,15 @@
     notifempty
     sharedscripts
 }
+
+/srv/slapgrid/*/.slapgrid/*.data.json {
+    weekly
+    nocreate
+    rotate 104
+    nocompress
+    missingok
+    extension .json
+    dateext
+    dateformat -%Y-%m-%d
+    notifempty
+}
