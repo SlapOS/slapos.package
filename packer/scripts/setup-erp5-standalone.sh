@@ -1,5 +1,5 @@
 
-wget http://deploy.erp5.cn/erp5-standalone -O /root/run-standalone
+wget http://deploy.erp5.net/erp5-standalone -O /root/run-standalone
 bash /root/run-standalone
 
 sleep 10

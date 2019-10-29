@@ -1,0 +1,15 @@
+  - name: Check if ip6tables check script is present
+    stat: path=/usr/bin/re6stnet-ip6tables-check
+    register: ip6tables_check
+
+  - name: Run re6stnet-ip6tables-check
+    shell: /usr/bin/re6stnet-ip6tables-check
+    when: ip6tables_check.stat.exists == True
+
+  - name: Check if configuration already exists
+    stat: path=/etc/re6stnet/re6stnet.conf
+    register: check_re6stnet_conf
+
+  - name: Start re6st-node service
+    service: name=re6stnet state=started enabled=yes
+    when: check_re6stnet_conf.stat.exists == True

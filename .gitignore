@@ -2,6 +2,7 @@ obs/*/home:VIFIBnexedi*
 obs/slapos/slapos-node_*
 obs/slapos/slapos-recipe-version
 obs/slapos/slapos-version
+obs/slapos/slapos_repository/
 debian.tar.gz
 obs/slapos/templates/debian/cron.d
 obs/slapos/templates/debian/slapos-node.logrotate

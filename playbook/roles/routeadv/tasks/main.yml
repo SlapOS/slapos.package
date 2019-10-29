@@ -1,0 +1,27 @@
+---
+- name: stop and disable dnsmasq (as it will be started by re6st)
+  service:
+    name: dnsmasq
+    state: stopped
+    enabled: no
+- name: add dnsmasq in re6stnet config
+  lineinfile:
+    dest: /etc/re6stnet/re6stnet.conf
+    insertafter: '^key'
+    line: 'daemon "exec dnsmasq -k8 - -i $re6stnet_iface -F ${re6stnet_subnet%/*},ra-only,${re6stnet_subnet#*/},1d"'
+  notify:
+    - restart re6stnet
+- name: configure re6stnet main interface
+  lineinfile:
+    dest: /etc/re6stnet/re6stnet.conf
+    insertafter: '^daemon'
+    line: 'main-interface {{ ansible_default_ipv4.interface }}'
+  notify:
+    - restart re6stnet
+- name: configure re6stnet additional interface
+  lineinfile:
+    dest: /etc/re6stnet/re6stnet.conf
+    insertafter: '^main-interface'
+    line: 'interface {{ ansible_default_ipv4.interface }}'
+  notify:
+    - restart re6stnet

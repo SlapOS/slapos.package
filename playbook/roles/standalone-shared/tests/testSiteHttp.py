@@ -10,6 +10,7 @@ class TestSiteHttp(unittest.TestCase):
     self.https_url = os.environ['TEST_ACCESS_URL_HTTPS']
     self.http_url_norm = self.http_url.replace(':10080', '')
     self.https_url_norm = self.https_url.replace(':10443', '')
+    self.longMessage = True
 
   def test_http_erp5_login_form(self):
     """Check that accessing site over HTTP redirects to HTTPS"""
@@ -30,7 +31,8 @@ class TestSiteHttp(unittest.TestCase):
         is_permanent_redirect=False,
         status_code=302,
         location=self.https_url_norm + '/erp5/login_form'
-      )
+      ),
+      result.content
     )
 
   def test_http_erp5_anydomain(self):
@@ -53,5 +55,6 @@ class TestSiteHttp(unittest.TestCase):
         is_permanent_redirect=False,
         status_code=302,
         location='https://anyhost/erp5/'
-      )
+      ),
+      result.content
     )

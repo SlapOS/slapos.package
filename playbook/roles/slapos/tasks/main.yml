@@ -1,8 +1,8 @@
-  - name: Install packages using apt
+  - name: Install slapos.node using apt
     apt: name=slapos-node state={{ package_state }} update_cache=yes cache_valid_time=3600
     when: ansible_os_family == "Debian"
 
-  - name: Install re6stnet on CentOS
+  - name: Install slapos.node using yum
     yum: name=slapos.node state={{ package_state }} update_cache=yes
     when: ansible_os_family == "RedHat"
 

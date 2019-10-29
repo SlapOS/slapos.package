@@ -15,19 +15,44 @@
   - sysctl: name="net.ipv6.neigh.default.gc_thresh1" value=512 sysctl_set=yes state=present reload=yes
   - sysctl: name="net.ipv6.neigh.default.gc_thresh2" value=1024 sysctl_set=yes state=present reload=yes
   - sysctl: name="net.ipv6.neigh.default.gc_thresh3" value=2048 sysctl_set=yes state=present reload=yes
+  - sysctl: name="net.ipv6.conf.all.accept_ra" value=0 sysctl_set=yes state=present reload=yes
+  - sysctl: name="net.ipv6.conf.default.accept_ra" value=0 sysctl_set=yes state=present reload=yes
+  - sysctl: name="net.ipv6.conf.all.forwarding" value=1 sysctl_set=yes state=present reload=yes
+  - sysctl: name="net.ipv6.conf.default.forwarding" value=1 sysctl_set=yes state=present reload=yes
 
-  - include: kvm.yml 
+  - include: kvm.yml
   - include: shuttle-modprobe.yml
 
-  - name: Include table 0 on re6st
-    shell: echo "TODO"
-
-  - name: interface on re6st
-    shell: echo "TODO"
-
   - name: Increase ulimit
-    shell: echo "TODO"
+    copy: src="slapos_limit.conf" dest="/etc/security/limits.d/slapos.conf" mode=0644 owner=root group=root
 
   - name: Set Cron
     cron: name="Launch Startup with ansible" special_time=reboot job='cd /opt/upgrader/playbook && ansible-playbook vifib-startup.yml -i hosts 2>>/opt/upgrader/startup.log >> /opt/upgrader/startup.log'
 
+  - name: Get systemd version
+    shell: systemd --version | head -n 1 | cut -d " " -f 2
+    register: systemd_version
+
+  - file: state=directory path="/etc/systemd/system/cron.service.d/"
+    when: systemd_version.stdout | int > 228
+
+  - name: Increase the maximum of subprocesses for cron
+    copy: src="etc_systemd_system_cron_service_d_override.conf" dest="/etc/systemd/system/cron.service.d/override.conf" mode=0644 owner=root group=root
+    when: systemd_version.stdout | int > 228
+
+  - stat: path=/etc/opt/slapos/slapos.cfg
+    register: slapos_cfg
+
+  - name: Remove invalid shacache certificate title
+    lineinfile:
+      dest: /etc/opt/slapos/slapos.cfg
+      line: "#   Romain Courteaud"
+      state: absent
+    when: slapos_cfg.stat.exists == True
+
+  - name: Remove invalid shacache certificate
+    replace:
+      dest: /etc/opt/slapos/slapos.cfg
+      regexp: '^signature-certificate-list =$[^.*$]+^\s+QUUGLQ==\s^.*END\sCERTIFICATE-----$'
+      replace: 'signature-certificate-list ='
+    when: slapos_cfg.stat.exists == True

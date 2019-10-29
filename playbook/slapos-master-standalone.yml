@@ -3,11 +3,13 @@
   connection: local
 
   vars:
-    software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.56/software/slapos-master/software.cfg
+    software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.123/software/slapos-master/software.cfg
     bt5_list: erp5_full_text_myisam_catalog slapos_configurator
     startup_playbook_id: slapos-master-standalone.yml
     playbook_name: slapos-master
     request_instance_template: request-slapos-master.j2
+    request_frontend_template: request-slapos-master-frontend.j2
+    backend_instance_reference: instance-of-slapos-master
 
   pre_tasks:
 
@@ -16,3 +18,25 @@
   roles:
     - standalone-shared
     - { role: package, package_name: socat, package_state: present }
+
+  tasks:
+    - name: Create firewall script for slapos master
+      template: src=roles/standalone-shared/templates/setup-firewall-direct.j2 dest=/tmp/playbook-firewall-setup-{{ playbook_name }}-service mode=0700
+
+    - name: Setup firewall
+      cron:
+        cron_file=ansible-{{ playbook_name }}-service-firewall
+        user=root
+        name="Setup firewall SlapOS Master"
+        minute=*/5
+        job="/tmp/playbook-firewall-setup-{{ playbook_name }}-service > /dev/null 2>&1"
+
+
+    - name: Adjust permissions
+      cron:
+        cron_file=ansible-{{ playbook_name }}-adjust-permission
+        user=root
+        name="Adjust Permission"
+        minute=*/5
+        job="chmod -R 777 /etc/slapos-ssl  > /dev/null 2>&1"
+

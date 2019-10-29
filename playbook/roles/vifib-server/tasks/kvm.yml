@@ -1,13 +1,43 @@
 ---
 
-  - modprobe: name=kvm_intel state=present
+  - name: Insert kvm_intel module with parameter nested=Y
+    modprobe: name=kvm_intel state=present params='nested=Y'
     ignore_errors: True
+
+  - name: Prevent kvm_intel module from being loaded by udev
+    lineinfile:
+      dest: /etc/modprobe.d/blacklist.conf
+      line: "blacklist kvm_intel"
+      state: present
+      create: yes
 
   - pause: seconds=2
 
   - stat: path=/dev/kvm
     register: dev_kvm
-    
+
   - name: Set 666 on /dev/kvm
-    shell: chmod 666 /dev/kvm                 
+    shell: chmod 666 /dev/kvm
     when: dev_kvm.stat.exists == True
+
+
+  - name: Insert vhost-net module
+    modprobe: name=vhost-net state=present
+    ignore_errors: True
+
+  - pause: seconds=2
+
+  - stat: path=/dev/vhost-net
+    register: dev_vhost
+
+  - name: Set 666 on /dev/vhost-net
+    shell: chmod 666 /dev/vhost-net
+    when: dev_vhost.stat.exists == True
+
+  - name: Check if configuration exists already
+    stat: path=/etc/opt/slapos/slapos.cfg
+    register: xslapos_cfg
+
+  - name: Force create_tap to be true
+    shell: sed -i 's/^create_tap =.*/create_tap = True/' /etc/opt/slapos/slapos.cfg
+    when: xslapos_cfg.stat.exists == True

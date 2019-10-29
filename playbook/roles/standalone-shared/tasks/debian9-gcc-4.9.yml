@@ -1,0 +1,65 @@
+---
+  - name: Install Debian Jessie repository for Debian 9 for gcc-4.9
+    apt_repository: repo='deb http://ftp.us.debian.org/debian/ jessie main contrib non-free' state=present update_cache=no
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+
+  - name: Update repos for debian 9
+    shell: apt update --allow-insecure-repositories
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+
+  - name: Install gcc-4.9 on Debian 9
+    apt: name=gcc-4.9 state=present update_cache=yes cache_valid_time=3600
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+
+  - name: Install g++-4.9 on Debian 9
+    apt: name=g++-4.9 state=present update_cache=yes cache_valid_time=3600
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+
+  - name: Default to cpp-4.9
+    file:
+      src: /usr/bin/cpp-4.9
+      dest: /usr/bin/cpp
+      state: link
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+
+  - name: Default to gcc-4.9
+    file:
+      src: /usr/bin/gcc-4.9
+      dest: /usr/bin/gcc
+      state: link
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+
+  - name: Default to gcc-ar-4.9
+    file:
+      src: /usr/bin/gcc-ar-4.9
+      dest: /usr/bin/gcc-ar
+      state: link
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+
+  - name: Default to gcc-nm-4.9
+    file:
+      src: /usr/bin/gcc-nm-4.9
+      dest: /usr/bin/gcc-nm
+      state: link
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+
+  - name: Default to gcc-ranlib-4.9
+    file:
+      src: /usr/bin/gcc-ranlib-4.9
+      dest: /usr/bin/gcc-ranlib
+      state: link
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+
+  - name: Default to gcov-4.9
+    file:
+      src: /usr/bin/gcov-4.9
+      dest: /usr/bin/gcov
+      state: link
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+
+  - name: Default to g++-4.9
+    file:
+      src: /usr/bin/g++-4.9
+      dest: /usr/bin/g++
+      state: link
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"

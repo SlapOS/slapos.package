@@ -1,0 +1,11 @@
+
+- name: Install dctrl-tools using apt
+  apt: name=dctrl-tools state=latest
+
+- name: get packages to upgrade
+  shell: grep-status -X -S apt -ns Package
+  register: packages_to_upgrade
+
+- name: Upgrade all apt related packages
+  apt: name={{ item }} state=latest
+  with_items: "{{ packages_to_upgrade.stdout.split('\n') }}"

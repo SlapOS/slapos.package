@@ -1,0 +1,20 @@
+- name: a play that runs entirely on the ansible host
+  hosts: 127.0.0.1
+  connection: local
+
+  vars_files:
+    - settings/vifib.yml
+
+  vars:
+    - re6sttoken: noname 
+
+  vars_prompt:
+    - name: "computer_name"
+      prompt: "Please insert your email or a name of this computer, it will be used to configure re6st:"
+      private: no
+      default: "noname"
+
+  roles:
+    - { role: re6stnet-install }
+    - { role: re6stnet-ensure-running }
+

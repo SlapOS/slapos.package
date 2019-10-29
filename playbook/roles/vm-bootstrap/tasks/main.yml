@@ -41,8 +41,6 @@
   - include: network.yml
   - include: hostname.yml
   - include: user.yml
-  - include: sudo.yml
-    when: is_playbook_ok in [False, "False"]
   - include: ssh.yml
 
   - name: Enable hotplugged CPU and Memory automatically

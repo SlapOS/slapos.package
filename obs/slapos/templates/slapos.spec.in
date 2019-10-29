@@ -50,16 +50,16 @@ Packager: Rafael Monnerat <rafael@nexedi.com>
 %if 0%{?suse_version} == 1210
 BuildRequires: gcc-c++, make, patch, wget, python, python-devel, chrpath, openssl-devel, python-xml
 
-Requires: bridge-utils, python, gcc-c++, make, patch, wget, python-xml
+Requires: bridge-utils, python, gcc-c++, make, patch, wget, python-xml, lm_sensors
 %else
 BuildRequires: gcc-c++, make, patch, wget, python, python-devel, chrpath, openssl-devel, python-xml
 
-Requires: bridge-utils, python, gcc-c++, make, patch, wget, python-xml
+Requires: bridge-utils, python, gcc-c++, make, patch, wget, python-xml, lm_sensors
 %endif
 %else
 BuildRequires: gcc-c++, make, patch, wget, python, python-devel, chrpath, openssl-devel
 
-Requires: bridge-utils, python, gcc-c++, make, patch, wget
+Requires: bridge-utils, python, gcc-c++, make, patch, wget, lm_sensors
 %endif
 
 AutoReqProv: no
