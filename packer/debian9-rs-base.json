@@ -1,73 +1,73 @@
 {
-    "variables": {
-        "user": "slapos",
-        "password": "slapos",
-        "domain": "",
-        "disk_size": "6",
-        "name": "image",
-        "custom_script": "scripts/empty.sh",
-	"re6st_token": "{{env `RE6STTOKEN`}}",
-	"computer_token": "{{env `COMPUTERTOKEN`}}"
-	"computer_name": "{{env `COMPUTERNAME`}}"
-    },
+  "variables": {
+    "user": "slapos",
+    "password": "slapos",
+    "domain": "",
+    "disk_size": "6",
+    "name": "image",
+    "custom_script": "scripts/empty.sh",
+    "re6st_token": "{{env `RE6STTOKEN`}}",
+    "computer_token": "{{env `COMPUTERTOKEN`}}",
+    "computer_name": "{{env `COMPUTERNAME`}}"
+  },
 
-    "builders":
-    [
-        {
-            "name": "debian9-rs-base-{{ user `disk_size`}}G-{{ user `name`}}",
+  "builders":
+  [
+    {
+      "name": "debian9-rs-base-{{ user `disk_size`}}G-{{ user `name`}}",
 
-            "type": "qemu",
-            "format": "raw",
-            "accelerator": "kvm",
-            "disk_size": "{{ user `disk_size`}}000",
+      "type": "qemu",
+      "format": "raw",
+      "accelerator": "kvm",
+      "disk_size": "{{ user `disk_size`}}000",
 
-            "iso_url": "https://cdimage.debian.org/mirror/cdimage/archive/9.9.0/amd64/iso-cd/debian-9.9.0-amd64-netinst.iso",
-            "iso_checksum": "e494e78d531352f0f3fdb210f13f7577",
-            "iso_checksum_type": "md5",
+      "iso_url": "https://cdimage.debian.org/mirror/cdimage/archive/9.9.0/amd64/iso-cd/debian-9.9.0-amd64-netinst.iso",
+      "iso_checksum": "e494e78d531352f0f3fdb210f13f7577",
+      "iso_checksum_type": "md5",
 
-            "http_directory": "http",
+      "http_directory": "http",
 
-            "ssh_username": "{{user `user`}}",
-            "ssh_password": "{{user `password`}}",
-            "ssh_wait_timeout": "1800s",
-            "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -h now",
+      "ssh_username": "{{user `user`}}",
+      "ssh_password": "{{user `password`}}",
+      "ssh_wait_timeout": "1800s",
+      "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -h now",
 
-            "headless": true,
-            "boot_wait": "2s",
-            "boot_command": [
-                   "<esc><wait><wait>",
-                   "install auto ",
-                   "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian9.cfg ",
-                   "debian-installer=en_US locale=en_US keymap=fr ",
-                   "netcfg/get_hostname={{ .Name }} ",
-                   "netcfg/get_domain={{ user `domain`}} ",
+      "headless": true,
+      "boot_wait": "2s",
+      "boot_command": [
+        "<esc><wait><wait>",
+        "install auto ",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian9.cfg ",
+        "debian-installer=en_US locale=en_US keymap=fr ",
+        "netcfg/get_hostname={{ .Name }} ",
+        "netcfg/get_domain={{ user `domain`}} ",
 
-                   "fb=false debconf/frontend=noninteractive ",
+        "fb=false debconf/frontend=noninteractive ",
 
-                   "passwd/user-fullname={{user `user`}} ",
-                   "passwd/user-password={{user `password`}} ",
-                   "passwd/user-password-again={{user `password`}} ",
-                   "passwd/username={{user `user`}} ",
+        "passwd/user-fullname={{user `user`}} ",
+        "passwd/user-password={{user `password`}} ",
+        "passwd/user-password-again={{user `password`}} ",
+        "passwd/username={{user `user`}} ",
 
-                   "<enter>"
-            ]
-        }
-    ],
+        "<enter>"
+      ]
+    }
+  ],
 
-    "provisioners": [
-        {
-            "type": "shell",
-            "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
-	    "environment_vars": ["re6st_token={{ user `re6st_token` }}", "computer_name={{user `computer_name`}}", "computer_token={{ user `computer_token` }}"],
-            "scripts": [
-                "scripts/update.sh",
-                "scripts/packages.sh",
-                "scripts/network-debian9.sh",
-                "scripts/cleanup.sh",
-                "scripts/setup-base-slapos.sh",
-                "{{ user `custom_script` }}"
-            ]
-        }
-    ]
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+      "environment_vars": ["re6st_token={{ user `re6st_token` }}", "computer_name={{user `computer_name`}}", "computer_token={{ user `computer_token` }}"],
+      "scripts": [
+        "scripts/update.sh",
+        "scripts/packages.sh",
+        "scripts/network-debian9.sh",
+        "scripts/cleanup.sh",
+        "scripts/setup-base-slapos.sh",
+        "{{ user `custom_script` }}"
+      ]
+    }
+  ]
 }
 
