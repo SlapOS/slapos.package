@@ -10,7 +10,7 @@
 
   vars_prompt:
     - name: "computer_name"
-      prompt: "Please insert your email or a name of this computer, it will be used to configure re6st:"
+      prompt: "Please give a title to your re6st certificate (e.g. your computer name):"
       private: no
       default: "noname"
 

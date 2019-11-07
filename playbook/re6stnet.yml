@@ -4,7 +4,6 @@
 
   vars:
     - re6st_annon: False
-    - computer_name: noname
     - re6st_fingerprint: nofingerprint
 
   vars_prompt:
@@ -12,6 +11,11 @@
       prompt: "What is the url to the Re6st registry?"
       private: no
       default: "http://re6stnet.nexedi.com/"
+
+    - name: "computer_name"
+      prompt: "Please give a title to your re6st certificate (e.g. your computer name):"
+      private: no
+      default: "noname"
 
     - name: "re6sttoken"
       prompt: "Please insert your re6stnet token:"
