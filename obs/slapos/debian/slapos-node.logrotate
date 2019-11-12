@@ -52,7 +52,7 @@
     sharedscripts
 }
 
-/srv/slapgrid/*/.slapgrid/*.data.json {
+/srv/slapgrid/*/.slapgrid/monitor/*.data.json /srv/slapgrid/*/.slapgrid/promise/history/*.history.json {
     weekly
     nocreate
     rotate 104
@@ -63,3 +63,16 @@
     dateformat -%Y-%m-%d
     notifempty
 }
+
+/srv/slapgrid/*/.slapgrid/promise/promise_stats.json {
+    weekly
+    nocreate
+    rotate 104
+    nocompress
+    missingok
+    extension .json
+    dateext
+    dateformat -%Y-%m-%d
+    notifempty
+}
+
