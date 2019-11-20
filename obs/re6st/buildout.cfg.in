@@ -11,12 +11,21 @@ develop =
 extensions = slapos.rebootstrap
 newest = false
 
+allow-picked-versions = true
+
 parts += chrpath python
+
+[babeld-repository]
+git-executable =
+location = ${buildout:directory}/babeld
+
+[babeld]
+post-install = make clean
 
 [python]
 recipe = zc.recipe.egg
-interpreter = ${:_buildout_section_name_}
-eggs = setuptools
+interpreter = ${:_buildout_section_name_}.tmp
+eggs = slapos.libnetworkcache
 # https://lab.nexedi.com/nexedi/slapos.buildout/merge_requests/11
 scripts = dummy
 
@@ -36,5 +45,4 @@ environment +=
 
 [openssl]
 prefix = %(TARGET)s/parts/${:_buildout_section_name_}
-environment +=
-  INSTALL_PREFIX=%(ROOT)s
+make-install-extra = DESTDIR=%(ROOT)s

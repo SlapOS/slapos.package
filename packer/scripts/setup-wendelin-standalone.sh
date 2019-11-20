@@ -1,5 +1,5 @@
 
-wget http://deploy.erp5.cn/wendelin-standalone -O /root/run-standalone
+wget http://deploy.erp5.net/wendelin-standalone -O /root/run-standalone
 bash /root/run-standalone
 
 sleep 10
@@ -16,7 +16,3 @@ do
   slapos node instance
   sleep 5
 done
-
-wget https://lab.nexedi.com/nexedi/wendelin/raw/master/utils/wendelin-standalone-bind.sh -O /root/wendelin-standalone-bind.sh
-
-bash /root/wendelin-standalone-bind.sh

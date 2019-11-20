@@ -7,27 +7,27 @@
     register: gitignore_file
 
   - name: Install git
-    apt: name=git state=latest update_cache=no 
+    apt: name=git state=latest update_cache=no
     when: ansible_os_family == "Debian"
 
   - name: Install git
-    yum: name=git state=latest update_cache=no  
+    yum: name=git state=latest update_cache=no
     when: ansible_os_family == "RedHat"
 
   - name: Install etckeeper
-    apt: name=etckeeper state=latest update_cache=no 
+    apt: name=etckeeper state=latest update_cache=no
     when: ansible_os_family == "Debian"
 
   - name: Install etckeeper
-    yum: name=etckeeper state=latest update_cache=no  
+    yum: name=etckeeper state=latest update_cache=no
     when: ansible_os_family == "RedHat"
 
   - file: path=/etc/.gitignore state=touch mode=0660
 
-  - lineinfile: 
-      path:/etc/.gitignore 
-      line:{{ item }}
-    when: etckeeper_configuration.stat.exists == False
+  - lineinfile:
+      dest=/etc/.gitignore
+      line={{ item }}
+    when: etckeeper_configuration.stat.exists == True
     with_items:
       - ~*
       - shadow*
@@ -38,13 +38,12 @@
       - re6stnet/cert.key
       - opt/slapos/ssl
 
+  - lineinfile:
+      dest=/etc/etckeeper/etckeeper.conf
+      line="VCS=\"git\""
+    when: etckeeper_configuration.stat.exists == True
 
-  - lineinfile: 
-      path:/etc/etckeeper/etckeeper.conf
-      line:VCS="git"
-    when: etckeeper_configuration.stat.exists == False 
-
-  - shell: git config user.email `root@hostname`
+  - shell: git config user.email root@`hostname`
     when: etckeeper_configuration.stat.exists == False
     args:
       chdir: /etc
@@ -55,4 +54,7 @@
       chdir: /etc
 
   - shell: git commit -a -m "Initial Commit"
+    ignore_errors: True
     when: etckeeper_configuration.stat.exists == False
+    args:
+      chdir: /etc

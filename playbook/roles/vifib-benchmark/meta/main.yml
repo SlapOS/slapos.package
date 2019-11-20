@@ -1,0 +1,10 @@
+---
+dependencies:
+ - { role: sysstat }
+ - { role: package, package_name: fio, package_state: present }
+ - { role: package, package_name: iotop, package_state: present }
+ - { role: package, package_name: ioping, package_state: present }
+ - { role: package, package_name: bonnie++, package_state: present }
+ - { role: package, package_name: hdparm, package_state: present }
+
+

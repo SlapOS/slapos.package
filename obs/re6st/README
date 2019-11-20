@@ -31,3 +31,14 @@ Warning about SlapOS updates
 When a SlapOS update would add new files to download-cache or extends-cache,
 everything should be rebuilt by deleting the 'build' folder, in order to remove
 unused files from the caches.
+
+BUGS
+----
+
+1. Due to a bug in the 're6stnet' recipe, 'upstream' is skipped the first time
+   you run `./make` if you didn't check out re6stnet.git earlier (manually).
+   This leads to missing docs in the generated tarballs.
+
+2. The completion condition for the 'buildout' recipe is not enough. If you
+   interrupt it before it finishes, it may not resume the build when running
+   `./make` again.

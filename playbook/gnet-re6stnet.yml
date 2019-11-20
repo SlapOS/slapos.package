@@ -23,5 +23,13 @@ Your token
       private: no 
       default: "notoken"
 
+    - name: "enable_router_advertisement"
+      prompt: "Enable Router Advertisement"
+      private: no
+      default: 'no'
+
   roles:
-    - re6stnet
+    - { role: re6stnet-install }
+    - { role: re6stnet-ensure-running }
+    - role: routeadv
+      when: enable_router_advertisement == 'yes'

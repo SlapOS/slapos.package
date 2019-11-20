@@ -52,7 +52,7 @@ BOOTSTRAP_URL = "https://bootstrap.pypa.io/bootstrap-buildout.py"
 PACKAGE = "re6st-node"
 
 BIN = "re6st-conf re6st-registry re6stnet".split()
-BUILD_KEEP = "buildout.cfg", "extends-cache", "download-cache"
+BUILD_KEEP = "babeld", "buildout.cfg", "download-cache", "extends-cache"
 NOPART = "chrpath flex glib lunzip m4 patch perl popt site_perl xz-utils".split()
 TARGET = "opt/re6st"
 
@@ -97,6 +97,8 @@ def bootstrap(task):
                 "--setuptools-version", "33.1.0"), input=bootstrap)
             check_call(("bin/buildout", "buildout:extensions=",
                 "buildout:newest=true", "buildout:parts=python"))
+            check_call(("bin/python.tmp", "bin/buildout", "bootstrap"))
+            os.rename("bin/python.tmp", "bin/python")
 
 def sdist_version(egg):
     global MTIME, VERSION
@@ -176,8 +178,10 @@ def tarball(task):
         t.add("re6stnet/daemon")
         for x in upstream.outputs:
             t.add(x)
+        def exclude(path):
+            return path.endswith('/.git')
         for x in BUILD_KEEP:
-            t.add(BUILD + "/" + x)
+            t.add(BUILD + "/" + x, exclude=exclude)
 
 @task(sdist, "debian/changelog")
 def dch(task):
@@ -196,7 +200,7 @@ def deb(task):
     d["Version"] = VERSION
     d["Architecture"] = b["Architecture"] = "any"
     d["Build-Depends"] = s["Build-Depends"] = \
-        "python (>= 2.6), debhelper (>= 8)"
+        "python (>= 2.6), debhelper (>= 8), iproute2 | iproute"
     b["Depends"] = "${shlibs:Depends}, iproute2 | iproute"
     b["Conflicts"] = b["Provides"] = b["Replaces"] = "re6stnet"
     patched_control = StringIO(str("%s\n%s" % (s, b))) # BBB: cast to str for Python 2.6
@@ -227,7 +231,7 @@ s/^(Name:\s*).*/\1%s/
 s/^(Version:\s*).*/\1%s/
 s/^(Release:\s*).*/\11/
 /^BuildArch:/cAutoReqProv: no\
-BuildRequires: gcc-c++, make, python\
+BuildRequires: gcc-c++, make, python, iproute\
 #!BuildIgnore: rpmlint-Factory\
 Source: %%{name}_%%{version}.tar.gz
 /^Requires:/{

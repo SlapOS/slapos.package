@@ -25,7 +25,7 @@ $(BUILD)/bin/buildout:
 	cd $(BUILD) && $(PYTHON2) -S $(CURDIR)/rebootstrap
 
 $(BUILD)/.installed.cfg: $(BUILD)/bin/buildout $(BUILD)/buildout.cfg
-	cd $(BUILD) && bin/buildout
+	cd $(BUILD) && bin/buildout babeld-repository:recipe=
 	touch $@
 
 PROGS = $(patsubst %,$(DESTDIR)/usr/bin/%,$(BIN))

@@ -1,0 +1,3 @@
+---
+  - name: create partition script
+    copy: src=run_test.sh dest=/usr/local/bin/run-vifib-benchmark mode=700

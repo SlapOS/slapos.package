@@ -3,7 +3,6 @@
 import os
 import sys
 import subprocess
-import glob
 import time
 import getopt
 import sqlite3
@@ -21,23 +20,21 @@ def fmt_date():
 def discover_software():
   conn = sqlite3.connect("/opt/slapos/slapproxy.db")
   cur = conn.cursor()
-  qry = cur.execute("SELECT DISTINCT url FROM software11")
+  qry = cur.execute("SELECT DISTINCT url FROM software14")
   return [row[0] for row in qry if row[0]]
 
 def get_connection_information(software_release):
   conn = sqlite3.connect("/opt/slapos/slapproxy.db")
   cur = conn.cursor()
 
-  if 'software/erp5' in software_release:
-    partition_reference = 'instance-of-erp5'
-  elif  'software/wendelin' in software_release:
-    partition_reference = 'instance-of-wendelin'
+  if 'software/apache-frontend' not in software_release:
+    partition_reference = 'instance-of-%'
   elif 'software/apache-frontend' in software_release:
     partition_reference = 'apache-frontend-1'
   else:
     raise ValueError
 
-  qry = cur.execute("SELECT connection_xml FROM partition11 WHERE connection_xml IS NOT NULL AND software_release=? AND partition_reference=?", (software_release, partition_reference) )
+  qry = cur.execute("SELECT connection_xml FROM partition14 WHERE connection_xml IS NOT NULL AND software_release=? AND partition_reference LIKE ?", (software_release, partition_reference) )
   xml = None
   for row in qry:
     xml = str(row[0])
@@ -47,7 +44,7 @@ def get_connection_information(software_release):
     return (None, None)
 
   instance = minidom.parseString(xml)
-  if partition_reference in ['instance-of-erp5', 'instance-of-wendelin']:
+  if partition_reference.startswith('instance-of-'):
     try:
       el = instance.getElementsByTagName('parameter')[0]
       value = el.childNodes[0].nodeValue
@@ -78,7 +75,7 @@ def get_connection_information(software_release):
 def check_tables():
   conn = sqlite3.connect("/opt/slapos/slapproxy.db")
   cur = conn.cursor()
-  qry = cur.execute("SELECT CASE WHEN tbl_name = 'partition11' THEN 1 ELSE 0 END FROM sqlite_master WHERE tbl_name = 'partition11' AND type = 'table'")
+  qry = cur.execute("SELECT CASE WHEN tbl_name = 'partition14' THEN 1 ELSE 0 END FROM sqlite_master WHERE tbl_name = 'partition14' AND type = 'table'")
 
   if qry is None:
     print "tables aren't ready yet, your build may have failed, check logs in /opt/slapos/log/"
@@ -118,29 +115,45 @@ def status():
     build = False
 
   if build:
-    erp5_sr = [q for q in software_release_list if 'software/erp5' in q or 'software/wendelin' in q][0]
+    erp5_sr = [q for q in software_release_list if 'software/apache-frontend' not in q][0]
     frn_sr = [q for q in software_release_list
         if 'software/apache-frontend' in q][0]
     zope_ip, pw = get_connection_information(erp5_sr)
-    if 'software/erp5' in erp5_sr:
-      filename = '/tmp/playbook-erp5-public-ipv4'
-    elif 'software/wendelin' in erp5_sr:
-      filename = '/tmp/playbook-wendelin-public-ipv4'
-    else:
-      raise ValueError
+
     try:
-      ip = open(filename).read()
+      # by default try new apporach (domain based)...
+      hostname = open('/tmp/playbook-frontend-custom-domain').read().strip()
     except Exception:
-      frontend = None
+      try:
+        # ...and fall back to old one (IP based)
+        hostname = open('/tmp/playbook-public-ipv4').read().strip()
+      except Exception:
+        frontend = None
     else:
-      if len(ip) == 0:
+      if len(hostname) == 0:
         frontend = zope_ip
       else:
-        frontend = 'https://' + ip
-
+        frontend = 'https://' + hostname
     frontend_ip, _ = get_connection_information(frn_sr)
 
-    if zope_ip is None or frontend is None or frontend_ip is None:
+    connected = False
+    if frontend is not None:
+      # as frontend is already up, check if all is ready to serve requests
+      # before providing the access url to the user
+      ctx = ssl.create_default_context()
+      ctx.check_hostname = False
+      ctx.verify_mode = ssl.CERT_NONE
+
+      try:
+        r1 = urllib2.urlopen(frontend, context=ctx)
+        if 'Zope Management Interface' in r1.read():
+          connected = True
+        else:
+          print 'URL %s ready, but does not reply with Zope' % frontend
+      except urllib2.URLError, e:
+        print "Zope not available yet: %s" % e
+
+    if zope_ip is None or frontend is None or frontend_ip is None or not connected:
       print "Build successful, please wait for instantiation"
       sys.exit(2)
 

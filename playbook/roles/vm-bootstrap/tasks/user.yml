@@ -3,6 +3,25 @@
   - name: create netadmin
     user: name=netadmin shell=/bin/bash groups=root password=$6$rounds=100000$RcjiHRBJa/ORaqst$0L2hFmL5kwGpP6sY2r.hENK3DR5YLdlSDf.r57hwsLjKioYx36CdeLso.52av1UA61rhWIJWdoRYI5bFz.RAC1 update_password=on_create
 
+  - name: Ensure sudo is installed
+    apt: name=sudo state=latest update_cache=yes cache_valid_time=86400
+    when: ansible_os_family == "Debian"
+
+  - include: ../../yum/tasks/main.yml name=sudo cache_valid_time=86400
+    when: ansible_os_family == "RedHat"
+
+  - name: Ensure /etc/sudoers.d directory is present
+    file: path=/etc/sudoers.d state=directory
+
+  - name: Ensure /etc/sudoers.d is scanned by sudo
+    action: lineinfile dest=/etc/sudoers regexp="#includedir\s+/etc/sudoers.d" line="#includedir /etc/sudoers.d"
+
+  - name: Add netadmin user to the sudoers
+    lineinfile: dest=/etc/sudoers.d/netadmin state=present create=yes regexp="netadmin .*" line="netadmin ALL=(root)  NOPASSWD:ALL"
+
+  - name: Ensure /etc/sudoers.d/netadmin file has correct permissions
+    action: file path=/etc/sudoers.d/netadmin mode=0440 state=file owner=root group=root
+
   - name: remove other unwanted users
     user: name={{ item }} state=absent
     with_items:

@@ -1,4 +1,5 @@
 ---
+  - file: path=/opt/upgrader state=directory mode=0755
 
   - name: stat directory {{ mount_directory }}
     stat: path={{ mount_directory }}
@@ -25,6 +26,22 @@
     mount: src="{{ mount_directory }}/opt/slapos" name=/opt/slapos opts=bind state=mounted fstype=none
     when: mount_directory is defined and slapos_directory.stat.exists == True
 
+  - stat: path=/opt/upgrader/playbook
+    register: playbook
+
+  - name: Download the playbook
+    shell: /usr/local/bin/slapcache-download --destination=/opt/upgrader/archive.tar.gz
+    when: playbook.stat.exists == False
+
+  - file: path=/opt/upgrader/playbook state=directory mode=0755
+
+  - name: Copy slapos.playbook
+    unarchive: src=/opt/upgrader/archive.tar.gz dest=/opt/upgrader/playbook
+    when: playbook.stat.exists == False
+
+  - name: Set Startup Cron
+    cron: name="Launch Startup with ansible" special_time=reboot job='cd /opt/upgrader/playbook && ansible-playbook imt-startup.yml -i hosts 2>>/opt/upgrader/startup.log >> /opt/upgrader/startup.log'
+
   - name: stat slapos.cfg file
     stat: path=/etc/opt/slapos/slapos.cfg
     register: slapos_cfg
@@ -36,7 +53,8 @@
       - { regexp: '^create_tap\s*=', line: 'create_tap = True' }
       - { regexp: '^tap_gateway_interface\s*=', line: 'tap_gateway_interface = re6stnet-tcp' }
       - { regexp: '^partition_amount\s*=', line: 'partition_amount = 126' }
-    when: post_config is defined and slapos_cfg.stat.exists == True
+      - { regexp: '^tap_ipv6\s*=', line: 'tap_ipv6 = False' }
+    when: post_config is defined and slapos_cfg.stat.exists == True and startup is not defined
 
   - name: update slapos.cfg configuration storage/network
     lineinfile: dest=/etc/opt/slapos/slapos.cfg regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes insertafter="^instance_root ="
@@ -44,7 +62,28 @@
      - { regexp: '^ipv4_global_network\s*=', line: 'ipv4_global_network = 10.32.0.0/13' }
      - { regexp: '^instance_storage_home\s*=', line: 'instance_storage_home = /data' }
      - { regexp: '^manager_list\s*=', line: 'manager_list = prerm' }
+    when: post_config is defined and slapos_cfg.stat.exists == True  and startup is not defined
+
+  - name: Check whether firewall is enabled
+    shell: grep -Fxq "[firewall]" /etc/opt/slapos/slapos.cfg
+    register: has_firewall
+    ignore_errors: yes
     when: post_config is defined and slapos_cfg.stat.exists == True
+
+  - name: activate firewalld in slapos config
+    lineinfile: dest=/etc/opt/slapos/slapos.cfg line="[firewall]\n" insertbefore="^\[networkcache\]"
+    when: post_config is defined and has_firewall.rc != 0 and slapos_cfg.stat.exists == True
+
+  - name: Update firewall configuration
+    lineinfile: dest=/etc/opt/slapos/slapos.cfg regexp="{{ item.regexp }}" line="{{ item.line }}" insertafter="^\[firewall\]$" state=present
+    with_items:
+      - { regexp: '^dbus_executable\s*=', line: 'dbus_executable = /opt/slapos/parts/dbus/bin/dbus-daemon --nofork --nopidfile --system' } 
+      - { regexp: '^firewall_executable\s*=', line: 'firewall_executable = /opt/slapos/parts/firewalld/sbin/firewalld --nofork' }
+      - { regexp: '^firewall_cmd\s*=', line: 'firewall_cmd = /opt/slapos/parts/firewalld/bin/firewall-cmd' }
+      - { regexp: '^log_file\s*=*firewalld*', line: 'log_file = /opt/slapos/log/firewalld.log' }
+      - { regexp: '^dbus_log_file\s*=', line: 'dbus_log_file = /opt/slapos/log/dbus.log' }
+      - { regexp: '^reload_config_cmd\s*=', line: 'reload_config_cmd = slapos node restart firewall' }
+    when: post_config is defined and slapos_cfg.stat.exists == True and startup is not defined
 
   - modprobe: name=kvm state=present
     when: post_config is defined
@@ -60,4 +99,4 @@
 
   - name: Run slapos format for update configs
     shell: "slapos node format -v --now"  
-    when: post_config is defined and slapos_cfg.stat.exists == True
+    when: post_config is defined and slapos_cfg.stat.exists == True and startup is not defined

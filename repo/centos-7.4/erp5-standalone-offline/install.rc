@@ -1,0 +1,3 @@
+PLAYBOOK=erp5-standalone.yml
+ERP5_SR_URL="https://lab.node.vifib.com/nexedi/slapos/raw/1.0.56.1/software/erp5/software.cfg"
+FRONTEND_SR_URL="https://lab.node.vifib.com/nexedi/slapos/raw/1.0.56.1/software/apache-frontend/software.cfg"
