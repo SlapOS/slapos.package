@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Re6st peers communicate with each other on port 326.
+# Port 6696 is used by Babel (routing protocol).
+# ( "$ man re6stnet" for more information)
+
 if [ -f /sbin/ip6tables ]; then
   if [ 0 -ne `ip6tables -L | grep -E "(DROP|REJECT)" | wc -l` ]; then
     ip6tables -P FORWARD ACCEPT
