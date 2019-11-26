@@ -1,0 +1,15 @@
+  - name: Install/Upgrade latest slapos.libnetworkcache using pip
+    shell: pip install --upgrade slapos.libnetworkcache
+    when: pip_installed is succeeded
+
+  - name: Install/Upgrade latest slapcache using pip
+    shell: pip install --upgrade slapcache
+    when: pip_installed is succeeded
+
+  - name: Install/Upgrade latest slapos.libnetworkcache using pip3
+    shell: pip3 install --upgrade slapos.libnetworkcache
+    when: pip3_installed is succeeded
+
+  - name: Install/Upgrade latest slapcache using pip3
+    shell: pip3 install --upgrade slapcache
+    when: pip3_installed is succeeded
