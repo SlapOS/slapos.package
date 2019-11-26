@@ -16,18 +16,10 @@
     shell: easy_install pip
     when: pip_installed is failed and pip3_installed is failed
 
-  - name: Install/Upgrade latest slapos.libnetworkcache using pip
-    shell: pip install --upgrade slapos.libnetworkcache
-    when: pip_installed is success
+  - name: Install slapcache on Debian != 9
+    include: pip_installations_success.yml
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version != "9"
 
-  - name: Install/Upgrade latest slapcache using pip
-    shell: pip install --upgrade slapcache
-    when: pip_installed is success
-
-  - name: Install/Upgrade latest slapos.libnetworkcache using pip3
-    shell: pip3 install --upgrade slapos.libnetworkcache
-    when: pip3_installed is success
-
-  - name: Install/Upgrade latest slapcache using pip3
-    shell: pip3 install --upgrade slapcache
-    when: pip3_installed is success
+  - name: Install slapcache on Debian == 9
+    include: pip_installations_succeeded.yml
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
