@@ -27,10 +27,10 @@ def get_connection_information(software_release):
   conn = sqlite3.connect("/opt/slapos/slapproxy.db")
   cur = conn.cursor()
 
-  if 'software/apache-frontend' not in software_release:
+  if 'software/caddy-frontend' not in software_release:
     partition_reference = 'instance-of-%'
-  elif 'software/apache-frontend' in software_release:
-    partition_reference = 'apache-frontend-1'
+  elif 'software/caddy-frontend' in software_release:
+    partition_reference = 'caddy-frontend-1'
   else:
     raise ValueError
 
@@ -61,7 +61,7 @@ def get_connection_information(software_release):
       return (json_text, None)
     else:
       return (None, None)
-  elif partition_reference == 'apache-frontend-1':
+  elif partition_reference == 'caddy-frontend-1':
     ip = None
     for el in instance.getElementsByTagName('parameter'):
       if el.getAttribute('id') == 'private-ipv4':
@@ -115,9 +115,9 @@ def status():
     build = False
 
   if build:
-    erp5_sr = [q for q in software_release_list if 'software/apache-frontend' not in q][0]
+    erp5_sr = [q for q in software_release_list if 'software/caddy-frontend' not in q][0]
     frn_sr = [q for q in software_release_list
-        if 'software/apache-frontend' in q][0]
+        if 'software/caddy-frontend' in q][0]
     zope_ip, pw = get_connection_information(erp5_sr)
 
     try:
