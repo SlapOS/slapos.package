@@ -1,4 +1,9 @@
-# Installations on Ansible which supports succeeded
+# Installations on newest Ansible which supports succeeded
+
+  - name: Make sure pip is installed
+    shell: easy_install pip
+    when: pip_installed is failed and pip3_installed is failed
+
   - name: Install/Upgrade latest slapos.libnetworkcache using pip
     shell: pip install --upgrade slapos.libnetworkcache
     when: pip_installed is succeeded

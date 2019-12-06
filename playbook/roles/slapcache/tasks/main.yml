@@ -12,14 +12,10 @@
     ignore_errors: True
     register: pip3_installed
 
-  - name: Make sure pip is installed
-    shell: easy_install pip
-    when: pip_installed is failed and pip3_installed is failed
-
-  - name: Install slapcache on Debian != 9
+  - name: Install slapcache on Debian < 9
     include: pip_installations_success.yml
-    when: ansible_distribution == "Debian" and ansible_distribution_major_version != "9"
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version < "9"
 
-  - name: Install slapcache on Debian == 9
+  - name: Install slapcache on Debian >= 9
     include: pip_installations_succeeded.yml
-    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version >= "9"
