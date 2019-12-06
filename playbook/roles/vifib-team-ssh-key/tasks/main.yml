@@ -20,9 +20,6 @@
  - name: Add LNC SSH Key
    authorized_key: user=root key="{{ lookup('file', 'luke_chronos_key') }}"
 
- - name: Add LNW SSH Key
-   authorized_key: user=root key="{{ lookup('file', 'luke_web_key') }}"
-
  - name: Add RC SSH Key
    authorized_key: user=root key="{{ lookup('file', 'romain_key') }}"
 
@@ -37,6 +34,9 @@
 
  - name: Add KS SSH Key
    authorized_key: user=root key="{{ lookup('file', 'kazuhiko_key') }}"
+
+ - name: Remove LNW SSH Key
+   authorized_key: user=root key="{{ lookup('file', 'remove_key_8') }}" state=absent
 
  - name: Remove T SSH Key
    authorized_key: user=root key="{{ lookup('file', 'remove_key_7') }}" state=absent
