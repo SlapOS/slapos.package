@@ -15,7 +15,6 @@
   roles:
     - { role: re6stnet-install }
     - { role: slapos, package_state: present } 
-    - { role: package, package_name: ntp, package_state: present }
     - vifib-team-ssh-key
     - upgrader
     - vifib-server
