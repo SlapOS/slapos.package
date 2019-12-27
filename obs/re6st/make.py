@@ -200,10 +200,10 @@ def deb(task):
     d["Version"] = VERSION
     d["Architecture"] = b["Architecture"] = "any"
     d["Build-Depends"] = s["Build-Depends"] = \
-        "python (>= 2.6), debhelper (>= 8), iproute2 | iproute"
+        "python (>= 2.7), debhelper (>= 9.20120909), iproute2 | iproute"
     b["Depends"] = "${shlibs:Depends}, iproute2 | iproute"
     b["Conflicts"] = b["Provides"] = b["Replaces"] = "re6stnet"
-    patched_control = StringIO(str("%s\n%s" % (s, b))) # BBB: cast to str for Python 2.6
+    patched_control = StringIO("%s\n%s" % (s, b))
     open(task.outputs[1], "w").write(str(d))
     date = rfc822.parsedate_tz(Changelog(open(dch.output)).date)
     mtime = time.mktime(date[:9]) - date[9]
