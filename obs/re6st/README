@@ -23,7 +23,7 @@ pointing to it. For example, the vifib test directory::
 And whenever you want to push updates::
 
   A$ ./make osc
-  A$ (cd osc; osc commit)
+  A$ (cd osc && osc commit)
 
 Warning about SlapOS updates
 ----------------------------
