@@ -53,7 +53,7 @@ PACKAGE = "re6st-node"
 
 BIN = "re6st-conf re6st-registry re6stnet".split()
 BUILD_KEEP = "babeld", "buildout.cfg", "download-cache", "extends-cache"
-NOPART = "chrpath flex glib lunzip m4 patch perl popt site_perl xz-utils".split()
+NOPART = "chrpath bison flex lunzip m4 patch perl popt site_perl xz-utils".split()
 TARGET = "opt/re6st"
 
 ROOT = "build"
