@@ -17,22 +17,29 @@ echo "Preparing source tarball (recipe version: $RECIPE_VERSION)"
 echo " Build Directory: $BUILD_DIRECTORY "
 echo " Buildroot Directory: $BUILD_ROOT_DIRECTORY "
 
-mkdir -p $BUILD_DIRECTORY/{eggs,extends-cache,download-cache,download-cache/dist}
+mkdir -p $BUILD_DIRECTORY/{eggs,extends-cache,download-cache,download-cache/dist,tmp-networkcached/eggs}
 
 set -e
 
-sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../buildout.cfg.in > $BUILD_DIRECTORY/buildout.cfg 
+echo "Preparing networkcached zc.buildout"
+NETWORKCACHED_DIRECTORY=$BUILD_DIRECTORY/tmp-networkcached
+sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../networkcached.cfg.in > $NETWORKCACHED_DIRECTORY/buildout.cfg
+cd $NETWORKCACHED_DIRECTORY
+# Download  bootstrap file
+wget https://bootstrap.pypa.io/bootstrap-buildout.py --no-check-certificate -O bootstrap.py
+(python -S bootstrap.py --buildout-version $BUILDOUT_VERSION \
+                        --setuptools-to-dir eggs \
+                        -f http://www.nexedi.org/static/packages/source/slapos.buildout/ && \
+    ./bin/buildout -v)
 
+sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../buildout.cfg.in > $BUILD_DIRECTORY/buildout.cfg 
 
 # Build first time to get download-cache and extends-cache ready
 cd $BUILD_DIRECTORY
 
 echo "$BUILD_ROOT_DIRECTORY" > $CURRENT_DIRECTORY/$SLAPOS_DIRECTORY/slapos/original_directory
 
-# Download  bootstrap file
-wget https://bootstrap.pypa.io/bootstrap-buildout.py --no-check-certificate -O bootstrap.py
-
-(python -S bootstrap.py --buildout-version $BUILDOUT_VERSION \
+($NETWORKCACHED_DIRECTORY/bin/buildout bootstrap  --buildout-version $BUILDOUT_VERSION \
                         --setuptools-to-dir eggs \
                         -f http://www.nexedi.org/static/packages/source/slapos.buildout/ && \
     ./bin/buildout -v) || (./bin/buildout -v || (echo "Failed to run buildout, exiting." && exit 1))
@@ -53,7 +60,7 @@ rm -rfv ./{downloads,parts,eggs,develop-eggs,bin,rebootstrap}
 find . -type d -empty -prune -exec rmdir '{}' ';'
 
 mkdir -p $BUILD_DIRECTORY/eggs
-python -S bootstrap.py --buildout-version $BUILDOUT_VERSION \
+$NETWORKCACHED_DIRECTORY/bin/buildout bootstrap --buildout-version $BUILDOUT_VERSION \
                        --setuptools-to-dir eggs \
                        -f http://www.nexedi.org/static/packages/source/ \
                        -f http://www.nexedi.org/static/packages/source/slapos.buildout/ 
