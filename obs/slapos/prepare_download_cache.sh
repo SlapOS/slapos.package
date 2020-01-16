@@ -26,7 +26,7 @@ NETWORKCACHED_DIRECTORY=$BUILD_DIRECTORY/tmp-networkcached
 sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../networkcached.cfg.in > $NETWORKCACHED_DIRECTORY/buildout.cfg
 cd $NETWORKCACHED_DIRECTORY
 # Download  bootstrap file
-wget https://bootstrap.pypa.io/bootstrap-buildout.py --no-check-certificate -O bootstrap.py
+wget https://bootstrap.pypa.io/bootstrap-buildout.py -O bootstrap.py
 (python -S bootstrap.py --buildout-version $BUILDOUT_VERSION \
                         --setuptools-to-dir eggs \
                         -f http://www.nexedi.org/static/packages/source/slapos.buildout/ && \
