@@ -112,6 +112,14 @@
     apt_repository: repo='deb {{ base_open_build_url }}/xUbuntu_18.04/ ./' state=present
     when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "18.04"
 
+  - name: Install Ubuntu 19.10 repository key
+    apt_key: url={{ base_open_build_url }}/xUbuntu_19.10/Release.key state=present
+    when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "19.10"
+
+  - name: Install Ubuntu 19.10 repository
+    apt_repository: repo='deb {{ base_open_build_url }}/xUbuntu_19.10/ ./' state=present
+    when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "19.10"
+
   - name: Install CentOS 7 Repository
     get_url: url=http://download.opensuse.org/repositories/home:/VIFIBnexedi/CentOS_7/home:VIFIBnexedi.repo dest=/etc/yum.repos.d/slapos.repo mode=0440
     when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
