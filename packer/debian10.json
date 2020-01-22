@@ -18,8 +18,8 @@
       "accelerator": "kvm",
       "disk_size": "{{ user `disk_size`}}000",
 
-      "iso_url": "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-10.1.0-amd64-netinst.iso",
-      "iso_checksum": "b931ef8736c98704bcf519160b50fd83",
+      "iso_url": "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-10.2.0-amd64-netinst.iso",
+      "iso_checksum": "36de671429939e90f2a31ce3fbed0aaf",
       "iso_checksum_type": "md5",
 
       "http_directory": "http",
