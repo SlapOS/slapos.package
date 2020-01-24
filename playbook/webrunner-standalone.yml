@@ -3,7 +3,7 @@
   connection: local
 
   vars:
-    software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.60/software/slaprunner/software.cfg
+    software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.129/software/slaprunner/software.cfg
     startup_playbook_id: webrunner-standalone.yml
     playbook_name: webrunner
     request_instance_template: request-webrunner.j2

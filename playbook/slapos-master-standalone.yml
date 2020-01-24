@@ -3,7 +3,7 @@
   connection: local
 
   vars:
-    software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.64/software/slapos-master/software.cfg
+    software_release_url: https://lab.nexedi.com/nexedi/slapos/raw/1.0.134/software/slapos-master/software.cfg
     bt5_list: erp5_full_text_myisam_catalog slapos_configurator
     startup_playbook_id: slapos-master-standalone.yml
     playbook_name: slapos-master
