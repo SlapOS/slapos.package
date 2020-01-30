@@ -1,4 +1,4 @@
-frontend_software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.122/software/caddy-frontend/software.cfg
+frontend_software_release_url: https://lab.node.vifib.com/nexedi/slapos/raw/1.0.135/software/apache-frontend/software.cfg
 firewall_setup_template: setup-firewall.j2
 frontend_master_reference: master-frn-{{ playbook_name }}
 frontend_slave_reference: slave-srn-{{ playbook_name }}
