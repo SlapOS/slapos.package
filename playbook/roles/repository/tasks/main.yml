@@ -1,12 +1,14 @@
 
+  - include: fedora_init.yml
+
+  - include: debian_init.yml
+
   - name: Remove {{ base_open_build_url }} key (and add later) on every upgrade, as expiration date is quite short (2 months).
     apt_key: id=94A63987 state=absent
     when: ansible_distribution == "Debian"
 
   - file: path=/etc/apt/sources.list.d/re6stnet.list state=absent
     when: ansible_distribution == "Debian"
-
-  - include: fedora_init.yml 
 
   - name: Install Debian 10 repository key
     apt_key: url={{ base_open_build_url }}/Debian_10/Release.key state=present

@@ -1,0 +1,4 @@
+
+  - apt: name=gpg state=present
+    when: ansible_distribution == "Debian"
+
