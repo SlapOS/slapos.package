@@ -5,7 +5,7 @@
 # Edit for release
 VERSION=`grep ^slapos.core slapos_repository/stack/slapos.cfg | cut -f3 -d\ `
 # Edit for release
-RECIPE_VERSION=1.0.83.1
+RECIPE_VERSION=`cd slapos_repository && git describe --tags $(git rev-list --tags --max-count=1)`
 # Edit for release
 RELEASE=1
 
