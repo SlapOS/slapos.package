@@ -140,4 +140,10 @@
     rpm_key: state=present key=http://download.opensuse.org/repositories/home:/VIFIBnexedi/Fedora_26/repodata/repomd.xml.key
     when: ansible_distribution == "Fedora" and ansible_distribution_major_version == "26"
 
+  - name: Install OpenSuse Leap 15 RPM Key
+    rpm_key: state=present key=http://download.opensuse.org/repositories/home:/VIFIBnexedi/openSUSE_Leap_15.1/repodata/repomd.xml.key
+    when: ansible_distribution == "Suse" and ansible_distribution_major_version == "15"
 
+  - name: Install OpenSuse Leap 15 repository
+    get_url: url=http://download.opensuse.org/repositories/home:/VIFIBnexedi/openSUSE_Leap_15.1/home:VIFIBnexedi.repo dest=/etc/zypp/repos.d/home_VIFIBnexedi.repo mode=0440
+    when: ansible_os_family == "Suse" and ansible_distribution_major_version == "15"
