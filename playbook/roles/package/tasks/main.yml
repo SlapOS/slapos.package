@@ -5,3 +5,7 @@
   - name: Install {{ package_name }} using yum
     yum: name={{ package_name }} state={{ package_state }} update_cache=yes
     when: ansible_os_family == "RedHat"
+
+  - name: Install {{ package_name }} using zypper
+    zypper: name={{ package_name }} state={{ package_state }} update_cache=yes
+    when: ansible_os_family == "Suse"
