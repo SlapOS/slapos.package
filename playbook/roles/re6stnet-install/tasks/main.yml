@@ -1,4 +1,8 @@
 ---
+  - name: Unistall firewalld on OpenSuse Leap 15
+    zypper: name=firewalld state=absent
+    when: ansible_os_family == "Suse" and ansible_distribution_major_version == "15"
+
   - name: Check if configuration already exists
     stat: path=/etc/re6stnet/re6stnet.conf
     register: re6stnet_conf
