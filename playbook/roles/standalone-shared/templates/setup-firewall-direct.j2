@@ -18,6 +18,6 @@ if [ ! -z "$slap_ipv4" ] ; then
   fi
   iptables -t nat -vnL PREROUTING | grep dpt:5443 | grep -q "${remote_access_comment}" && iptables -t nat -D PREROUTING `iptables -t nat -vnL PREROUTING --line-numbers | grep dpt:5443 | grep "${remote_access_comment}" | cut -d ' ' -f 1`
   iptables -t nat -vnL OUTPUT | grep dpt:5443 | grep -q "${local_access_comment}" && iptables -t nat -D OUTPUT `iptables -t nat -vnL OUTPUT --line-numbers | grep dpt:5443 | grep "${local_access_comment}" | cut -d ' ' -f 1`
-  iptables -t nat -A OUTPUT -p tcp -d {{ ansible_default_ipv4.address }} --dport 5443 -j DNAT --to $slap_ipv4:2157 -m comment --comment "${local_access_comment}"
-  iptables -t nat -A PREROUTING -p tcp -d {{ ansible_default_ipv4.address }} --dport 5443 -j DNAT --to-destination $slap_ipv4:2157 -m comment --comment "${remote_access_comment}"
+  iptables -t nat -A OUTPUT -p tcp -d {{ ansible_default_ipv4.address }} --dport 5443 -j DNAT --to $slap_ipv4:2161 -m comment --comment "${local_access_comment}"
+  iptables -t nat -A PREROUTING -p tcp -d {{ ansible_default_ipv4.address }} --dport 5443 -j DNAT --to-destination $slap_ipv4:2161 -m comment --comment "${remote_access_comment}"
 fi
