@@ -1,5 +1,11 @@
 ---
 
+  - stat: path=/proc/sys/kernel/unprivileged_userns_clone
+    register: unprivileged_userns_clone
+  - name: Allow unprivileged CLONE_NEWUSER
+    sysctl: name="kernel.unprivileged_userns_clone" value=1 sysctl_set=yes reload=no
+    when: unprivileged_userns_clone.stat.exist
+
   - name: Set kernel.panic for force reboot after kernel panic
     sysctl: name="kernel.panic" value=120 sysctl_set=yes state=present reload=yes
 
