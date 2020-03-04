@@ -8,6 +8,8 @@
 
   - name: Set kernel.sem for increase semaphore limits
     sysctl: name="kernel.sem" value="1250 256000 100 1024" sysctl_set=yes state=present reload=yes
+  - name: Allow unprivileged CLONE_NEWUSER
+    sysctl: name="kernel.unprivileged_userns_clone" value=1 sysctl_set=yes state=present reload=yes
 
   - sysctl: name="net.ipv4.neigh.default.gc_thresh1" value=512 sysctl_set=yes state=present reload=yes
   - sysctl: name="net.ipv4.neigh.default.gc_thresh2" value=1024 sysctl_set=yes state=present reload=yes
