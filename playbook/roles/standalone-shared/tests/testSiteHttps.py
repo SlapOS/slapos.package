@@ -52,6 +52,13 @@ class TestSiteHttps(unittest.TestCase):
       result.content
     )
 
+  def test_https_erp5_auto_configuration_is_successfull(self):
+    """Check that auto configuration was successfull."""
+    result = requests.get(
+        self.https_url + '/erp5/ERP5Site_isReady', 
+        verify=False, allow_redirects=False)
+    self.assertTrue(bool(result.content))
+
   @unittest.skip(
       'Currently HTTPS will reply with "Hostname 172.16.0.9 provided via SNI '
       'and hostname anyhost provided via HTTP are different"')
