@@ -4,7 +4,7 @@
 
   vars:
     software_release_url: https://lab.nexedi.com/nexedi/slapos/raw/master/software/erp5/software.cfg
-    bt5_list: erp5_full_text_myisam_catalog erp5_configurator_standard erp5_scalability_test erp5_auto_configuration
+    bt5_list: erp5_full_text_myisam_catalog erp5_configurator_standard erp5_scalability_test erp5_test_auto_configuration
     startup_playbook_id: erp5-standalone.yml
     playbook_name: erp5
     request_instance_template: request-erp5.j2
