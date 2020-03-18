@@ -1,6 +1,7 @@
 import requests
 import unittest
 import os
+from time import sleep
 
 
 class TestSiteHttps(unittest.TestCase):
@@ -53,11 +54,25 @@ class TestSiteHttps(unittest.TestCase):
     )
 
   def test_https_erp5_auto_configuration_is_successfull(self):
-    """Check that auto configuration was successfull."""
-    result = requests.get(
-        self.https_url + '/erp5/ERP5Site_isReady', 
-        verify=False, allow_redirects=False)
-    self.assertTrue(bool(result.content))
+    """
+    Check that auto configuration was successfull.
+    As it takes certain time for site initialization and installation try
+    few times before giving up.
+    """
+    is_ready = False
+    for i in range(60):
+      result = requests.get(
+          self.https_url + '/erp5/ERP5Site_isReady',
+          verify=False,
+          allow_redirects=False)
+      is_ready = bool(result.content)
+      if is_ready:
+        # site is prepared
+        break
+      # give some time
+      sleep(120)
+
+    self.assertTrue(is_ready)
 
   @unittest.skip(
       'Currently HTTPS will reply with "Hostname 172.16.0.9 provided via SNI '
