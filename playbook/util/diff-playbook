@@ -1,3 +1,10 @@
+if [ ! $(which slapcache-download) ] ; then
+  echo "slapcache-download is missing, please install slapcache distribution"
+  exit 1
+fi
+
+set -e
+
 function cleanup {
   rm -fr "$DFILE"
 }
