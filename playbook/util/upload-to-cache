@@ -1,1 +1,3 @@
-rm -f /tmp/archive.tar.gz && tar -czvf /tmp/archive.tar.gz . && slapcache-upload --file=/tmp/archive.tar.gz
+conf=${1:-/etc/opt/slapcache.cfg}
+conf=$(realpath $conf)
+rm -f /tmp/archive.tar.gz && tar -czvf /tmp/archive.tar.gz . && slapcache-upload --file=/tmp/archive.tar.gz --slapos-configuration=$conf
