@@ -5,6 +5,9 @@ fi
 
 set -e
 
+conf=${1:-/etc/opt/slapcache.cfg}
+conf=$(realpath $conf)
+
 function cleanup {
   rm -fr "$DFILE"
 }
@@ -14,7 +17,7 @@ HERE=`pwd`
 DFILE=`mktemp -d`
 TFILE="archive.tar.gz"
 cd $DFILE
-slapcache-download --destination=$TFILE
+slapcache-download --slapos-configuration=$conf --destination=$TFILE
 tar -xzf $TFILE
 rm $TFILE
 
