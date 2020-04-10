@@ -1,1 +1,1 @@
-rm -f /tmp/archive.tar.gz && tar -czvf /tmp/archive.tar.gz . && ~/workspace/slapcache/venv2/bin/slapcache-upload --file=/tmp/archive.tar.gz
+rm -f /tmp/archive.tar.gz && tar -czvf /tmp/archive.tar.gz . && slapcache-upload --file=/tmp/archive.tar.gz
