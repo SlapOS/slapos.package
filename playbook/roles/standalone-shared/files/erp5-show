@@ -51,6 +51,11 @@ def get_connection_information(software_release):
     except:
       return "error"
 
+    # remove leading and trailing '"' character
+    # from serialized partition information inside SQlite DB
+    if value.startswith('"') and value.endswith('"'):
+      value = value[1:-1].replace('\\"', '"')
+
     if not value.startswith("{"):
       value = "\"" + value + "\""
     json_text = json.loads(value)
