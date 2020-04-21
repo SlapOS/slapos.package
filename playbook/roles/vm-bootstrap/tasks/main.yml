@@ -15,8 +15,11 @@
     stat: path=/etc/opt/netconfig.sh
     register: netconfig_file
 
-  - name: replace /etc/rc.local
-    copy: src=/etc/opt/netconfig.sh dest=/etc/rc.local mode=755
+  - name: create cronjob for netconfig.sh at boot time
+    cron:
+      name: "call netconfig.sh at reboot"
+      special_time: reboot
+      job: "/etc/opt/netconfig.sh"
     when: netconfig_file.stat.exists == True
 
   - name: call netconfig.sh
