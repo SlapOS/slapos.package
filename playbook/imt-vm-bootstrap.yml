@@ -24,8 +24,8 @@
           - dateext
 
   roles:
-    - { role: package, package_name: python-requests, package_state: present, when: ansible_distribution == "Debian" and ansible_distribution_major_version|int >= 10}
     - { role: vm-bootstrap, startup_playbook_id: imt-vm-bootstrap.yml }
+    - { role: package, package_name: python-requests, package_state: present, when: ansible_distribution == "Debian" and ansible_distribution_major_version|int >= 10}
     - ntp
     - { role: vm-disks, vd_disk: b, data_n: 1, when: vd_list.stdout.find("vdb") != -1 }
     - { role: vm-disks, vd_disk: c, data_n: 2, when: vd_list.stdout.find("vdc") != -1 }
