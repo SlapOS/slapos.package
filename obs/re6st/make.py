@@ -96,7 +96,7 @@ def bootstrap(task):
                 #      we'll have the wanted version in cache.
                 "--setuptools-version", "33.1.0"), input=bootstrap)
             check_call(("bin/buildout", "buildout:extensions=",
-                "buildout:newest=true", "buildout:parts=python"))
+                "buildout:newest=true", "buildout:parts=python-bootstrap"))
             check_call(("bin/python.tmp", "bin/buildout", "bootstrap"))
             os.rename("bin/python.tmp", "bin/python")
 
