@@ -6,11 +6,11 @@ pkgrel=1
 arch=('x86_64' 'i686')
 url="http://www.slapos.org"
 license=('GPL')
-depends=('gcc' 'make' 'patch' 'wget' 'python2' 'python2-distribute' 'bridge-utils')
-makedepends=('gcc' 'make' 'patch' 'wget' 'python2' 'python2-distribute' 'chrpath' 'inetutils')
+depends=(python2 python2-distribute iptables iproute2)
+makedepends=(patch wget chrpath inetutils)
 install='slapos-node.install'
 source=(${pkgname}_${pkgver}.tar.gz)
-md5sums=(%SOURCEMD5)
+md5sums=(%SOURCEMD5%)
 
 build() {
 	cd "${srcdir}/${pkgname}_${pkgver}"
