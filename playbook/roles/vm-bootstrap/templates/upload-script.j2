@@ -31,53 +31,26 @@ class uploader():
         with open(filepath, 'r') as fd:
           content = ','.join(fd.readlines())
         r = self.upload_file(to_path, '[%s]' % content, True)
-        print 'Content uploaded to %s' % to_path, r
+        print('Content uploaded to %s' % to_path, r)
       if filename.endswith('FAILED'):
         has_failure = True
     if not has_failure:
       to_path = 'ansible/%s_FAILED' % self.host
       r = self.upload_file(to_path, '[]', True)
-      print 'Content uploaded to %s' % to_path, r
+      print('Content uploaded to %s' % to_path, r)
 
-  def readFileFrom(self, f, lastPosition, limit=20000):
+  def readFileFrom(self, f, last_position):
     """
     Returns the last lines of file `f`, from position lastPosition.
     and the last position
-    limit = max number of characters to read
     """
-    BUFSIZ = 1024
-    f.seek(0, 2)
-    btes = f.tell()
-    block = -1
-    data = ""
-    length = btes
-    truncated = False  # True if a part of log data has been truncated
-    #if (lastPosition <= 0 and length > limit) or (length - lastPosition > limit):
-    #  lastPosition = length - limit
-    #  truncated = True
-    if lastPosition > btes:
-      lastPosition = 0
-    size = btes - lastPosition
-    while btes > lastPosition:
-      if abs(block * BUFSIZ) <= size:
-        # Seek back one whole BUFSIZ
-        f.seek(block * BUFSIZ, 2)
-        data = f.read(BUFSIZ) + data
-      else:
-        margin = abs(block * BUFSIZ) - size
-        if length < BUFSIZ:
-          f.seek(0, 0)
-        else:
-          seek = block * BUFSIZ + margin
-          f.seek(seek, 2)
-        data = f.read(BUFSIZ - margin) + data
-      btes -= BUFSIZ
-      block -= 1
+    f.seek(last_position)
+    data = f.read()
+    new_position = f.tell()
     f.close()
     return {
       'data': data,
-      'position': length,
-      'truncated': truncated
+      'position': new_position
     }
 
 if __name__ == "__main__":
@@ -85,8 +58,8 @@ if __name__ == "__main__":
   ansible_log = "/var/log/vm-bootstrap.log"
   url = "http://10.0.2.100/"
   if len(sys.argv) < 3:
-    print "Use: %s upload_url file_to_upload" % sys.argv[0]
-    print "Default: %s %s %s" % (sys.argv[0], url, ansible_log)
+    print("Use: %s upload_url file_to_upload" % sys.argv[0])
+    print("Default: %s %s %s" % (sys.argv[0], url, ansible_log))
   if len(sys.argv) >= 2:
     url = sys.argv[1]
   if len(sys.argv) >= 3:
@@ -106,11 +79,11 @@ if __name__ == "__main__":
     f.close()
     if content['data']:
       r = uploader.upload_file(log_destination, content['data'])
-      print 'Content uploaded to %s' % log_destination, r
+      print('Content uploaded to %s' % log_destination, r)
       with open(state_file, 'w') as f:
         f.write(str(content['position']))
   else:
-    print 'No Ansible log file found in %s.' % ansible_log
+    print('No Ansible log file found in %s.' % ansible_log)
   # Post Ansible execution result
   uploader.upload_result()
 

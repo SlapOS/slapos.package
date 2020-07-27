@@ -2,8 +2,19 @@
   - name: Add upload script
     template: src=upload-script.j2 dest=/usr/local/bin/ansible-upload-vm-logs mode=755
 
-  - name: Add a periodical upload of logs and result
+  - name: Add a periodical upload of logs and result (python 3)
+    cron: name="Upload ansible files to http server"
+          minute="*/5"
+          job="python3 /usr/local/bin/ansible-upload-vm-logs http://10.0.2.100/ /var/log/vm-bootstrap.log > /var/log/ansible-upload.log 2>&1"
+          cron_file=ansible-upload-log user="root"
+    when: (ansible_distribution == "Debian" and ansible_distribution_major_version|int >= 10) or
+          (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 20)
+
+  - name: Add a periodical upload of logs and result (python 2)
     cron: name="Upload ansible files to http server"
           minute="*/5"
           job="/usr/local/bin/ansible-upload-vm-logs http://10.0.2.100/ /var/log/vm-bootstrap.log > /var/log/ansible-upload.log 2>&1"
           cron_file=ansible-upload-log user="root"
+    when: (ansible_distribution == "Debian" and ansible_distribution_major_version|int < 10) or
+          (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int < 20) or
+          (not ansible_distribution == "Debian" and not ansible_distribution == "Ubuntu")
