@@ -20,4 +20,8 @@ build() {
 package() {
 	cd "${srcdir}/${pkgname}-${pkgver}"
 	make DESTDIR="$pkgdir" PREFIX=/usr install
+	cd "$pkgdir/usr"
+	mv ../lib .
+	mv sbin/* bin
+	rmdir sbin
 }
