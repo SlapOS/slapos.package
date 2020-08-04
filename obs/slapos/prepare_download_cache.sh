@@ -32,7 +32,8 @@ wget https://bootstrap.pypa.io/bootstrap-buildout.py -O bootstrap.py
                         -f http://www.nexedi.org/static/packages/source/slapos.buildout/ && \
     ./bin/buildout -v)
 
-sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../buildout.cfg.in > $BUILD_DIRECTORY/buildout.cfg 
+# build locally everything with gcc
+sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../buildout_with_gcc.cfg.in > $BUILD_DIRECTORY/buildout.cfg
 
 # Build first time to get download-cache and extends-cache ready
 cd $BUILD_DIRECTORY
@@ -71,3 +72,6 @@ cp -R $BUILD_ROOT_DIRECTORY/../slapos.rebootstrap* eggs
 # package installation) and static libraries
 find . -regextype posix-extended -type f \
 	-iregex '.*/*\.(py[co]|[l]?a|exe|bat)$$' -exec rm -fv '{}' ';'
+
+# in OBS build, don't force gcc build
+sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../buildout_without_gcc.cfg.in > $BUILD_DIRECTORY/buildout.cfg
