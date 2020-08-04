@@ -46,21 +46,9 @@ URL: http://community.slapos.org/
 Vendor: Vifib
 Packager: Rafael Monnerat <rafael@nexedi.com>
 
-%if 0%{?suse_version}
-%if 0%{?suse_version} == 1210
-BuildRequires: gcc-c++, make, patch, wget, python, python-devel, chrpath, openssl-devel, python-xml
+BuildRequires: gcc-c++, make, patch, wget, python2, python-devel, chrpath, openssl-devel
 
-Requires: bridge-utils, python, gcc-c++, make, patch, wget, python-xml, lm_sensors
-%else
-BuildRequires: gcc-c++, make, patch, wget, python, python-devel, chrpath, openssl-devel, python-xml
-
-Requires: bridge-utils, python, gcc-c++, make, patch, wget, python-xml, lm_sensors
-%endif
-%else
-BuildRequires: gcc-c++, make, patch, wget, python, python-devel, chrpath, openssl-devel
-
-Requires: bridge-utils, python, gcc-c++, make, patch, wget, lm_sensors
-%endif
+Requires: bridge-utils, python2, gcc-c++, make, patch, wget, lm_sensors
 
 AutoReqProv: no
 
@@ -89,7 +77,7 @@ zcat $RPM_SOURCE_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_n
 
 %build
 cd $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}
-make
+make PYTHON=python2
 
 %install
 cd $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}/
