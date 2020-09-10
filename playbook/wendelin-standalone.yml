@@ -3,7 +3,7 @@
   connection: local
 
   vars:
-    software_release_url: https://lab.nexedi.com/nexedi/slapos/raw/1.0.160/software/wendelin/software.cfg
+    software_release_url: https://lab.nexedi.com/nexedi/slapos/raw/1.0.161/software/wendelin/software.cfg
     bt5_list: erp5_full_text_myisam_catalog erp5_configurator_standard erp5_wendelin_configurator
     startup_playbook_id: wendelin-standalone.yml
     request_instance_template: request-erp5.j2
