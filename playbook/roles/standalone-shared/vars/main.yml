@@ -1,4 +1,14 @@
-frontend_software_release_url: https://lab.nexedi.com/nexedi/slapos/raw/1.0.161/software/apache-frontend/software.cfg
+# Important note regarding frontend_software_release_url
+# Please do not change the defined software release here, as only some
+# versions of the software are known to be working.
+# If the change is needed, then one needs to manually:
+#  * assure that apache-frontend can be correctly installed (w/o shared)
+#  * assure that apache-frontend can be instantiated with parameters similar
+#    to ones used in the playbooks
+#  * release new version
+#  * upload it to binary cache
+#  * then change here
+frontend_software_release_url: https://lab.nexedi.com/nexedi/slapos/raw/1.0.135.1/software/apache-frontend/software.cfg
 firewall_setup_template: setup-firewall.j2
 frontend_master_reference: master-frn-{{ playbook_name }}
 frontend_slave_reference: slave-srn-{{ playbook_name }}
