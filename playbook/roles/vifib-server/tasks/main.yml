@@ -62,3 +62,17 @@
       regexp: '^signature-certificate-list =$[^.*$]+^\s+QUUGLQ==\s^.*END\sCERTIFICATE-----$'
       replace: 'signature-certificate-list ='
     when: slapos_cfg.stat.exists == True
+
+  - name: Prevent mei_me module from being loaded
+    lineinfile:
+      dest: /etc/modprobe.d/blacklist.conf
+      line: "blacklist mei_me"
+      state: present
+      create: yes
+
+  - name: Prevent mei module from being loaded
+    lineinfile:
+      dest: /etc/modprobe.d/blacklist.conf
+      line: "blacklist mei"
+      state: present
+      create: yes
