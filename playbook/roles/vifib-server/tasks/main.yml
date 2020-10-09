@@ -42,7 +42,7 @@
   - file: state=directory path="/etc/systemd/system/cron.service.d/"
     when: systemd_version.stdout | int > 228
 
-  - name: Increase the maximum of subprocesses for cron
+  - name: Increase limits for cron
     copy: src="etc_systemd_system_cron_service_d_override.conf" dest="/etc/systemd/system/cron.service.d/override.conf" mode=0644 owner=root group=root
     when: systemd_version.stdout | int > 228
 
