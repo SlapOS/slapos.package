@@ -35,6 +35,42 @@
     when: ansible_distribution == "Debian" and ansible_distribution_major_version == "7"
     notify: [ 'Mark to reboot' ]
 
+
+  # ----------------------------------------
+  # install nxd-fuse on old Debian and Ubuntu
+  # https://navytux.spb.ru/pkg/
+
+  # gpg key with which nxd-fuse is signed
+  - name: mkdir -p /etc/keyrings
+    file: path=/etc/keyrings state=directory
+  - name: Install kirr.gpg keyring
+    copy: src=kirr.gpg dest=/etc/keyrings/kirr.gpg mode=644
+
+  # add deb repository corresponding to distribution
+  - name: Apt += http://navytux.spb.ru/pkg/debian/buster
+    apt_repository: repo='deb [signed-by=/etc/keyrings/kirr.gpg] http://navytux.spb.ru/pkg/debian/buster ./'
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "10"
+    register: install_nxd_fuse
+
+  - name: Apt += http://navytux.spb.ru/pkg/debian/stretch
+    apt_repository: repo='deb [signed-by=/etc/keyrings/kirr.gpg] http://navytux.spb.ru/pkg/debian/stretch ./'
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
+    register: install_nxd_fuse
+
+  - name: Apt += http://navytux.spb.ru/pkg/ubuntu/xenial
+    apt_repository: repo='deb [signed-by=/etc/keyrings/kirr.gpg] http://navytux.spb.ru/pkg/ubuntu/xenial ./'
+    when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "16.04"
+    register: install_nxd_fuse
+
+  # install nxd-fuse if ^^^ distribution was detected to be old and configured
+  # to use correposnding repository
+  - name: Install nxd-fuse
+    apt: name=nxd-fuse-dkms state=latest update_cache=yes
+    when: install_nxd_fuse is defined
+    notify: [ 'Mark to reboot' ]
+  # ----------------------------------------
+
+
   - name: create trigger reboot script
     copy: src=slapos-trigger-reboot.sh dest=/usr/local/bin/slapos-trigger-reboot.sh mode=700
 
