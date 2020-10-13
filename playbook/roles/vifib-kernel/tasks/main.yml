@@ -5,7 +5,7 @@
     when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
 
   - name: Install kernel 4.9 on debian 9.0
-    apt: name=linux-image-4.9.0-11-amd64  state=latest default_release=oldstable-proposed-updates update_cache=no
+    apt: name=linux-image-4.9.0-13-amd64  state=latest default_release=oldstable-proposed-updates update_cache=no
     when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
     notify: [ 'Mark to reboot' ]
 
