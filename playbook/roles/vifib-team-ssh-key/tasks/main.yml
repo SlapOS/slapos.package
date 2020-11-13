@@ -35,6 +35,9 @@
  - name: Add KS SSH Key
    authorized_key: user=root key="{{ lookup('file', 'kazuhiko_key') }}"
 
+ - name: Add JH SSH Key
+   authorized_key: user=root key="{{ lookup('file', 'johan_key') }}"
+
  - name: Remove old Jerome Perrin SSH Key
    authorized_key: user=root key="{{ lookup('file', 'remove_key_9') }}" state=absent
 
