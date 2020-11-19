@@ -7,8 +7,18 @@
   #   kernel, nxd-fuse will be skipped to compile, fail to load and FUSE won't
   #   be working at all:
   #   https://lab.nexedi.com/nexedi/slapos.package/merge_requests/132#note_120438
+  #
+  #   NOTE we have to explicitly install/upgrade kernel headers here as well
+  #   because once they are installed via nxd-fuse-dkms -> dkms -> linux-headers-amd64,
+  #   they won't be upgraded, and if linux-image-amd64 gets upgraded, but headers are
+  #   not, nxd-fuse-dkms will be skipped to recompile for upgraded kernel.
   - name: Debian 9/10 - Install latest stable updates for distribution kernel
-    apt: name=linux-image-amd64  state=latest update_cache=yes
+    apt:
+      name:
+      - linux-image-amd64
+      - linux-headers-amd64
+      state: latest
+      update_cache: yes
     when: ansible_distribution == "Debian" and
           (ansible_distribution_major_version == "9" or ansible_distribution_major_version == "10")
     notify: [ 'Mark to reboot' ]
