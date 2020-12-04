@@ -1,0 +1,10 @@
+# This playbook will install slapos-node package and then slapproxy (with the
+# "slapos configure local" command line). The combination of a slapnode and a
+# slapproxy is a slapos standalone.
+
+- name: SlapOS Standalone
+  hosts: 127.0.0.1
+  connection: local
+
+  roles:
+    - slapos-proxy
