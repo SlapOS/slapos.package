@@ -12,7 +12,7 @@
 
   - name: Configure SlapOS with slapos node register
     shell: "slapos node register --token {{ slapostoken }} --master-url {{ slapos_master_url }} --master-url-web {{ slapos_web_master_url }} --interface-name {{ interface_name }} {{ computer_name }}"
-    when: slapos_cfg.stat.exists == False and "{{ slapostoken }}" != "notoken" and "{{ computer_name }}" != "noname"
+    when: slapos_cfg.stat.exists == False and slapostoken != "notoken" and computer_name != "noname"
 
   - name: Check if configuration exists already
     stat: path=/etc/opt/slapos/slapos.cfg
