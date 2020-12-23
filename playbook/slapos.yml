@@ -13,19 +13,12 @@
       private: no
       default: "https://slapos.vifib.com/"
 
-    - name: "register_computer"
-      prompt: "Do you want to register your computer to SlapOS Master? (yes/no)"
+    - name: "computer_name"
+      prompt: Name your computer (ignore if you already have a configured re6st and slapos or if you don't want to register your computer to SlapOS Master)
       private: no
-      default: "no"
+      default: "noname"
 
   pre_tasks:
-    - pause:
-        prompt: "Name your computer (ignore if you already have a configured re6st and slapos) [noname]"
-      when: register_computer == "yes"
-      register: prompt
-    - set_fact:
-        computer_name: "{{ prompt.user_input | default('noname', true) }}"
-
     - pause:
         prompt: "Input your slapos token (ignore if you already have a configured slapos) [notoken]"
       when: computer_name != "noname"
