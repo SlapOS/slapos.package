@@ -1,0 +1,27 @@
+  - name: Install firefox
+    apt: name=firefox
+    when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "focal"
+  - name: Install chromium
+    apt: name=chromium-browser
+    when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "focal"
+  - name: Add the user 'nxdlap'
+    user:
+      name: nxdlap
+      comment: nxdlap (Nexedi Laptop User)
+      groups: adm,cdrom,sudo,dip,plugdev,lpadmin,lxd,sambashare
+      password_lock: yes
+  - name: Create archive script
+    copy:
+      src: archive_nxdlap.sh
+      dest: /usr/local/bin/archive_nxdlap.sh
+      mode: 0700
+  - name: Remove (archive in reality) nxdlap contents on each reboot
+    cron:
+      name: "Remove (archive in reality) nxdlap contents on each reboot"
+      special_time: reboot
+      job: "/usr/local/bin/archive_nxdlap.sh"
+      cron_file: ansible-nxdlap-archive
+      user: root
+  - name: Explain
+    debug:
+      msg: nxdlap user password is locked, please use 'passwd nxdlap' to set the password and activate the user
