@@ -9,6 +9,9 @@
   hosts: 127.0.0.1
   connection: local
 
+  vars_files:
+    - settings/gnet.yml
+
   vars_prompt:
     - name: "slapos_master_url"
       prompt: "What is the url to the SlapOS Master API?  (ignore if you already have a configured re6st and slapos):"
@@ -24,6 +27,19 @@
       prompt: "Name your computer (ignore if you already have a configured re6st and slapos or if you don't want to register your computer to SlapOS Master):"
       private: no
       default: "noname"
+
+    - name: "re6sttoken"
+      prompt: "\n\n
+Please insert your token from Grandenet to configure your computer.\n
+If you don't have a token, please access http://www.grandenet.cn/en \n
+and request one. \n\n
+Move informations at http://www.grandenet.cn/en/documentation/user
+\n\n
+
+Your token
+"
+      private: no
+      default: "notoken"
 
   pre_tasks:
     - pause:
@@ -41,5 +57,7 @@
         interface_name: "{{ prompt.user_input | default('lo', true) }}"
 
   roles:
+    - { role: re6stnet-install }
+    - { role: re6stnet-ensure-running }
     - { role: slapos, package_state: present }
     - nexedi-laptop
