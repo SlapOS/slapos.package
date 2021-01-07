@@ -12,7 +12,8 @@
       name: nxdlap
       comment: nxdlap (Nexedi Laptop User)
       groups: adm,cdrom,sudo,dip,plugdev,lpadmin,lxd,sambashare
-      password_lock: yes
+      password: '*'
+      update_password: on_create
   - name: Create archive script
     copy:
       src: archive_nxdlap.sh
