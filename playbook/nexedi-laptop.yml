@@ -1,7 +1,4 @@
 # Prepares computer as standard Nexedi laptop -- https://deploy.erp5.net/nexedi-laptop
-#  Outcome
-#    * registered as slapos node
-#    * uses free re6stnet
 #  Optional
 #    * automatic monitoring
 #    * data on encrypted key
