@@ -1,0 +1,47 @@
+  - name: Remove not needed packages
+    apt:
+      pkg:
+        - aisleriot
+        - firefox
+        - gedit
+        - gnome-mahjongg
+        - gnome-mines
+        - gnome-todo
+        - gnome-sudoku
+        - libreoffice-core
+        - rhythmbox
+        - thunderbird
+        - totem
+        - transmission-gtk
+      state: absent
+      autoremove: yes
+    when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "focal"
+  - name: Install standard nexedi laptop packages
+    apt:
+      pkg:
+        - chromium-browser
+        - git
+        - ubuntu-desktop
+  - name: Add the user 'nxdlap'
+    user:
+      name: nxdlap
+      comment: nxdlap (Nexedi Laptop User)
+      groups: adm,cdrom,sudo,dip,plugdev,lpadmin,lxd,sambashare
+      password: '*'
+      update_password: on_create
+  - name: Create archive script
+    copy:
+      src: archive_nxdlap.sh
+      dest: /usr/local/bin/archive_nxdlap.sh
+      mode: 0700
+  - name: Remove (archive in reality) nxdlap contents on each reboot
+    cron:
+      name: "Remove (archive in reality) nxdlap contents on each reboot"
+      special_time: reboot
+      job: "/usr/local/bin/archive_nxdlap.sh"
+      cron_file: ansible-nxdlap-archive
+      user: root
+  - name: Explain
+    debug:
+      # XXX: Check password status of the account and then tell correctly
+      msg: On first run nxdlap user password is locked, please use 'passwd nxdlap' to set the password and activate the user, otherwise feel free to change the password if needed
