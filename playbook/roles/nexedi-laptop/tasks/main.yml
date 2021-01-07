@@ -28,4 +28,5 @@
       user: root
   - name: Explain
     debug:
-      msg: nxdlap user password is locked, please use 'passwd nxdlap' to set the password and activate the user
+      # XXX: Check password status of the account and then tell correctly
+      msg: On first run nxdlap user password is locked, please use 'passwd nxdlap' to set the password and activate the user, otherwise feel free to change the password if needed
