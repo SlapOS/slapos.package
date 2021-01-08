@@ -7,6 +7,9 @@
   - name: Install desktop
     apt: name=ubuntu-desktop
     when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "focal"
+  - name: Install git
+    apt: name=git
+    when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "focal"
   - name: Add the user 'nxdlap'
     user:
       name: nxdlap
