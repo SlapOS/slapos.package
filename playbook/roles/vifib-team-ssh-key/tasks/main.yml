@@ -38,6 +38,9 @@
  - name: Add JH SSH Key
    authorized_key: user=root key="{{ lookup('file', 'johan_key') }}"
 
+ - name: Add Nicolas SSH Key
+   authorized_key: user=root key="{{ lookup('file', 'nicolas_key') }}"
+
  - name: Remove old Jerome Perrin SSH Key
    authorized_key: user=root key="{{ lookup('file', 'remove_key_9') }}" state=absent
 
@@ -46,9 +49,6 @@
 
  - name: Remove T SSH Key
    authorized_key: user=root key="{{ lookup('file', 'remove_key_7') }}" state=absent
-
- - name: Remove N SSH Key
-   authorized_key: user=root key="{{ lookup('file', 'remove_key_6') }}" state=absent
 
  - name: Remove G SSH Key
    authorized_key: user=root key="{{ lookup('file', 'remove_key_5') }}" state=absent
