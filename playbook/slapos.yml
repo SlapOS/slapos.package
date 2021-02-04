@@ -24,14 +24,21 @@
       when: computer_name != "noname"
       register: prompt
     - set_fact:
-        slapostoken: "{{ prompt.user_input | default('notoken', true) }}" 
+        slapostoken: "{{ prompt.user_input | default('notoken', true) }}"
 
     - pause:
-        prompt: "Which network interface are you using? (ignore if you already have a configured re6st) [lo]"
+        prompt: "Which interface will provide IPv6? (ignore if you already have a configured re6st) [lo]"
       when: slapostoken != "notoken"
       register: prompt
     - set_fact:
-        interface_name: "{{ prompt.user_input | default('lo', true) }}" 
+        interface_name: "{{ prompt.user_input | default('lo', true) }}"
+
+    - pause:
+        prompt: "How many SlapOS computer partitions would you like? [10]"
+      when: slapostoken != "notoken"
+      register: prompt
+    - set_fact:
+        partition_number: "{{ prompt.user_input | default('10', true) }}"
 
   roles:
     - { role: slapos, package_state: present }
