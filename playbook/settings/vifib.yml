@@ -4,5 +4,6 @@ re6st_fingerprint: sha256:73e364f2b7ab19335932dfc6514eab518b06a6b5d9b48dea5bcd61
 slapos_master_url: https://slap.vifib.com/
 slapos_web_master_url: https://slapos.vifib.com/
 interface_name: lo
+partition_number: 10
 re6st_annon: True
 re6sttoken: noname
