@@ -45,6 +45,19 @@ echo "$BUILD_ROOT_DIRECTORY" > $CURRENT_DIRECTORY/$SLAPOS_DIRECTORY/slapos/origi
                         -f http://www.nexedi.org/static/packages/source/slapos.buildout/ && \
     ./bin/buildout -v) || (./bin/buildout -v || (echo "Failed to run buildout, exiting." && exit 1))
 
+echo "Fetch all eggs in source instead of wheels so that it can build on OBS"
+cd "$CURRENT_DIRECTORY/$SLAPOS_DIRECTORY/slapos/slapos_repository/component/slapos/download-cache/dist"
+for f in *x86_64.whl
+do
+  package=${f%%-*}
+  version=${f#*-}
+  version=${version%%-*}
+  echo "Fetching $package at version $version"
+  pip download --no-binary :all: $package==$version
+  rm $f
+done
+cd -
+
 # remove all files from build keeping only caches
 echo "Deleting unecessary files to reduce source tarball size"
 
