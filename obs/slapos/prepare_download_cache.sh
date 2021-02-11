@@ -52,8 +52,9 @@ do
   package=${f%%-*}
   version=${f#*-}
   version=${version%%-*}
-  echo "Fetching $package at version $version"
-  pip download --no-binary :all: $package==$version
+  url=$(python3 $CURRENT_DIRECTORY/pypi_download.py $package $version)
+  echo "Fetching $package at version $version (at $url)"
+  wget $url
   rm $f
 done
 cd -
