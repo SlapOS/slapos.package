@@ -178,10 +178,10 @@ def tarball(task):
         t.add("re6stnet/daemon")
         for x in upstream.outputs:
             t.add(x)
-        def exclude(path):
-            return path.endswith('/.git')
+        def tar_filter(info):
+            return None if info.name.endswith('/.git') else info
         for x in BUILD_KEEP:
-            t.add(BUILD + "/" + x, exclude=exclude)
+            t.add(BUILD + "/" + x, filter=tar_filter)
 
 @task(sdist, "debian/changelog")
 def dch(task):
@@ -210,7 +210,9 @@ def deb(task):
     # Unfortunately, OBS does not support symlinks.
     with make_tar_gz(task.outputs[0], mtime, dereference=True) as t:
         added = glob("debian/*")
-        t.add("debian")
+        t.add("debian", filter=lambda info:
+            # https://github.com/openSUSE/obs-build/pull/646
+            None if info.name == "debian/source" else info)
         x = "debian/control"
         tarfile_addfileobj(t, x, patched_control, control)
         added.append(x)
