@@ -1,10 +1,10 @@
 Format: http://anonscm.debian.org/viewvc/dep/web/deps/dep5.mdwn?revision=174
 Upstream-Name: slapos.core
-Upstream-Contact: Vifib SARL <info@slapos.org>
-Source: http://git.erp5.org/repos/slapos.core.git
+Upstream-Contact: Nexedi SA <contact@nexedi.com>
+Source: https://lab.nexedi.com/nexedi/slapos.core.git
 
 Files: *
-Copyright: 2011, Arnaud Fontaine <arnaud.fontaine@nexedi.com>
+Copyright: 2021, Thomas Gambier <thomas.gambier@nexedi.com>
 License: GPL-3
  On Debian systems the complete text of  the GNU General Public License v3 can
  be found in the file `/usr/share/common-licenses/GPL-3'.

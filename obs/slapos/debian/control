@@ -1,20 +1,17 @@
 Source: slapos-node
-Maintainer: Arnaud Fontaine <arnaud.fontaine@nexedi.com>
+Maintainer: Thomas Gambier <thomas.gambier@nexedi.com>
 Section: net
 Priority: optional
 Build-Depends: debhelper,
                chrpath,
-#              po-debconf,
                python
-Homepage: https://www.slapos.org
+Homepage: https://slapos.nexedi.com
 
 Package: slapos-node
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          ucf,
-# slapformat
-         bridge-utils,
          uml-utilities,
 # slapgrid-sr needed by most recipes
 	 libc6-dev | libc-dev,
