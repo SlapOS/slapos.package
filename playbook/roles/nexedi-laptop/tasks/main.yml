@@ -1,15 +1,27 @@
-  - name: Install firefox
-    apt: name=firefox
+  - name: Remove not needed packages
+    apt:
+      pkg:
+        - aisleriot
+        - firefox
+        - gedit
+        - gnome-mahjongg
+        - gnome-mines
+        - gnome-todo
+        - gnome-sudoku
+        - libreoffice-core
+        - rhythmbox
+        - thunderbird
+        - totem
+        - transmission-gtk
+      state: absent
+      autoremove: yes
     when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "focal"
-  - name: Install chromium
-    apt: name=chromium-browser
-    when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "focal"
-  - name: Install desktop
-    apt: name=ubuntu-desktop
-    when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "focal"
-  - name: Install git
-    apt: name=git
-    when: ansible_distribution == "Ubuntu" and ansible_distribution_release == "focal"
+  - name: Install standard nexedi laptop packages
+    apt:
+      pkg:
+        - chromium-browser
+        - git
+        - ubuntu-desktop
   - name: Add the user 'nxdlap'
     user:
       name: nxdlap
