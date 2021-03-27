@@ -45,10 +45,10 @@ $(DESTDIR)/$(TARGET): $(BUILD)/.installed.cfg
 	cd $@ && $(CURDIR)/cleanup && chmod -R u+w .
 
 # Fix paths in files, first ELF, then non-binary
-	set -e $(CURDIR)/$(BUILD) /$(TARGET); set $$* "s:\\Q$$1\\E:$$2:g"; \
-	x=`find $@ -type f \( -executable -o -name '*.so*' \) | \
-	xargs -r file |sed -n 's/:.*ELF.*\(executable\|shared\).*//p' | \
-	xargs -r chrpath -k |perl -ne "$$3"'; \
+	@set -ex $(CURDIR)/$(BUILD) /$(TARGET); set $$* "s:\\Q$$1\\E:$$2:g"; \
+	x=`find $@ -type f \( -executable -o -name '*.so*' \)`; x=`file $$x`; \
+	x=`echo "$$x" |sed -n 's/:.*ELF.*\(executable\|shared\).*//p'`; \
+	x=`chrpath -k $$x |perl -ne "$$3"'; \
 		s/(.*): R(UN)?PATH=(.*)/chrpath -r $$3 $$1/ and print'`; \
 	eval "$$x"; \
 	if x=`grep -rIlF $$1 $@`; then \
