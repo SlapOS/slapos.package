@@ -8,7 +8,7 @@
 #  * release new version
 #  * upload it to binary cache
 #  * then change here
-frontend_software_release_url: https://lab.nexedi.com/nexedi/slapos/raw/1.0.135.1/software/apache-frontend/software.cfg
+frontend_software_release_url: https://lab.nexedi.com/nexedi/slapos/raw/wip/1.0.135.2/software/apache-frontend/software.cfg
 firewall_setup_template: setup-firewall.j2
 frontend_master_reference: master-frn-{{ playbook_name }}
 frontend_slave_reference: slave-srn-{{ playbook_name }}
