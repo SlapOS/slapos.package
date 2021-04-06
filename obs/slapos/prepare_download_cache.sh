@@ -27,9 +27,9 @@ sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DI
 cd $NETWORKCACHED_DIRECTORY
 # Download  bootstrap file
 wget https://bootstrap.pypa.io/bootstrap-buildout.py -O bootstrap.py
-(python -S bootstrap.py --buildout-version $BUILDOUT_VERSION \
-                        --setuptools-to-dir eggs \
-                        -f http://www.nexedi.org/static/packages/source/slapos.buildout/ && \
+(python2.7 -S bootstrap.py --buildout-version $BUILDOUT_VERSION \
+                           --setuptools-to-dir eggs \
+                           -f http://www.nexedi.org/static/packages/source/slapos.buildout/ && \
     ./bin/buildout -v)
 
 # build locally everything with gcc
