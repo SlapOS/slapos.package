@@ -94,7 +94,7 @@ def bootstrap(task):
             check_output((sys.executable, "-S", "-",
                 # XXX: By starting with an older version,
                 #      we'll have the wanted version in cache.
-                "--setuptools-version", "33.1.0"), input=bootstrap)
+                "--setuptools-version", "40.8.0"), input=bootstrap)
             check_call(("bin/buildout", "buildout:extensions=",
                 "buildout:newest=true", "buildout:parts=python-bootstrap"))
             check_call(("bin/python.tmp", "bin/buildout", "bootstrap"))
