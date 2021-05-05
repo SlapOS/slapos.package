@@ -16,10 +16,20 @@
       private: no
       default: "noname"
 
-    - name: "slapostoken"
-      prompt: "If you have slapos token if you have (ignore if you already have a configured slapos):"
-      private: no
-      default: "notoken"
+  pre_tasks:
+    - pause:
+        prompt: "Input your slapos token (ignore if you already have a configured slapos) [notoken]"
+      when: computer_name != "noname"
+      register: prompt
+    - set_fact:
+        slapostoken: "{{ prompt.user_input | default('notoken', true) }}"
+
+    - pause:
+        prompt: "Which interface will provide IPv6? (ignore if you already have a configured re6st) [lo]"
+      when: slapostoken != "notoken"
+      register: prompt
+    - set_fact:
+        interface_name: "{{ prompt.user_input | default('lo', true) }}"
 
   roles:
     - { role: re6stnet-install, package_state: present }
