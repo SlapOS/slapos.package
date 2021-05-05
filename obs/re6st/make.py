@@ -81,6 +81,11 @@ def cfg(task):
     mkdir(BUILD)
     open(task.output, "w").write(cfg)
 
+def no_wheel():
+    args = ["sed", "-i", r"/def _satisfied(/s/\(\bsource=\)None/\11/"]
+    args += glob("eggs/zc.buildout-*/zc/buildout/easy_install.py")
+    check_call(args)
+
 @task((cfg, slapos), (BUILD + "/bin/buildout", BUILD + "/bin/python"))
 def bootstrap(task):
     try:
@@ -95,9 +100,12 @@ def bootstrap(task):
                 # XXX: By starting with an older version,
                 #      we'll have the wanted version in cache.
                 "--setuptools-version", "40.8.0"), input=bootstrap)
+            no_wheel()
             check_call(("bin/buildout", "buildout:extensions=",
                 "buildout:newest=true", "buildout:parts=python-bootstrap"))
+            no_wheel()
             check_call(("bin/python.tmp", "bin/buildout", "bootstrap"))
+            assert not glob("download-cache/dist/*.whl")
             os.rename("bin/python.tmp", "bin/python")
 
 def sdist_version(egg):
