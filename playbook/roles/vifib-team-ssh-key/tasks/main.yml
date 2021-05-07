@@ -18,7 +18,7 @@
    authorized_key: user=root key="{{ lookup('file', 'thomas_key') }}"
 
  - name: Add LNC SSH Key
-   authorized_key: user=root key="{{ lookup('file', 'luke_chronos_key') }}"
+   authorized_key: user=root key="{{ lookup('file', 'luke_key') }}"
 
  - name: Add RC SSH Key
    authorized_key: user=root key="{{ lookup('file', 'romain_key') }}"
