@@ -1,0 +1,34 @@
+---
+# One-line addition, ini_file can be used
+  - name: "Setup manager_list"
+    ini_file:
+      dest: /etc/opt/slapos/slapos.cfg
+      create: no
+      section: slapos
+      option: manager_list
+      value: devperm,prerm
+
+# Line by line uncomment with lineinfile
+  - name: "Setup download-from-binary-cache-force-url-list (1/3): key"
+    lineinfile:
+      path: /etc/opt/slapos/slapos.cfg
+      state: present
+      backrefs: yes
+      regexp: '^#(download-from-binary-cache-force-url-list.*)'
+      line: '\1'
+
+  - name: "Setup download-from-binary-cache-force-url-list (2/3): entry"
+    lineinfile:
+      path: /etc/opt/slapos/slapos.cfg
+      state: present
+      backrefs: yes
+      regexp: '^#(  https://lab.nexedi.com/nexedi/slapos/raw/1.0.)'
+      line: '\1'
+
+  - name: "Setup download-from-binary-cache-force-url-list (3/3): entry"
+    lineinfile:
+      path: /etc/opt/slapos/slapos.cfg
+      state: present
+      backrefs: yes
+      regexp: '^#(  https://lab.node.vifib.com/nexedi/slapos/raw/1.0.)'
+      line: '\1'
