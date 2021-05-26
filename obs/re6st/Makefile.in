@@ -7,7 +7,7 @@
 
 BUILD = $(TARGET)
 
-PATH := $(patsubst %,$(CURDIR)/$(BUILD)/parts/%/bin:,chrpath file perl)$(PATH)
+PATH := $(CURDIR)/$(BUILD)/parts/chrpath/bin:$(CURDIR)/$(BUILD)/parts/file/bin:$(CURDIR)/$(BUILD)/parts/perl/bin:$(PATH)
 PYTHON2 = $(firstword $(wildcard /usr/bin/python2 /usr/bin/python))
 
 all: $(BUILD)/.installed.cfg
