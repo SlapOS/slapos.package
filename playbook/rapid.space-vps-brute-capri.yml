@@ -1,0 +1,7 @@
+- name: Playbook to configure Capri VPS host
+  hosts: 127.0.0.1
+  connection: local
+
+  roles:
+    - rapid-space-vps-base
+    - rapid-space-vps-brute-capri

@@ -1,0 +1,9 @@
+---
+# One-line addition, ini_file can be used
+  - name: "Setup manager_list"
+    ini_file:
+      dest: /etc/opt/slapos/slapos.cfg
+      create: no
+      section: slapos
+      option: manager_list
+      value: devperm,prerm
