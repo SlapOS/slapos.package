@@ -1,0 +1,12 @@
+---
+# Block setup, at least our version does not support multiline ini_file
+  - name: Setup [manager:devperm]
+    blockinfile:
+      path: /etc/opt/slapos/slapos.cfg
+      block: |
+        [manager:devperm]
+        allowed-disk-for-vm =
+          /dev/nvme0n1
+          /dev/nvme1n1
+          /dev/nvme2n1
+          /dev/nvme3n1
