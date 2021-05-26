@@ -1,0 +1,24 @@
+---
+  - name: Setup manager_list
+    ini_file:
+      dest=slapos.cfg
+      create=no
+      section=slapos
+      option=manager_list
+      value=devperm,prerm
+
+  - name: Setup [manager:devperm]
+    ini_file:
+      dest=slapos.cfg
+      create=no
+      section=manager:devperm
+      option=allowed-disk-for-vm
+      value="/dev/nvme0n1 /dev/nvme1n1 /dev/nvme2n1 /dev/nvme3n1"
+
+  - name: Setup download-from-binary-cache-force-url-list
+    ini_file:
+      dest=slapos.cfg
+      create=no
+      section=networkcache
+      option=download-from-binary-cache-force-url-list
+      value="https://lab.nexedi.com/nexedi/slapos/raw/1.0. https://lab.node.vifib.com/nexedi/slapos/raw/1.0."
