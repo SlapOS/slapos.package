@@ -20,7 +20,7 @@ Depends: ${misc:Depends},
          make,
          patch,
 # slapos node collect
-         lm-sensors
+         lm-sensors,
 # devperm manager plugin wants to use lsblk
          util-linux
 Conflicts: firewalld
