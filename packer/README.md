@@ -14,8 +14,8 @@ How to build one VM?
 
     mkdir /opt/packer/
     cd /opt/packer/
-    wget https://releases.hashicorp.com/packer/0.10.1/packer_0.10.1_linux_amd64.zip
-    unzip packer_0.10.1_linux_amd64.zip
+    wget https://releases.hashicorp.com/packer/1.7.3/packer_1.7.3_linux_amd64.zip
+    unzip packer_1.7.3_linux_amd64.zip
 
 2) Building one VM (example)::
   
