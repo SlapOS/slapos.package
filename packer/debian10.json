@@ -25,7 +25,7 @@
       "name": "debian10-{{ user `disk_size`}}G-{{ user `name`}}",
       "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -h now",
       "ssh_password": "{{user `password`}}",
-      "ssh_timeout": "1800s",
+      "ssh_timeout": "3600s",
       "ssh_username": "{{user `user`}}",
       "type": "qemu"
     }
