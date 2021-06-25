@@ -34,7 +34,7 @@
       "boot_command": [
         "<esc><wait><wait><wait><wait>",
         "auto preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian10.cfg ",
-        "debian-installer=en_US.UTF-8 locale=en_US keymap=fr ",
+        "debian-installer=en_US.UTF-8 locale=en_US ",
         "netcfg/get_hostname={{ .Name }} ",
         "netcfg/get_domain={{ user `domain`}} ",
 
