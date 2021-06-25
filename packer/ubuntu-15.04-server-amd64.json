@@ -33,11 +33,11 @@
       "boot_command": [
         "<esc><esc><enter><wait>",
         "/install/vmlinuz url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-ubuntu.cfg ",
-        "debian-installer=en_US auto locale=en_US kbd-chooser/method=fr ",
+        "debian-installer=en_US auto locale=en_US kbd-chooser/method=en ",
         "hostname={{ .Name }} ",
 
         "keyboard-configuration/modelcode=pc101 ",
-        "keyboard-configuration/layoutcode=fr ",
+        "keyboard-configuration/layoutcode=en ",
 
         "passwd/user-fullname={{user `user`}} ",
         "passwd/user-password-again={{user `password`}} ",
