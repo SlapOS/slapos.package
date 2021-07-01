@@ -19,4 +19,4 @@ override_dh_shlibdeps:
 	rm $(TMP)/DEBIAN/shlibs
 
 %:
-	dh $@
+	dh $@ --with systemd
