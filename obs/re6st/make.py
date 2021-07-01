@@ -103,7 +103,6 @@ def bootstrap(task):
             no_wheel()
             check_call(("bin/buildout", "buildout:extensions=",
                 "buildout:newest=true", "buildout:parts=python-bootstrap"))
-            no_wheel()
             check_call(("bin/python.tmp", "bin/buildout", "bootstrap"))
             assert not glob("download-cache/dist/*.whl")
             os.rename("bin/python.tmp", "bin/python")
