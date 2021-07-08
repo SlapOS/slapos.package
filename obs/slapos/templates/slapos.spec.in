@@ -27,6 +27,10 @@
 # Turn off the brp-python-bytecompile script
 %global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
  
+# Turn off shebangs mangling, as shebangs are handled by package itself
+##%undefine __brp_mangle_shebangs
+## undefine seems not working: https://bugzilla.redhat.com/show_bug.cgi?id=1597664
+%define __brp_mangle_shebangs %{nil}
 
 %define slapversion %RECIPE_VERSION%
 %define version %VERSION%
