@@ -80,6 +80,9 @@ cd $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_numb
 make PYTHON=python2
 
 %install
+# Turn off shebangs mangling, as shebangs are handled by package itself
+%undefine __brp_mangle_shebangs
+
 cd $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}/
 make DESTDIR=$RPM_BUILD_ROOT install 
 mkdir -p $RPM_BUILD_ROOT/etc/cron.d/
