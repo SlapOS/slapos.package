@@ -15,7 +15,7 @@
         "passwd/username={{user `user`}} ",
         "<enter>"
       ],
-      "boot_wait": "2s",
+      "boot_wait": "30s",
       "disk_size": "{{ user `disk_size`}}000",
       "format": "qcow2",
       "headless": true,
