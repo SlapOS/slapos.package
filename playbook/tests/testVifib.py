@@ -70,6 +70,9 @@ class TestVifibPlaybook(unittest.TestCase):
     self.runPlaybook()
 
   def assertSlaposCfg(self):
+    self.assertTrue(
+      os.path.exists('/etc/opt/slapos/slapos.cfg')
+    )
     with open('/etc/opt/slapos/slapos.cfg') as fh:
       slapos_cfg_list = [q.strip() for q in fh.readlines()]
 
