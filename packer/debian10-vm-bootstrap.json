@@ -22,7 +22,7 @@
       "http_directory": "http",
       "iso_checksum": "md5:a3ebc76aec372808ad80000108a2593a",
       "iso_url": "https://shacache.nxdcdn.com/0a6aee1d9aafc1ed095105c052f9fdd65ed00ea9274188c9cd0072c8e6838ab40e246d45a1e6956d74ef1b04a1fc042151762f25412e9ff0cbf49418eef7992e",
-      "name": "debian10-{{ user `disk_size`}}G-{{ user `name`}}",
+      "name": "debian10-vm-bootstrap-{{ user `disk_size`}}G-{{ user `name`}}",
       "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -h now",
       "ssh_password": "{{user `password`}}",
       "ssh_timeout": "3600s",
@@ -38,13 +38,12 @@
         "scripts/packages.sh",
         "scripts/network-debian.sh",
         "scripts/cleanup.sh",
-        "{{ user `custom_script` }}"
+        "scripts/vm-bootstrap.sh"
       ],
       "type": "shell"
     }
   ],
   "variables": {
-    "custom_script": "scripts/empty.sh",
     "disk_size": "100",
     "domain": "",
     "name": "image",
