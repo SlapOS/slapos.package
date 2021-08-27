@@ -206,8 +206,11 @@ def deb(task):
     d["Source"] = s["Source"] = b["Package"] = PACKAGE
     d["Version"] = VERSION
     d["Architecture"] = b["Architecture"] = "any"
-    d["Build-Depends"] = s["Build-Depends"] = \
-        "python (>= 2.7), debhelper (>= 9.20120909), dh-systemd, iproute2 | iproute"
+    d["Build-Depends"] = s["Build-Depends"] = (
+        "python (>= 2.7), debhelper (>= 9.20120909),"
+        " debhelper (>= 10) | dh-systemd,"
+        " iproute2 | iproute"
+    )
     b["Depends"] = "${shlibs:Depends}, iproute2 | iproute"
     b["Conflicts"] = b["Provides"] = b["Replaces"] = "re6stnet"
     patched_control = StringIO("%s\n%s" % (s, b))
