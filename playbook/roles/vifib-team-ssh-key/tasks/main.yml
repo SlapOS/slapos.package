@@ -44,6 +44,9 @@
  - name: Add LX SSH Key
    authorized_key: user=root key="{{ lookup('file', 'lu_key') }}"
 
+ - name: Remove old Georgios Dagkakis SSH Key
+   authorized_key: user=root key="{{ lookup('file', 'remove_key_10') }}" state=absent
+
  - name: Remove old Jerome Perrin SSH Key
    authorized_key: user=root key="{{ lookup('file', 'remove_key_9') }}" state=absent
 
