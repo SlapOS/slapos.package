@@ -1,7 +1,13 @@
 #!/bin/bash
 export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-frontend_ipv4=`/opt/slapos/parts/sqlite3/bin/sqlite3 /opt/slapos/slapproxy.db "select address from partition_network14 where partition_reference=(select reference from partition14 where requested_by = (select reference from partition14 where partition_reference='{{ frontend_master_reference }}')) and netmask='255.255.255.255';"`
+# create variables containing table names without the figures like this:
+#   partition=partition15
+#   partition_network=partition_network15
+#   ...
+eval $(/opt/slapos/parts/sqlite3/bin/sqlite3 /opt/slapos/slapproxy.db .tables | sed -r 's/\b([a-z_]+)[0-9]+\b/\1=\0/g')
+
+frontend_ipv4=`/opt/slapos/parts/sqlite3/bin/sqlite3 /opt/slapos/slapproxy.db "select address from $partition_network where partition_reference=(select reference from $partition where requested_by = (select reference from $partition where partition_reference='{{ frontend_master_reference }}')) and netmask='255.255.255.255';"`
 
 local_access_comment="Local {{ playbook_name }} IPv4 access"
 remote_access_comment="Remote {{ playbook_name }} IPv4 access"
