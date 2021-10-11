@@ -1,0 +1,54 @@
+{
+  "builders": [
+    {
+      "accelerator": "kvm",
+      "boot_command": [
+        "<esc><wait><wait><wait><wait>",
+        "auto preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian11.cfg ",
+        "debian-installer=en_US.UTF-8 locale=en_US keymap=fr ",
+        "netcfg/get_hostname={{ .Name }} ",
+        "netcfg/get_domain={{ user `domain`}} ",
+        "fb=false debconf/frontend=noninteractive ",
+        "passwd/user-fullname={{user `user`}} ",
+        "passwd/user-password={{user `password`}} ",
+        "passwd/user-password-again={{user `password`}} ",
+        "passwd/username={{user `user`}} ",
+        "<enter>"
+      ],
+      "boot_wait": "30s",
+      "disk_size": "{{ user `disk_size`}}000",
+      "format": "qcow2",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum": "md5:b710c178eb434d79ce40ce703d30a5f0",
+      "iso_url": "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-11.1.0-amd64-netinst.iso",
+      "name": "debian11-vm-bootstrap-{{ user `disk_size`}}G-{{ user `name`}}",
+      "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -h now",
+      "ssh_password": "{{user `password`}}",
+      "ssh_timeout": "3600s",
+      "ssh_username": "{{user `user`}}",
+      "type": "qemu"
+    }
+  ],
+  "provisioners": [
+    {
+      "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+      "scripts": [
+        "scripts/update.sh",
+        "scripts/packages.sh",
+        "scripts/network-debian.sh",
+        "scripts/cleanup.sh",
+        "scripts/vm-bootstrap.sh"
+      ],
+      "type": "shell"
+    }
+  ],
+  "variables": {
+    "disk_size": "100",
+    "domain": "",
+    "name": "image",
+    "password": "slapos",
+    "user": "slapos"
+  }
+}
+
