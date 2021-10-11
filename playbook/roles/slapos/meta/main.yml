@@ -1,3 +1,4 @@
 ---
 dependencies:
   - { role: ntp }
+  - { role: package, package_name: slapos-node, package_state: latest }

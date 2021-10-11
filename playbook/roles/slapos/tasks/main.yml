@@ -1,11 +1,3 @@
-  - name: Install slapos.node using apt
-    apt: name=slapos-node state={{ package_state }} update_cache=yes cache_valid_time=3600
-    when: ansible_os_family == "Debian"
-
-  - name: Install slapos.node using yum
-    yum: name=slapos.node state={{ package_state }} update_cache=yes
-    when: ansible_os_family == "RedHat"
-
   - name: Check if configuration exists already
     stat: path=/etc/opt/slapos/slapos.cfg
     register: slapos_cfg
