@@ -12,8 +12,8 @@ How to build VM with differents images size?
 
     mkdir /opt/packer/
     cd /opt/packer/
-    wget https://releases.hashicorp.com/packer/1.7.3/packer_1.7.3_linux_amd64.zip
-    unzip packer_1.7.3_linux_amd64.zip
+    wget https://releases.hashicorp.com/packer/1.7.6/packer_1.7.6_linux_amd64.zip
+    unzip packer_1.7.6_linux_amd64.zip
 
 2) Check and install qemu
 
