@@ -6,5 +6,49 @@
   hosts: 127.0.0.1
   connection: local
 
+  tasks:
+
+    - name: Allow loopback
+      iptables:
+        action: insert
+        chain: INPUT
+        in_interface: lo
+        jump: ACCEPT
+
+    - name: Allow DNS
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: udp
+        destination_port: 53
+        jump: ACCEPT
+
+    - name: Allow to access shacache
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination: shacache.org
+        destination_port: 80
+        jump: ACCEPT
+
+    - name: Allow the inbound connection started by us
+      iptables:
+        action: append
+        chain: INPUT
+        match: conntrack
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: DROP INPUT
+      iptables:
+        policy: DROP
+        chain: INPUT
+
+    - name: DROP OUTPUT
+      iptables:
+        policy: DROP
+        chain: OUTPUT
+
   roles:
     - slapos-proxy
