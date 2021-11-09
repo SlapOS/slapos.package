@@ -6,5 +6,123 @@
   hosts: 127.0.0.1
   connection: local
 
+  tasks:
+
+    - name: Clean all rules
+      iptables:
+        flush: true
+
+    - name: Allow loopback
+      iptables:
+        action: insert
+        chain: INPUT
+        in_interface: lo
+        jump: ACCEPT
+
+    - name: Allow DNS
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: udp
+        destination_port: 53
+        jump: ACCEPT
+
+    - name: Allow to access shacache
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination: shacache.org
+        destination_port: 80
+        jump: ACCEPT
+
+    - name: Allow the inbound connection started by us
+      iptables:
+        action: append
+        chain: INPUT
+        match: conntrack
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: DROP INPUT
+      iptables:
+        policy: DROP
+        chain: INPUT
+
+    - name: DROP OUTPUT
+      iptables:
+        policy: DROP
+        chain: OUTPUT
+
+    - name: DROP IPV6 INPUT
+      iptables:
+        ip_version: ipv6
+        policy: DROP
+        chain: INPUT
+
+    - name: DROP IPV6 OUTPUT
+      iptables:
+        ip_version: ipv6
+        policy: DROP
+        chain: OUTPUT
+
+    - name: DROP IPV6 FORWARD
+      iptables:
+        ip_version: ipv6
+        policy: DROP
+        chain: FORWARD
+
+    - name: Allow the inbound connection started by us
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        match: conntrack
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: Allow IPV6 input loopback
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        in_interface: lo
+        jump: ACCEPT
+
+    - name: Allow SSH IPV6 connection
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        match: tcp
+        protocol: tcp
+        destination_port: 22
+        jump: ACCEPT
+
+    - name: Allow INPUT IPV6 ICMP
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        protocol: ipv6-icmp
+        jump: ACCEPT
+
+    - name: Allow OUTPUT IPV6 ICMP
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: ipv6-icmp
+        jump: ACCEPT
+
+    - name: Allow OUTPUT conntrack
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        match: conntrack
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
   roles:
     - slapos-proxy
