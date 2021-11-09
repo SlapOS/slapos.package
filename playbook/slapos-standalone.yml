@@ -6,5 +6,240 @@
   hosts: 127.0.0.1
   connection: local
 
+  tasks:
+    - name: Send the message to tell the test is success
+      command: echo "Build successful, connect to:"
+      register: build_msg
+
+    - name: expose build message
+      debug:
+        msg="{{ build_msg }}"
+
+    - name: Allow DNS
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: udp
+        destination_port: 53
+        jump: ACCEPT
+
+    - name: Allow to loopback and use localhost
+      iptables:
+        action: append
+        chain: INPUT
+        in_interface: lo
+        jump: ACCEPT
+
+    - name: Allow to use 10.0.X.X
+      iptables:
+        action: append
+        chain: OUTPUT
+        source: 10.0.0.0/16
+        destination: 10.0.0.0/16
+        jump: ACCEPT
+
+    - name: Allow to use localhost
+      iptables:
+        action: append
+        chain: INPUT
+        source: 127.0.0.1
+        destination: 127.0.0.1
+        jump: ACCEPT
+
+    - name: Allow to use localhost
+      iptables:
+        action: append
+        chain: OUTPUT
+        source: 127.0.0.1
+        destination: 127.0.0.1
+        jump: ACCEPT
+
+    - name: Allow the inbound connection started by us
+      iptables:
+        action: append
+        chain: INPUT
+        match: conntrack
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: Allow to access nexedi.org
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination: www.nexedi.org
+        destination_port: 80
+        jump: ACCEPT
+
+    - name: Allow to access shacache
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination: shacache.org
+        destination_port: 80
+        jump: ACCEPT
+
+    - name: Allow to access nexedi.org HTTPS
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination: www.nexedi.org
+        destination_port: 443
+        jump: ACCEPT
+
+    - name: Allow to access shacache HTTPS
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination: shacache.org
+        destination_port: 443
+        jump: ACCEPT
+
+    - name: Allow to access lab.nexedi.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: lab.nexedi.com
+        jump: ACCEPT
+
+    # This is for connect to the test suite and upload the test result.
+    # You need to replace it with your own ERP5 instance domain s
+    - name: Allow to access ERP5 test suite address
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: softinst144119.host.vifib.net
+        jump: ACCEPT
+
+    - name: Allow to access slap.vifib.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: slap.vifib.com
+        jump: ACCEPT
+
+    - name: Allow to access slap.vifib.com IPv6
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: slap.vifib.com
+        jump: ACCEPT
+
+    - name: DROP INPUT
+      iptables:
+        policy: DROP
+        chain: INPUT
+
+    - name: DROP OUTPUT
+      iptables:
+        policy: DROP
+        chain: OUTPUT
+
+    - name: DROP IPV6 INPUT
+      iptables:
+        ip_version: ipv6
+        policy: DROP
+        chain: INPUT
+
+    - name: DROP IPV6 OUTPUT
+      iptables:
+        ip_version: ipv6
+        policy: DROP
+        chain: OUTPUT
+
+    - name: DROP IPV6 FORWARD
+      iptables:
+        ip_version: ipv6
+        policy: DROP
+        chain: FORWARD
+
+    - name: Allow the inbound connection started by us
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        match: conntrack
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: Allow IPV6 input loopback
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        in_interface: lo
+        jump: ACCEPT
+
+    - name: Allow SSH IPV6 connection
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        match: tcp
+        protocol: tcp
+        destination_port: 22
+        jump: ACCEPT
+
+    - name: Allow INPUT IPV6 ICMP
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        protocol: ipv6-icmp
+        jump: ACCEPT
+
+    - name: Allow OUTPUT IPV6 ICMP
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: ipv6-icmp
+        jump: ACCEPT
+
+    - name: Allow OUTPUT conntrack
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        match: conntrack
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: Change the download-binary-cache-url
+      lineinfile:
+        path: /etc/opt/slapos/slapos.cfg
+        regexp: download-binary-cache-url = http://shacache.nxdcdn.com
+        line: download-binary-cache-url = http://shacache.org/shacache
+        state: present
+        backrefs: yes
+
+    - name: Change the download-cache-url
+      lineinfile:
+        path: /etc/opt/slapos/slapos.cfg
+        regexp: download-cache-url = http://shacache.nxdcdn.com
+        line: download-cache-url = http://shacache.org/shacache
+        state: present
+        backrefs: yes
+
+    - name: Change the download-binary-dir-url
+      lineinfile:
+        path: /etc/opt/slapos/slapos.cfg
+        regexp: download-binary-dir-url = http://shadir.nxdcdn.com
+        line: download-binary-dir-url = http://shacache.org/shadir
+        state: present
+        backrefs: yes
+
   roles:
     - slapos-proxy
