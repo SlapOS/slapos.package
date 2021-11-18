@@ -23,6 +23,29 @@
         destination_port: 53
         jump: ACCEPT
 
+    - name: Allow to use localhost
+      iptables:
+        action: append
+        chain: INPUT
+        in_interface: lo
+        jump: ACCEPT
+
+    - name: Allow to use localhost
+      iptables:
+        action: append
+        chain: INPUT
+        source: 127.0.0.1
+        destination: 127.0.0.1
+        jump: ACCEPT
+
+    - name: Allow to use localhost
+      iptables:
+        action: append
+        chain: OUTPUT
+        source: 127.0.0.1
+        destination: 127.0.0.1
+        jump: ACCEPT
+
     - name: Allow to access shacache
       iptables:
         action: append
