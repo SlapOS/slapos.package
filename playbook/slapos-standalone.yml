@@ -143,5 +143,29 @@
         ctstate: ESTABLISHED,RELATED
         jump: ACCEPT
 
+    - name: Change the download-binary-cache-url
+      lineinfile:
+        path: /etc/opt/slapos/slapos.cfg
+        regexp: download-binary-cache-url = http://shacache.nxdcdn.com
+        line: download-binary-cache-url = http://shacache.org/shacache
+        state: present
+        backrefs: yes
+
+    - name: Change the download-cache-url
+      lineinfile:
+        path: /etc/opt/slapos/slapos.cfg
+        regexp: download-cache-url = https://shacache.nxdcdn.com
+        line: download-cache-url = http://shacache.org/shacache
+        state: present
+        backrefs: yes
+
+    - name: Change the download--binary-dir-url
+      lineinfile:
+        path: /etc/opt/slapos/slapos.cfg
+        regexp: download-binary-dir-url = http://shadir.nxdcdn.com
+        line: download-binary-dir-url = http://shacache.org/shadir
+        state: present
+        backrefs: yes
+
   roles:
     - slapos-proxy
