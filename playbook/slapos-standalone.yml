@@ -46,6 +46,22 @@
         destination: 127.0.0.1
         jump: ACCEPT
 
+    - name: Allow to use 10.0.2.100
+      iptables:
+        action: append
+        chain: INPUT
+        source: 10.0.2.100
+        destination: 10.0.2.100
+        jump: ACCEPT
+
+    - name: Allow to use 10.0.2.100
+      iptables:
+        action: append
+        chain: OUTPUT
+        source: 10.0.2.100
+        destination: 10.0.2.100
+        jump: ACCEPT
+
     - name: Allow to access shacache
       iptables:
         action: append
