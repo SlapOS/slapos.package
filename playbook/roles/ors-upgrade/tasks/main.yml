@@ -1,0 +1,21 @@
+---
+  - name: Get current LTE version
+    stat: path=/opt/amarisoft/lte
+    register: lte_version
+
+  - name: Get hostname
+    shell: hostname
+    register: hostname
+
+  - name: Check new LTE
+    debug: msg="New amarisoft LTE available"
+    when: lte_version.stat.lnk_target is not search(current_lte_version)
+
+  - name: Check hostname
+    debug: var=hostname
+
+  - name: Install give-cap-sys-nice-lteenb script
+    copy: src=give-cap-sys-nice-lteenb dest={{ install_folder }} owner=root mode=770
+
+  - name: Give permission to slapsoft to execute give-cap-sys-nice-lteenb script
+    copy: src=slapsoft-give-cap-sys-nice-lteenb dest=/etc/sudoers.d owner=root mode=440
