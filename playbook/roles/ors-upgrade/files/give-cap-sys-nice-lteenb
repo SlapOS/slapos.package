@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+  echo "Missing argument"; exit 1;
+fi
+element-in () {
+  local e match="$1"; shift
+  for e in "$@"; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
+BINARY=$1
+
+# List of hash for all supported lteenb / lteenb-avx2 binaries
+SHA256_LIST=(\
+"03e8641094b1909562dbf25678354ea09edb8109743cc3cdda43c4b423a36c07" \
+"09e5ff98bb6839e72d14728e9839fcbfb5873f786281b658a6c0d790ac1ff227" \
+)
+
+element-in $(sha256sum $BINARY) "${SHA256_LIST[@]}" || { echo "$1 sha256sum mismatch" >&2; exit 1; }
+
+# relative RPATH gets ignored after capability has been set on binary
+patchelf --set-rpath $(dirname $BINARY) $BINARY;
+setcap cap_sys_nice=+pe $BINARY;

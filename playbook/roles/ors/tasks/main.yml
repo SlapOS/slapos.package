@@ -1,0 +1,3 @@
+---
+  - name: Install upgrader
+    shell: ansible-playbook upgrader-run.yml --extra-vars "upgrader_playbook=ors-upgrade.yml upgrade_kernel=False"
