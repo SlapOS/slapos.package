@@ -11,5 +11,3 @@ if [ -f /etc/openvpn/vifib.conf ]; then
 fi
 
 #DEBHELPER#
-
-exit 0
