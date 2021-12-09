@@ -6,6 +6,9 @@
   hosts: 127.0.0.1
   connection: local
 
+  tasks:
+    - name: Send the message to tell the test is success
+      command: echo "Build successful, connect to:"
 
   roles:
     - slapos-proxy
