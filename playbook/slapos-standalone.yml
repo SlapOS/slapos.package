@@ -6,6 +6,14 @@
   hosts: 127.0.0.1
   connection: local
 
+  tasks:
+    - name: Send the message to tell the test is success
+      command: echo "Build successful, connect to:"
+      register: build_msg
+
+    - name: expose build message
+      debug:
+        msg="{{ build_msg }}"
 
   roles:
     - slapos-proxy
