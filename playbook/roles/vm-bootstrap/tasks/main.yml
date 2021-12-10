@@ -17,13 +17,13 @@
 
   - name: create cronjob for netconfig.sh at boot time
     cron:
-      name: "call netconfig.sh at reboot"
+      name: "call netconfig.sh at reboot (need to be called twice to work, until https://lab.nexedi.com/nexedi/slapos/commit/07439e2e6a8c39430d5be84ff3d77d2aae4d99c6 is used)"
       special_time: reboot
-      job: "/etc/opt/netconfig.sh"
+      job: "/etc/opt/netconfig.sh ; /etc/opt/netconfig.sh"
     when: netconfig_file.stat.exists == True
 
   - name: call netconfig.sh
-    command: /etc/opt/netconfig.sh 
+    command: /etc/opt/netconfig.sh ; /etc/opt/netconfig.sh
     when: netconfig_file.stat.exists == True
     ignore_errors: True
 
