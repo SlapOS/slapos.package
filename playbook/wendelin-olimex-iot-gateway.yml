@@ -22,6 +22,10 @@
     - name: "user_password"
       prompt: "What is the password for the user of your Wendelin instance?"
       private: yes
+    - name: "fluentd_software_name"
+      prompt: "What is the name of your Fluentd Software relase?"
+      private: no
+      default: "Fluentd software release"
 
 
   vars:
