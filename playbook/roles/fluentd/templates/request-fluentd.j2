@@ -1,0 +1,14 @@
+# Constants
+fluentd_software_release_uri = product.fluentd
+computer_name = "{{computer_name}}"
+fluentd_software_name = "{{fluentd_software_name}}"
+fluentd_config = """{{fluentd_config}}"""
+
+# Supplying and requesting
+supply(fluentd_software_release_uri, computer_name)
+request(
+    fluentd_software_release_uri,
+    fluentd_software_name,
+    filter_kw={"computer_guid": computer_name},
+    partition_parameter_kw={"conf_text": fluentd_config},
+)
