@@ -26,3 +26,9 @@
   template:
     src: read_bme280.j2
     dest: /usr/local/bin/read_bme280.py
+
+- name: Add access sensor permission for slapsoft
+  copy:
+    src: 60-i2c-tools.rules
+    dest: /etc/udev/rules.d/60-i2c-tools.rules
+    owner: root
