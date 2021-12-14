@@ -1,0 +1,13 @@
+# Simply import both playbooks so that all variables can be set by the user
+- import_playbook: re6stnet.yml
+- import_playbook: slapos.yml
+ 
+- name: a play that runs entirely on the ansible host
+  hosts: 127.0.0.1
+  connection: local
+
+  vars_prompt:
+    - name: "fluentd_software_name"
+      prompt: "What is the name of your Fluentd Software relase?"
+      private: no
+      default: "Fluentd software release"

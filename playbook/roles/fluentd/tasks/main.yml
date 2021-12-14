@@ -1,0 +1,10 @@
+- set_fact:
+    request_fluentd_python_script_path={{ role_path }}/files/request-fluentd.py
+
+- name: Solve template to request Fluentd
+  template:
+    src: request-fluentd.j2
+    dest: "{{ request_fluentd_python_script_path }}"
+
+- name: Request Fluentd from SlapOS Master
+  shell: slapos console "{{ request_fluentd_python_script_path }}"
