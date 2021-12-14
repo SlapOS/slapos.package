@@ -1,0 +1,12 @@
+  - name: managing resolv.conf file
+    lineinfile: dest=/etc/resolv.conf line="search tl.teralab-datascience.fr"
+
+  - name: adding entry from workspace
+    lineinfile: dest=/etc/resolv.conf line="nameserver 10.200.218.1"
+
+  - name: Delete default nameserver
+    lineinfile: dest=/etc/resolv.conf line="nameserver 10.0.2.3" state=absent
+
+  - name: Delete nameserver 8.8.8.8
+    lineinfile: dest=/etc/resolv.conf line="nameserver 8.8.8.8" state=absent
+    when: is_playbook_ok in [False, "False"]
