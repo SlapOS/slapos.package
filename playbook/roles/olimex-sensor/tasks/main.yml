@@ -1,26 +1,15 @@
-- name: Install Python
+- name: Install apt package dependencies
   apt:
-    name: python
-    state: present
-
-- name: Install pip
-  apt:
-    name: python-pip
-    state: present
-
-- name: Install i2c-tools
-  apt:
-    name: i2c-tools
+    pkg:
+      - python
+      - python-pip
+      - i2c-tools
+      - python-smbus
     state: present
 
 - name: Install Python package bme280
   pip:
     name: bme280
-
-- name: Install python-smbus
-  apt:
-    name: python-smbus
-    state: present
 
 - name: Solve python template to read sensor
   template:
