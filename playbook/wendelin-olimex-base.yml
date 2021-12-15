@@ -1,6 +1,10 @@
 # Simply import both playbooks so that all variables can be set by the user
 - import_playbook: re6stnet.yml
 - import_playbook: slapos.yml
+
+- name: Check if client configuration exists already
+  stat: path=/root/.slapos/slapos-client.cfg
+  register: slapos_client_cfg
  
 - name: a play that runs entirely on the ansible host
   hosts: 127.0.0.1
@@ -10,7 +14,9 @@
     - name: "slapos_user_token"
       prompt: "Please enter a token from your SlapOS account."
       private: no
+      when: slapos_client_cfg.stat.exists == False
   
   tasks:
     - name: Configure SlapOS Client
       shell: slapos configure client --token {{ slapos_user_token }}
+      when: slapos_client_cfg.stat.exists == False
