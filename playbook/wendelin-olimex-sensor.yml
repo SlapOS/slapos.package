@@ -15,10 +15,6 @@
       prompt: "What is your tag name?\nYour tag name must consist of 2 part separated by .(dot). First part is the name of the sensor and must be the same as the reference of the Data Supply. The second part is the type of data (Data Product)."
       private: no
       default: "sensor_1.sample-environment-raw-data"
-    - name: "fluentd_software_name"
-      prompt: "What is the name of your Fluentd Software relase?"
-      private: no
-      default: "Fluentd software release"
 
   vars:
     fluentd_config: |
