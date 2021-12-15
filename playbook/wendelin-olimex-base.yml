@@ -7,11 +7,14 @@
   connection: local
 
   pre_tasks:
-    - pause:
-        prompt: "What is the reference of your computer (COMP-XXXX)?"
-      register: prompt
-    - set_fact:
-        computer_id: "{{ prompt.user_input }}"
+    - name: Set Computer reference
+      block:
+        - pause:
+            prompt: "What is the reference of your computer (COMP-XXXX)?"
+          register: prompt
+
+        - set_fact:
+            computer_id: "{{ prompt.user_input }}"
 
   tasks:
     - name: Check if client configuration exists already
