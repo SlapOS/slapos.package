@@ -33,7 +33,7 @@
     - name: Configure SlapOS client
       block:
         - pause:
-            prompt: "Please enter a token from your SlapOS account (Ignore if you already configured the SlapOS Client)."
+            prompt: "Please enter a token from your SlapOS account."
           register: prompt
 
         - set_fact:
