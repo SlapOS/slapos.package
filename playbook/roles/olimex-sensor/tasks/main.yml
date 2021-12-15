@@ -7,9 +7,11 @@
       - python-smbus
     state: present
 
-- name: Install Python package bme280
+- name: Install Python packages via pip
   pip:
-    name: bme280
+    name:
+      - setuptools
+      - bme280
 
 - name: Solve python template to read sensor
   template:
