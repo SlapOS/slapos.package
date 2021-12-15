@@ -16,6 +16,15 @@
         - set_fact:
             computer_id: "{{ prompt.user_input }}"
 
+    - name: Set Fluentd Software Release Name
+      block:
+        - pause:
+            prompt: "What is the name of your Fluentd Software Relase? [Fluentd-Software-Release]"
+          register: prompt
+
+        - set_fact:
+            fluentd_software_name: "{{ prompt.user_input | default('Fluentd-Software-Release', true) }}"
+
   tasks:
     - name: Check if client configuration exists already
       stat: path=/root/.slapos/slapos-client.cfg
