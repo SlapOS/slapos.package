@@ -11,14 +11,17 @@
     - name: "streamtool_uri"
       prompt: "What is the URL of your Wendelin instance? (e.g. https://softinstXXXX.host.vifib.net)"
       private: no
+
     - name: "tag_name"
       prompt: "What is your tag name?\nYour tag name must consist of 2 part separated by .(dot). First part is the name of the sensor and must be the same as the reference of the Data Supply. The second part is the type of data (Data Product)."
       private: no
       default: "sensor_1.sample-environment-raw-data"
+
     - name: "user_name"
       prompt: "What is the user name for your Wendelin instance?"
       private: no
       default: "zope"
+
     - name: "user_password"
       prompt: "What is the password for the user of your Wendelin instance?"
       private: yes

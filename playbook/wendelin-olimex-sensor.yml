@@ -11,6 +11,7 @@
     - name: "ipv6_address_iot_gateway"
       prompt: "What is the IPv6 address of the host where the data will be send to (IoT Gateway)?"
       private: no
+
     - name: "tag_name"
       prompt: "What is your tag name?\nYour tag name must consist of 2 part separated by .(dot). First part is the name of the sensor and must be the same as the reference of the Data Supply. The second part is the type of data (Data Product)."
       private: no
