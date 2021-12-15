@@ -5,3 +5,12 @@
 - name: a play that runs entirely on the ansible host
   hosts: 127.0.0.1
   connection: local
+  
+  vars_prompt:
+    - name: "slapos_user_token"
+      prompt: "Please enter a token from your SlapOS account."
+      private: no
+  
+  tasks:
+    - name: Configure SlapOS Client
+      shell: slapos configure client --token {{ slapos_user_token }}
