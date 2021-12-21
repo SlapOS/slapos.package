@@ -86,6 +86,11 @@
         ctstate: ESTABLISHED,RELATED
         jump: ACCEPT
 
+    - name: DROP INPUT
+      iptables:
+        policy: DROP
+        chain: INPUT
+
     - name: Allow the inbound connection started by us
       iptables:
         ip_version: ipv6
