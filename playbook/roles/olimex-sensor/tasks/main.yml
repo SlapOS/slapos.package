@@ -19,7 +19,7 @@
 - name: Solve python template to read sensor
   template:
     src: read_bme280.j2
-    dest: /usr/local/bin/read_bme280.py
+    dest: /usr/local/bin/custom_read_bme280.py
 
 - name: Add access sensor permission for slapsoft
   copy:
