@@ -11,10 +11,12 @@
 - name: Install setuptools
   pip:
     name: setuptools
+    executable: pip2
 
 - name: Install bme280
   pip:
     name: bme280
+    executable: pip2
 
 - name: Solve python template to read sensor
   template:
