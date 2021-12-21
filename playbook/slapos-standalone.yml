@@ -91,6 +91,24 @@
         policy: DROP
         chain: INPUT
 
+    - name: DROP IPV6 INPUT
+      iptables:
+        ip_version: ipv6
+        policy: DROP
+        chain: INPUT
+
+    - name: DROP IPV6 OUTPUT
+      iptables:
+        ip_version: ipv6
+        policy: DROP
+        chain: OUTPUT
+
+    - name: DROP IPV6 FORWARD
+      iptables:
+        ip_version: ipv6
+        policy: DROP
+        chain: FORWARD
+
     - name: Allow the inbound connection started by us
       iptables:
         ip_version: ipv6
