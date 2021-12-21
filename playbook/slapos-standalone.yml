@@ -91,6 +91,11 @@
         policy: DROP
         chain: INPUT
 
+    - name: DROP OUTPUT
+      iptables:
+        policy: DROP
+        chain: OUTPUT
+
     - name: DROP IPV6 INPUT
       iptables:
         ip_version: ipv6
