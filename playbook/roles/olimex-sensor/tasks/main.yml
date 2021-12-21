@@ -24,7 +24,4 @@
     dest: /usr/local/bin/custom_read_bme280.py
 
 - name: Add access sensor permission for slapsoft
-  copy:
-    src: 60-i2c-tools.rules
-    dest: /etc/udev/rules.d/60-i2c-tools.rules
-    owner: root
+  shell: chgrp slapsoft /dev/i2c-3
