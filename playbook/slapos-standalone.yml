@@ -86,6 +86,81 @@
         ctstate: ESTABLISHED,RELATED
         jump: ACCEPT
 
+    - name: Allow the inbound connection started by us
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        match: conntrack
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: Allow IPV6 input loopback
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        in_interface: lo
+        jump: ACCEPT
+
+    - name: Allow SSH IPV6 connection
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        match: tcp
+        protocol: tcp
+        destination_port: 22
+        jump: ACCEPT
+
+    - name: Allow INPUT IPV6 ICMP
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        protocol: ipv6-icmp
+        jump: ACCEPT
+
+    - name: Allow OUTPUT IPV6 ICMP
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: ipv6-icmp
+        jump: ACCEPT
+
+    - name: Allow OUTPUT conntrack
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        match: conntrack
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: Change the download-binary-cache-url
+      lineinfile:
+        path: /etc/opt/slapos/slapos.cfg
+        regexp: download-binary-cache-url = http://shacache.nxdcdn.com
+        line: download-binary-cache-url = http://shacache.org/shacache
+        state: present
+        backrefs: yes
+
+    - name: Change the download-cache-url
+      lineinfile:
+        path: /etc/opt/slapos/slapos.cfg
+        regexp: download-cache-url = https://shacache.nxdcdn.com
+        line: download-cache-url = http://shacache.org/shacache
+        state: present
+        backrefs: yes
+
+    - name: Change the download--binary-dir-url
+      lineinfile:
+        path: /etc/opt/slapos/slapos.cfg
+        regexp: download-binary-dir-url = http://shadir.nxdcdn.com
+        line: download-binary-dir-url = http://shacache.org/shadir
+        state: present
+        backrefs: yes
 
   roles:
     - slapos-proxy
