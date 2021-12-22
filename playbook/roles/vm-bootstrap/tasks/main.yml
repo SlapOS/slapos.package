@@ -58,7 +58,8 @@
   - stat: path=/opt/upgrader/last-upgrade
     register: last_upgrade
 
-  - shell: echo 1 > /opt/upgrader/last-upgrade
+  - name: Setup initial last upgrade timestamps
+    shell: echo 1 > /opt/upgrader/last-upgrade
     when: last_upgrade.stat.exists == False
 
   - include: upgrader.yml upgrade_after={{ upgrade_needed.content }}
