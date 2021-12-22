@@ -42,7 +42,6 @@
     register: upgrade_needed
 
   - include: network.yml
-  - include: hostname.yml
   - include: user.yml
   - include: ssh.yml
 
