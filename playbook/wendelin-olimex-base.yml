@@ -1,7 +1,26 @@
-# Simply import both playbooks so that all variables can be set by the user
-- import_playbook: re6stnet.yml
-- import_playbook: slapos.yml
-
 - name: a play that runs entirely on the ansible host
   hosts: 127.0.0.1
   connection: local
+
+  vars:
+    - re6st_annon: False
+    - computer_name: noname
+    - re6st_fingerprint: nofingerprint
+
+  vars_prompt:
+    - name: "re6st_registry_url"
+      prompt: "What is the url to the Re6st registry? (Ignore if you are using a FREEFIB Token from rapid.space)"
+      private: no
+      default: "http://re6stnet.gnet.erp5.cn/"
+
+    - name: "re6sttoken"
+      prompt: "Please insert your re6stnet token:"
+      private: no 
+      default: "notoken"
+
+  roles:
+    - role: re6stnet-install
+    - role: re6stnet-ensure-running
+
+
+- import_playbook: slapos.yml
