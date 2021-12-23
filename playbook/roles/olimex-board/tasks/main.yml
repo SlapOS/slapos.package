@@ -1,0 +1,17 @@
+- name: Install iptables
+  apt:
+    name: iptables
+    state: present
+
+- name: Set firewall config file path
+  set_fact:
+    setup_olimex_firewall_path: /usr/bin/setup-olimex-firewall
+
+- name: Add script to boot firewall
+  template:
+    src: iptables.j2
+    dest: "{{ setup_olimex_firewall_path }}"
+    mode: 755
+
+- name: Include setup-olimex-firewall at reboot on cron
+  cron: name="Setup firewall on reboot" special_time=reboot job="sleep 30 && {{ setup_olimex_firewall_path }}"

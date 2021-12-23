@@ -7,5 +7,17 @@
   hosts: 127.0.0.1
   connection: local
 
+  vars:
+    - iptables_rules: |
+        # To send data to IoT-Gateway
+          
+        iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+          
+        LISTEN_SENSOR_PORT=24224
+
+        ip6tables -A OUTPUT -p tcp --dport $LISTEN_SENSOR_PORT -j ACCEPT
+        ip6tables -A OUTPUT -p udp --dport $LISTEN_SENSOR_PORT -j ACCEPT
+
   roles:
+    - role: olimex-board
     - role: olimex-sensor

@@ -6,3 +6,33 @@
 - name: a play that runs entirely on the ansible host
   hosts: 127.0.0.1
   connection: local
+
+  vars:
+    - iptables_rules: |
+        # We send data to Wendelin via HTTP or HTTPS
+
+        # Only accept packets on the INPUT chain that are ESTABLISHED or RELATED to a current connection
+        iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+        # #### Output exceptions  #### #
+
+        # Accept DNS
+        iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
+        iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+
+        # Accept HTTP
+        iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+
+        # Accept HTTPS
+        iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+        iptables -A OUTPUT -p udp --dport 443 -j ACCEPT
+
+        # To receive data from Sensor
+        
+        LISTEN_SENSOR_PORT=24224
+
+        ip6tables -A INPUT -p tcp --dport $LISTEN_SENSOR_PORT -j ACCEPT
+        ip6tables -A INPUT -p udp --dport $LISTEN_SENSOR_PORT -j ACCEPT
+
+  roles:
+    - role: olimex-board

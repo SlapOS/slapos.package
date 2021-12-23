@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# We want to close all ports except for those which are used by
+# re6stnet and SSH (to be able to keep a connection to the board).
+
+echo "Update firewall. Close all ports except SSH ports."
+
+# Remove all existing rules
+iptables -F
+
+# Allow SSH access
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+iptables -A OUTPUT -p tcp --sport 22 -j ACCEPT
+
+# Set default drop policy
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+iptables -P FORWARD DROP
+
+ip6tables -P INPUT DROP
+ip6tables -P OUTPUT DROP
+ip6tables -P FORWARD DROP
+
+# For additional rules (for instance Wendelin/Fluentd, ...)
+
+{{ iptables_rules }}
+
+# Open Re6stnet ports (if bash file exists)
+RE6STNET_IP6TABLES_CHECK="/usr/bin/re6stnet-ip6tables-check"
+
+if [ -f $RE6STNET_IP6TABLES_CHECK ]; then
+    bash $RE6STNET_IP6TABLES_CHECK
+else
+  echo "No Re6stnet ip6tables check file could be found!"
+  echo "No dedicated re6stnet ports could be opened."
+fi
