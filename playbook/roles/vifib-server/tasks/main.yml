@@ -27,6 +27,9 @@
   - sysctl: name="net.ipv6.conf.default.forwarding" value=1 sysctl_set=yes state=present reload=yes
   - sysctl: name="net.ipv6.route.max_size" value=262144 sysctl_set=yes state=present reload=yes
 
+  - name: Allow ping for all users (no need for SUID binary)
+    sysctl: name="net.ipv4.ping_group_range" value="0 2147483647" sysctl_set=yes state=present reload=yes
+
   - include: kvm.yml
   - include: shuttle-modprobe.yml
 
