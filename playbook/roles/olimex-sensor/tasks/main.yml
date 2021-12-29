@@ -7,7 +7,6 @@
       - python-smbus
     state: present
 
-
 - name: Install setuptools
   pip:
     name: setuptools
@@ -23,5 +22,18 @@
     src: read_bme280.j2
     dest: /usr/local/bin/custom_read_bme280.py
 
-- name: Add access sensor permission for slapsoft
-  shell: chgrp slapsoft /dev/i2c-3
+- name: Set sensor permission script path
+  set_fact:
+    set_olimex_sensor_permission_path: /usr/bin/olimex-sensor-set-sensor-permission
+
+- name: Move script to grant access to sensor to file path
+  copy:
+    src: olimex-sensor-set-sensor-permission.sh
+    dest: "{{ set_olimex_sensor_permission_path }}"
+    mode: 755
+
+- name: Include olimex-sensor-set-sensor-permission at reboot on cron
+  cron: name="Set permission on reboot" special_time=reboot job="sleep 30 && {{ set_olimex_sensor_permission_path }}"
+
+- name: Run olimex-sensor-set-sensor-permission
+    shell: "{{ set_olimex_sensor_permission_path }}"
