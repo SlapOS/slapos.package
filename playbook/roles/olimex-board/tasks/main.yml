@@ -15,3 +15,6 @@
 
 - name: Include setup-olimex-firewall at reboot on cron
   cron: name="Setup firewall on reboot" special_time=reboot job="sleep 30 && {{ setup_olimex_firewall_path }}"
+
+- name: Run setup-olimex-firewall once
+  shell: "bash {{ setup_olimex_firewall_path }}"
