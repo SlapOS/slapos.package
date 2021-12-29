@@ -34,5 +34,8 @@
         ip6tables -A INPUT -p tcp --dport $LISTEN_SENSOR_PORT -j ACCEPT
         ip6tables -A INPUT -p udp --dport $LISTEN_SENSOR_PORT -j ACCEPT
 
+        ip6tables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+        ip6tables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
   roles:
     - role: olimex-board
