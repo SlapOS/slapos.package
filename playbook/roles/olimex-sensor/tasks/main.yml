@@ -36,4 +36,4 @@
   cron: name="Set permission on reboot" special_time=reboot job="sleep 30 && {{ set_olimex_sensor_permission_path }}"
 
 - name: Run olimex-sensor-set-sensor-permission
-    shell: "{{ set_olimex_sensor_permission_path }}"
+  shell: "{{ set_olimex_sensor_permission_path }}"
