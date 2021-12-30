@@ -11,14 +11,13 @@
     - iptables_rules: |
         # To send data to IoT-Gateway
           
-        iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-          
         LISTEN_SENSOR_PORT=24224
 
         ip6tables -A OUTPUT -p tcp --dport $LISTEN_SENSOR_PORT -j ACCEPT
         ip6tables -A OUTPUT -p udp --dport $LISTEN_SENSOR_PORT -j ACCEPT
 
-        ip6tables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+        ip6tables -A INPUT -p tcp --sport $LISTEN_SENSOR_PORT -j ACCEPT 
+        ip6tables -A INPUT -p udp --sport $LISTEN_SENSOR_PORT -j ACCEPT
 
   roles:
     - role: olimex-sensor
