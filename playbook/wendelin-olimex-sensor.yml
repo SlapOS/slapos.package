@@ -21,5 +21,5 @@
         ip6tables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 
   roles:
-    - role: olimex-board
     - role: olimex-sensor
+    - role: olimex-board
