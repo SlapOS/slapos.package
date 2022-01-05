@@ -1,0 +1,10 @@
+slapuser1 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte
+slapuser2 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte
+slapuser3 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte
+slapuser4 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte
+slapuser5 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte
+slapuser6 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte
+slapuser7 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte
+slapuser8 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte
+slapuser9 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte
+slapuser10 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte

@@ -17,5 +17,11 @@
   - name: Install give-cap-sys-nice-lteenb script
     copy: src=give-cap-sys-nice-lteenb dest={{ install_folder }} owner=root mode=770
 
+  - name: Install rm-tmp-lte script
+    copy: src=rm-tmp-lte dest={{ install_folder }} owner=root mode=770
+
   - name: Give permission to slapsoft to execute give-cap-sys-nice-lteenb script
     copy: src=slapsoft-give-cap-sys-nice-lteenb dest=/etc/sudoers.d owner=root mode=440
+
+  - name: Give permission to slapuser to remove tmp files owned by other slapuser
+    copy: src=slapuser-rm-tmp dest=/etc/sudoers.d owner=root mode=440
