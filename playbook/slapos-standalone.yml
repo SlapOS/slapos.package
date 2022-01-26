@@ -90,6 +90,15 @@
         destination_port: 80
         jump: ACCEPT
 
+          #     - name: Allow to access pypi.org
+          #       iptables:
+          #         action: append
+          #         chain: OUTPUT
+          #         protocol: tcp
+          #         destination_port: 443
+          #         destination: pypi.org
+          #         jump: ACCEPT
+
     - name: Allow to access lab.nexedi.com
       iptables:
         action: append
