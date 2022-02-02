@@ -90,14 +90,23 @@
         destination_port: 80
         jump: ACCEPT
 
-          #     - name: Allow to access pypi.org
-          #       iptables:
-          #         action: append
-          #         chain: OUTPUT
-          #         protocol: tcp
-          #         destination_port: 443
-          #         destination: pypi.org
-          #         jump: ACCEPT
+    - name: Allow to access nexedi.org HTTPS
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination: www.nexedi.org
+        destination_port: 443
+        jump: ACCEPT
+
+    - name: Allow to access shacache HTTPS
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination: shacache.org
+        destination_port: 443
+        jump: ACCEPT
 
     - name: Allow to access lab.nexedi.com
       iptables:
@@ -136,32 +145,32 @@
         destination: slap.vifib.com
         jump: ACCEPT
 
-          #     - name: Allow to access slap.vifib.com
-          #       iptables:
-          #         action: append
-          #         chain: OUTPUT
-          #         protocol: icmp
-          #         destination: slap.vifib.com
-          #         jump: ACCEPT
+          #    - name: Allow to access slap.vifib.com
+          #      iptables:
+          #        action: append
+          #        chain: OUTPUT
+          #        protocol: icmp
+          #        destination: slap.vifib.com
+          #        jump: ACCEPT
           #
-          #     - name: Allow to access slap.vifib.com
-          #       iptables:
-          #         action: append
-          #         chain: OUTPUT
-          #         protocol: tcp
-          #         destination: slap.vifib.com
-          #         destination_port: 80
-          #         jump: ACCEPT
+          #    - name: Allow to access slap.vifib.com
+          #      iptables:
+          #        action: append
+          #        chain: OUTPUT
+          #        protocol: tcp
+          #        destination: slap.vifib.com
+          #        destination_port: 80
+          #        jump: ACCEPT
           #
-          #     - name: Allow to access slap.vifib.com
-          #       iptables:
-          #         ip_version: ipv6
-          #         action: append
-          #         chain: OUTPUT
-          #         protocol: tcp
-          #         destination: slap.vifib.com
-          #         destination_port: 80
-          #         jump: ACCEPT
+          #    - name: Allow to access slap.vifib.com
+          #      iptables:
+          #        ip_version: ipv6
+          #        action: append
+          #        chain: OUTPUT
+          #        protocol: tcp
+          #        destination: slap.vifib.com
+          #        destination_port: 80
+          #        jump: ACCEPT
 
 
     - name: DROP INPUT
