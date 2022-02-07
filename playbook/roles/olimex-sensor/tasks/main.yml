@@ -1,21 +1,35 @@
 - name: Install apt package dependencies
   apt:
     pkg:
-      - python
-      - python-pip
+      - python3
+      - python3-pip
       - i2c-tools
-      - python-smbus
+      - python3-smbus
     state: present
 
 - name: Install setuptools
   pip:
     name: setuptools
-    executable: pip2
+    executable: pip3
 
 - name: Install bme280
   pip:
     name: bme280
-    executable: pip2
+    executable: pip3
+
+# We need to set a different bus number depending
+# on the debian version. For Debian 12 we may
+# need another number again.
+
+- name: Set bus number for debian bullseye
+  set_fact:
+    i2c_bus_number: 3
+  when: ansible_distribution == 'Debian' and ansible_distribution_release == 'Buster'
+
+- name: Set bus number for debian bullseye
+  set_fact:
+    i2c_bus_number: 2
+  when: ansible_distribution == 'Debian' and ansible_distribution_release == 'bullseye'
 
 - name: Solve python template to read sensor
   template:
@@ -27,8 +41,8 @@
     set_olimex_sensor_permission_path: /usr/bin/olimex-sensor-set-sensor-permission
 
 - name: Move script to grant access to sensor to file path
-  copy:
-    src: olimex-sensor-set-sensor-permission.sh
+  template:
+    src: olimex-sensor-set-sensor-permission.j2
     dest: "{{ set_olimex_sensor_permission_path }}"
     mode: 755
 
