@@ -9,12 +9,28 @@
 
   vars:
     - iptables_rules: |
-        # To send data to IoT-Gateway
-          
+        # To allow connection to SlapOS master
+        # (for requesting Fluentd instance)
+
+        # Only accept packets on the INPUT chain that are ESTABLISHED or RELATED to a current connection
+        iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+        # Accept DNS
+        iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT
+        iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+
+        # Accept HTTP
+        iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+
+        # Accept HTTPS
+        iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+        iptables -A OUTPUT -p udp --dport 443 -j ACCEPT
+
+        # To send data to IoT Gateway
+
         LISTEN_SENSOR_PORT=24224
 
-        ip6tables -A OUTPUT -p tcp --dport $LISTEN_SENSOR_PORT -j ACCEPT
-        ip6tables -A OUTPUT -p udp --dport $LISTEN_SENSOR_PORT -j ACCEPT
+        ip6tables -A OUTPUT -o eth0 -j ACCEPT
 
         ip6tables -A INPUT -p tcp --sport $LISTEN_SENSOR_PORT -j ACCEPT 
         ip6tables -A INPUT -p udp --sport $LISTEN_SENSOR_PORT -j ACCEPT
