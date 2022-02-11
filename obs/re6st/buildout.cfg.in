@@ -44,5 +44,6 @@ environment +=
   DESTDIR=%(ROOT)s
 
 [openssl]
+shared = false
 prefix = %(TARGET)s/parts/${:_buildout_section_name_}
 make-install-extra = DESTDIR=%(ROOT)s
