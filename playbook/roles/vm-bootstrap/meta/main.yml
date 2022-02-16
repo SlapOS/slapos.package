@@ -1,4 +1,3 @@
 ---
 dependencies:
-  - { role: vm-bootstrap-hostname }
   - { role: package, package_name: python3, package_state: present }
