@@ -1,0 +1,23 @@
+[buildout]
+rootdir = %TARGET_DIR%
+destdir = %BUILD_DIR%
+builddir = %PARTS_DIR%
+extends =
+  %BUILD_DIR%/../software_release/component/lunzip/buildout.cfg
+extensions =
+parts =
+  networkcached
+versions = versions
+
+[networkcached]
+recipe = zc.recipe.egg
+eggs =
+  slapos.libnetworkcache
+  zc.buildout
+
+[versions]
+setuptools = 44.1.1
+# Use SlapOS patched zc.buildout
+zc.buildout = 2.7.1+slapos016
+# Use SlapOS patched zc.recipe.egg (zc.recipe.egg 2.x is for Buildout 2)
+zc.recipe.egg = 2.0.3+slapos003

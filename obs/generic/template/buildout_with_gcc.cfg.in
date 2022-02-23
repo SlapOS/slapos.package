@@ -1,0 +1,18 @@
+[buildout]
+rootdir = %TARGET_DIR%
+destdir = %BUILD_DIRY% 
+builddir = %PARTS_DIR%
+extends =
+  %BUILD_DIR%/../software_release/component/lunzip/buildout.cfg
+versions = versions
+
+[gcc]
+# force usage of gcc from slapos to have it in the cache
+max_version = 0
+
+[versions]
+setuptools = 44.1.1
+# Use SlapOS patched zc.buildout
+zc.buildout = 2.7.1+slapos016
+# Use SlapOS patched zc.recipe.egg (zc.recipe.egg 2.x is for Buildout 2)
+zc.recipe.egg = 2.0.3+slapos003
