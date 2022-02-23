@@ -1,0 +1,20 @@
+[buildout]
+rootdir = %TARGET_DIR%
+destdir = %BUILD_DIR%
+builddir = %RUN_BUILDOUT_DIR%
+extends =
+  %SR_PATH%
+#  %BUILD_DIR%/../software_release/software/fluent-bit/software.cfg
+#  %TARBALL_DIR%/software_release/software/fluent-bit/software.cfg
+#  %TARBALL_DIR%/software_release/component/fluent-bit/buildout.cfg
+#  %BUILD_DIR%/../software_release/component/fluent-bit/buildout.cfg
+versions = versions
+extends-cache = extends-cache
+download-cache = download-cache
+
+[versions]
+setuptools = 44.1.1
+# Use SlapOS patched zc.buildout
+zc.buildout = 2.7.1+slapos016
+# Use SlapOS patched zc.recipe.egg (zc.recipe.egg 2.x is for Buildout 2)
+zc.recipe.egg = 2.0.3+slapos003

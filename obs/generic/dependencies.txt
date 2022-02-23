@@ -1,0 +1,6 @@
+bash
+python2.7
+wget
+
+# required to checkout with osc (command-line for OBS)
+python3-m2crypto

@@ -1,0 +1,27 @@
+Source: fluent-bit
+Maintainer: Ophelie Gagnard <ophelie.gagnard@nexedi.com>
+Section: net
+Priority: optional
+Build-Depends: debhelper,
+               chrpath,
+               python
+Homepage: https://slapos.nexedi.com
+
+Package: fluent-bit
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         ucf,
+         uml-utilities,
+# slapgrid-sr needed by most recipes
+	 libc6-dev | libc-dev,
+         gcc | c-compiler,
+         g++ | c++-compiler,
+         make,
+         patch,
+# slapos node collect
+         lm-sensors,
+# devperm manager plugin wants to use lsblk
+         util-linux
+Conflicts:
+Description: fluent-bit packaging test
