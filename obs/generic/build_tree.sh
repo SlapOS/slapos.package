@@ -14,4 +14,4 @@ git checkout fluent-bit
 
 cd $INITIAL_DIR
 # Peparing the build directories
-mkdir -p $PARTS_DIR/{eggs,extends-cache,download-cache/dist,tmp-networkcached/eggs}
+mkdir -p $PARTS_DIR/{eggs,extends-cache,download-cache/dist}

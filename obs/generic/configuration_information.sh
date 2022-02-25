@@ -33,8 +33,9 @@ PARTS_DIR=`realpath -m $PARTS_DIR`
 # Regular expressions for templates
 VERSION_REGEX="s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s/\%VERSION\%/$VERSION/g;s/\%RELEASE\%/$RELEASE/g"
 # Note: %PATCHES_DIRECTORY% not supported yet
-# supporting legacy macros
-DIR_REGEX="s|\%TARGET_DIRECTORY\%|$TARGET_DIR|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_DIR|g;s|\%BUILD_DIRECTORY\%|$PARTS_DIR|g"
 # supporting new macros
-#DIR_REGEX="s|\%TARGET_DIR\%|$TARGET_DIR|g;s|\%BUILD_DIR\%|$BUILD_DIR|g;s|\%PARTS_DIR\%|$PARTS_DIR|g"
-
+DIR_REGEX="s|\%TARGET_DIR\%|$TARGET_DIR|g;s|\%BUILD_DIR\%|$BUILD_DIR|g;s|\%PARTS_DIR\%|$PARTS_DIR|g"
+# supporting legacy macros
+OLD_DIR_REGEX="s|\%TARGET_DIRECTORY\%|$TARGET_DIR|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_DIR|g;s|\%BUILD_DIRECTORY\%|$PARTS_DIR|g"
+# concatenate all regex using ; (quoted, not to end the command)
+ALL_REGEX=$VERSION_REGEX";"$DIR_REGEX";"$OLD_DIR_REGEX

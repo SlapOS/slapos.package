@@ -11,4 +11,4 @@ rm -rf software_release
 
 cd $INITIAL_DIR
 # Clean the build tree
-rm -rf $PARTS_DIR/{eggs,extends-cache,download-cache,tmp-networkcached}
+rm -rf $PARTS_DIR/{eggs,extends-cache,download-cache}
