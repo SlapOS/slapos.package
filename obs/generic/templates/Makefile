@@ -1,0 +1,57 @@
+
+VERSION = 1
+RECIPE_VERSION = 1
+
+PY = $(PYTHON)
+#INSTALL_DIRECTORY = $(DESTDIR)/opt/test
+#TARGET_DIRECTORY = /opt/slapos
+TARGET_DIRECTORY = /opt/test
+BUILD_DIR := $(shell pwd)/build
+RUN_BUILDOUT_DIR := $(BUILD_DIR)$(TARGET_DIRECTORY)
+#PATCHES_DIRECTORY := $(shell pwd)/patches
+# get the path of the BUILD_DIR of the first build (performed to prepare the cache for OBS)
+OLD_BUILD_DIR := $(shell cat cache_creation_build_directory)
+
+#Use to get path of buildout correct
+#ORIGINAL_DIRECTORY := $(shell cat ./original_directory)
+
+all: build
+
+build: build-stamp
+build-stamp:
+	@echo "Fixing buildout path to $(BUILD_DIR) rather than $(OLD_BUILD_DIR) for buildout"
+################################################################################ 
+#	grep -rIl '$(OLD_DIRECTORY)' $(BUILD_DIR) 2> /dev/null | \
+#		xargs sed -i 's#$(OLD_DIRECTORY)#$(BUILD_DIR)#g' || \
+#		echo "No path to fix."
+################################################################################ 
+	cd $(RUN_BUILDOUT_DIR); sed -i 's#$(OLD_BUILD_DIR)#$(BUILD_DIR)#g' buildout.cfg bin/* tmp-networkcached/buildout.cfg tmp-networkcached/bin/* 
+	cd $(RUN_BUILDOUT_DIR); sed -i 's#$(OLD_BUILD_DIR)#$(BUILD_DIR)#g' tmp-networkcached/bin/*
+	echo RUN_BUILDOUT_DIR = $(RUN_BUILDOUT_DIR) \; PY = $(PY)
+	cd $(RUN_BUILDOUT_DIR) && \
+		$(PY) ./bin/buildout -v
+
+	@touch build-stamp
+
+clean:
+	# TODO: implement a proper cleaning
+	#rm -rf $(BUILD_DIR)
+	rm -f *-stamp
+
+install: all
+	#cd slapos; make install
+	mkdir -p $(DESTDIR)/usr/bin/
+	mkdir -p $(DESTDIR)/usr/sbin/
+	mkdir -p $(DESTDIR)/usr/etc/
+	mkdir -p $(DESTDIR)/usr/lib/
+	mkdir -p $(DESTDIR)/usr/share/
+	mkdir -p $(DESTDIR)/opt
+	#cp `find $(RUN_BUILDOUT_DIR) | grep -e "^$(RUN_BUILDOUT_DIR)/[^/][^/]*/bin/*` $(DESTDIR)/usr/bin/
+	-cp -r $(RUN_BUILDOUT_DIR)/parts/*/bin/* $(DESTDIR)/usr/bin/
+	-cp -r $(RUN_BUILDOUT_DIR)/parts/*/sbin/* $(DESTDIR)/usr/sbin/
+	-cp -r $(RUN_BUILDOUT_DIR)/parts/*/etc/* $(DESTDIR)/usr/etc/
+	-cp -r $(RUN_BUILDOUT_DIR)/parts/*/lib/* $(DESTDIR)/usr/lib/
+	-cp -r $(RUN_BUILDOUT_DIR)/parts/*/share/* $(DESTDIR)/usr/share/
+	-cp -r $(RUN_BUILDOUT_DIR)/parts/*/opt/* $(DESTDIR)/opt
+
+.PHONY: build all clean install

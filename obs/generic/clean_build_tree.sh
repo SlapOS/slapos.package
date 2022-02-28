@@ -4,11 +4,17 @@ set -e
 source configuration_information.sh
 
 cd $INITIAL_DIR
+rm -rf tarballs/$SOFTWARE/
+
+exit # TODO: separate the tree building from the software release retrieving
+
+cd $INITIAL_DIR
 # Clean the software release to pack
-cd tarball/$SOFTWARE/
-rm -rf slapos slapos_repository # LEGACY
-rm -rf software_release
+if [[ -d tarballs/$SOFTWARE/ ]]; then
+	cd tarballs/$SOFTWARE/
+	rm -rf software_release
+else echo tarballs/$SOFTWARE/ does not exist.
 
 cd $INITIAL_DIR
 # Clean the build tree
-rm -rf $PARTS_DIR/{eggs,extends-cache,download-cache}
+rm -rf $RUN_BUILDOUT_DIR/{eggs,extends-cache,download-cache}
