@@ -1,0 +1,3 @@
+bash
+python2.7
+wget
