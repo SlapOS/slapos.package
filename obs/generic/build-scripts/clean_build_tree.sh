@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-source configuration_information.sh
+source build-scripts/configuration_information.sh
 
 cd $INITIAL_DIR
 rm -rf tarballs/$SOFTWARE/

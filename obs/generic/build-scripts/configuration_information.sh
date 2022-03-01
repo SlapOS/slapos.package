@@ -2,7 +2,7 @@
 # Use on script as source release_configuration.sh
 ####################################################
 
-INITIAL_DIR="$(pwd)"
+INITIAL_DIR="$(pwd)"/
 # Modify the following variables accordingly
 
 # RELEASE INFORMATION
