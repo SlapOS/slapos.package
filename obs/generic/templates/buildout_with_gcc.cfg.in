@@ -3,7 +3,7 @@ rootdir = %TARGET_DIR%
 destdir = %BUILD_DIR% 
 builddir = %PARTS_DIR%
 extends =
-  %BUILD_DIR%/../software_release/component/lunzip/buildout.cfg
+  %BUILD_DIR%/../software_release/software/fluent-bit/software.cfg
 versions = versions
 
 [gcc]
