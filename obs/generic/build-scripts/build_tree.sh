@@ -4,13 +4,12 @@ set -e
 source build-scripts/configuration_information.sh
 
 cd $INITIAL_DIR
-mkdir -p tarballs/$SOFTWARE/
+mkdir -p $TARBALL_DIR
 # Re-downloading the software release to pack
-cd tarballs/$SOFTWARE/
-git clone https://lab.nexedi.com/Francois/slapos
-mv slapos software_release
-cd software_release
-git checkout fluent-bit
+#cp -r /home/test/other-projects/model/1wip_simplify-fluentbit_my-slapos .
+cp -r /home/test/other-projects/new_slapos.package/sid.fluentbit.my-slapos $TARBALL_DIR
+#mv 1wip_simplify-fluentbit_my-slapos software_release
+mv $TARBALL_DIR/sid.fluentbit.my-slapos $TARBALL_DIR/software_release
 
 cd $INITIAL_DIR
 # Peparing the build directories

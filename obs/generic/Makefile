@@ -1,6 +1,9 @@
 
-all: build_tree template_stage bootstrap_buildout obs
-clean: clean_build_tree clean_template_stage clean_bootstrap_buildout clean_obs
+all: no_obs obs
+clean: clean_no_obs clean_obs
+
+no_obs: build_tree template_stage bootstrap_buildout
+clean_no_obs: clean_build_tree clean_template_stage clean_bootstrap_buildout
 
 build_tree:
 	build-scripts/build_tree.sh
@@ -22,4 +25,4 @@ obs:
 clean_obs:
 	build-scripts/clean_obs.sh
 
-.PHONY: all clean build_tree clean_build_tree template_stage clean_template_stage bootstrap_buildout clean_bootstrap_buildout obs clean_obs
+.PHONY: all clean no_obs clean_no_obs build_tree clean_build_tree template_stage clean_template_stage bootstrap_buildout clean_bootstrap_buildout obs clean_obs

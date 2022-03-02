@@ -1,10 +1,13 @@
 [buildout]
 rootdir = %TARGET_DIR%
-destdir = %BUILD_DIR% 
-builddir = %PARTS_DIR%
+destdir = %BUILD_DIR%
+builddir = %RUN_BUILDOUT_DIR%
 extends =
+  %SR_PATH%
 #  %BUILD_DIR%/../software_release/software/fluent-bit/software.cfg
-  %BUILD_DIR%/../software_release/component/fluent-bit/buildout.cfg
+#  %TARBALL_DIR%/software_release/software/fluent-bit/software.cfg
+#  %TARBALL_DIR%/software_release/component/fluent-bit/buildout.cfg
+#  %BUILD_DIR%/../software_release/component/fluent-bit/buildout.cfg
 versions = versions
 extends-cache = extends-cache
 download-cache = download-cache
