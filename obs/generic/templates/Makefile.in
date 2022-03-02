@@ -5,9 +5,12 @@ RECIPE_VERSION = 1
 PY = $(PYTHON)
 #INSTALL_DIRECTORY = $(DESTDIR)/opt/test
 #TARGET_DIRECTORY = /opt/slapos
-TARGET_DIRECTORY = /opt/test
-BUILD_DIR := $(shell pwd)/build
-RUN_BUILDOUT_DIR := $(BUILD_DIR)$(TARGET_DIRECTORY)
+# This templates are replaced by build-scripts/template_stage.sh
+# according to the values and regular expressions defined in
+# build-scripts/configuration_information.sh
+TARGET_DIRECTORY = %TARGET_DIR%
+BUILD_DIR = $(shell pwd)/build
+RUN_BUILDOUT_DIR = $(BUILD_DIR)$(TARGET_DIRECTORY)
 #PATCHES_DIRECTORY := $(shell pwd)/patches
 # get the path of the BUILD_DIR of the first build (performed to prepare the cache for OBS)
 OLD_BUILD_DIR := $(shell cat cache_creation_build_directory)
@@ -25,8 +28,7 @@ build-stamp:
 #		xargs sed -i 's#$(OLD_DIRECTORY)#$(BUILD_DIR)#g' || \
 #		echo "No path to fix."
 ################################################################################ 
-	cd $(RUN_BUILDOUT_DIR); sed -i 's#$(OLD_BUILD_DIR)#$(BUILD_DIR)#g' buildout.cfg bin/* tmp-networkcached/buildout.cfg tmp-networkcached/bin/* 
-	cd $(RUN_BUILDOUT_DIR); sed -i 's#$(OLD_BUILD_DIR)#$(BUILD_DIR)#g' tmp-networkcached/bin/*
+	cd $(RUN_BUILDOUT_DIR); sed -i 's#$(OLD_BUILD_DIR)#$(BUILD_DIR)#g' buildout.cfg bin/*
 	echo RUN_BUILDOUT_DIR = $(RUN_BUILDOUT_DIR) \; PY = $(PY)
 	cd $(RUN_BUILDOUT_DIR) && \
 		$(PY) ./bin/buildout -v
