@@ -1,0 +1,8 @@
+
+SHORT RUN
+"Merge" BUILD_DIR and RUN_BUILDOUT_DIR. Don't forgot the templates.
+In Makefile.in, allow to select some parts to copy.
+
+LONG RUN
+Use a ./configure script?
+In particular, in $ARCHIVE_NAME/Makefile there are some operations which should be in the template stage.
