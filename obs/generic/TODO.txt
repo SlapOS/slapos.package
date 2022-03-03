@@ -2,6 +2,7 @@
 SHORT RUN
 "Merge" BUILD_DIR and RUN_BUILDOUT_DIR. Don't forgot the templates.
 In Makefile.in, allow to select some parts to copy.
+Set the versions to 1-1 instead of 0-1?
 
 LONG RUN
 Use a ./configure script?

@@ -1,0 +1,24 @@
+Source: mca
+Maintainer: Francois Gagnard <francois.gagnard@nexedi.com>
+Section: net
+Priority: optional
+Build-Depends: debhelper,
+               chrpath,
+               python
+
+Package: mca
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         ucf,
+         uml-utilities,
+# slapgrid-sr needed by most recipes
+	 libc6-dev | libc-dev,
+         gcc | c-compiler,
+         g++ | c++-compiler,
+         make,
+         patch,
+# devperm manager plugin wants to use lsblk
+         util-linux
+Conflicts:
+Description: mca packaging test
