@@ -9,11 +9,11 @@ PY = $(PYTHON)
 TARGET_DIR = %TARGET_DIR%
 TARBALL_DIR = $(shell pwd)
 BUILD_DIR = $(TARBALL_DIR)/build
-INSTALL_DIR = $(BUILD_DIR)$(TARGET_DIR)
+INSTALL_DIR = $(DESTDIR)$(TARGET_DIR)
 RUN_BUILDOUT_DIR = $(BUILD_DIR)$(TARGET_DIR)
 #PATCHES_DIR := $(shell pwd)/patches
 # get the path of the BUILD_DIR of the first build (performed to prepare the cache for OBS)
-OLD_BUILD_DIR := $(shell cat cache_creation_build_directory)
+OLD_TARBALL_DIR := $(shell cat cache_creation_build_directory)
 
 #Use to get path of buildout correct
 #ORIGINAL_DIRECTORY := $(shell cat ./original_directory)
@@ -22,13 +22,15 @@ all: build
 
 build: build-stamp
 build-stamp:
-	@echo "Fixing buildout path to $(TARBALL_DIR) rather than $(OLD_BUILD_DIR) for buildout"
+	@echo "Fixing buildout path to $(TARBALL_DIR) rather than $(OLD_TARBALL_DIR) for buildout"
 ################################################################################ 
 #	grep -rIl '$(OLD_DIRECTORY)' $(BUILD_DIR) 2> /dev/null | \
 #		xargs sed -i 's#$(OLD_DIRECTORY)#$(BUILD_DIR)#g' || \
 #		echo "No path to fix."
 ################################################################################ 
-	cd $(RUN_BUILDOUT_DIR); sed -i 's#$(OLD_BUILD_DIR)#$(TARBALL_DIR)#g' buildout.cfg bin/*
+	ls -l $(RUN_BUILDOUT_DIR) # DEBUG
+	ls -l $(RUN_BUILDOUT_DIR)/bin/ # DEBUG
+	cd $(RUN_BUILDOUT_DIR); sed -i 's#$(OLD_TARBALL_DIR)#$(TARBALL_DIR)#g' buildout.cfg bin/*
 	echo RUN_BUILDOUT_DIR = $(RUN_BUILDOUT_DIR) \; PY = $(PY)
 	cd $(RUN_BUILDOUT_DIR) && \
 		$(PY) ./bin/buildout -v
@@ -53,5 +55,6 @@ install: all
 	-cp -r $(RUN_BUILDOUT_DIR)/parts/*/etc/* $(INSTALL_DIR)/etc/
 	-cp -r $(RUN_BUILDOUT_DIR)/parts/*/lib/* $(INSTALL_DIR)/lib/
 	-cp -r $(RUN_BUILDOUT_DIR)/parts/*/share/* $(INSTALL_DIR)/share/
+	ls -Rl $(INSTALL_DIR)/bin/ # DEBUG
 
 .PHONY: build all clean install
