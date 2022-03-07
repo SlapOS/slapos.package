@@ -217,6 +217,12 @@
         ctstate: ESTABLISHED,RELATED
         jump: ACCEPT
 
+    - name: Reject all output connect
+      iptables:
+        chain: OUTPUT
+        table: filter
+        jump: REJECT
+
     - name: Change the download-binary-cache-url
       lineinfile:
         path: /etc/opt/slapos/slapos.cfg
