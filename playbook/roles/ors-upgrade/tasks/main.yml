@@ -25,3 +25,9 @@
 
   - name: Give permission to slapuser to remove tmp files owned by other slapuser
     copy: src=slapuser-rm-tmp dest=/etc/sudoers.d owner=root mode=440
+
+  - name: Add init-sdr service
+    copy: src=init-sdr dest=/etc/init.d owner=root mode=755
+
+  - name: Enable init-sdr
+    systemd: name=init-sdr enabled=yes
