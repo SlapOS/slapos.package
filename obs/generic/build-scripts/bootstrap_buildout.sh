@@ -16,5 +16,9 @@ mkdir -p $RUN_BUILDOUT_DIR
 cd $RUN_BUILDOUT_DIR
 # should be with gcc here and without in OBS
 cp $TEMPLATE_DIR/tmp/buildout_without_gcc.cfg buildout.cfg
-(python2.7 -S bootstrap-buildout.py --buildout-version 2.7.1+slapos016 --setuptools-version 44.1.1 --setuptools-to-dir eggs -f http://www.nexedi.org/static/packages/source/slapos.buildout/ && ./bin/buildout -v)
+## next line explained
+# 1st cmd: bootstrap buildout (creates bin/buildout)
+# 2nd cmd: backup bin/buildout (to be restored for OBS)
+# 3rd cmd: run buildout (which apparently modifies itself)
+(python2.7 -S bootstrap-buildout.py --buildout-version 2.7.1+slapos016 --setuptools-version 44.1.1 --setuptools-to-dir eggs -f http://www.nexedi.org/static/packages/source/slapos.buildout/ && cp bin/buildout bin/backup.buildout && ./bin/buildout -v)
 #cp $TEMPLATE_DIR/tmp/buildout_with_gcc.cfg buildout.cfg
