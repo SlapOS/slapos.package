@@ -13,7 +13,7 @@ INSTALL_DIR = $(DESTDIR)$(TARGET_DIR)
 RUN_BUILDOUT_DIR = $(BUILD_DIR)$(TARGET_DIR)
 #PATCHES_DIR := $(shell pwd)/patches
 # get the path of the BUILD_DIR of the first build (performed to prepare the cache for OBS)
-OLD_TARBALL_DIR := $(shell cat cache_creation_build_directory)
+OLD_TARBALL_DIR := $(shell cat local_build_directory)
 
 #Use to get path of buildout correct
 #ORIGINAL_DIRECTORY := $(shell cat ./original_directory)
