@@ -6,7 +6,7 @@ Build-Depends: debhelper,
                chrpath,
                python
 
-Package: mca
+Package: %SOFTWARE_NAME%
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},

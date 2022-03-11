@@ -4,17 +4,9 @@ destdir = %BUILD_DIR%
 builddir = %RUN_BUILDOUT_DIR%
 extends =
   %SR_PATH%
-#  %BUILD_DIR%/../software_release/software/fluent-bit/software.cfg
-#  %TARBALL_DIR%/software_release/software/fluent-bit/software.cfg
-#  %TARBALL_DIR%/software_release/component/fluent-bit/buildout.cfg
-#  %BUILD_DIR%/../software_release/component/fluent-bit/buildout.cfg
 versions = versions
 extends-cache = extends-cache
 download-cache = download-cache
-
-[gcc]
-# force usage of gcc from slapos to have it in the cache
-max_version = 0
 
 [versions]
 setuptools = 44.1.1

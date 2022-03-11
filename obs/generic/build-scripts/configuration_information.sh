@@ -33,12 +33,12 @@ TARBALL_DIR=$INITIAL_DIR/tarballs/$SOFTWARE_AND_VERSION
 #SR_PATH=$TARBALL_DIR/software_release/component/$SOFTWARE_NAME/buildout.cfg
 SR_PATH=$TARBALL_DIR/software_release/software/$SOFTWARE_NAME/software.cfg
 
-COMPILATION_TEMPLATES_DIR=$INITIAL_DIR/templates/compilation-templates
+COMPILATION_TEMPLATES_DIR=$INITIAL_DIR/templates/compilation-templates/
 # BUILD_DIR was formerly BUILD_ROOT_DIRECTORY
 BUILD_DIR=$TARBALL_DIR/build/
 # RUN_BUILDOUT_DIR is where the parts/ directory will be ; formerly BUILD_DIRECTORY
 RUN_BUILDOUT_DIR=$BUILD_DIR/$TARGET_DIR
-DISTRIB_TEMPLATES_DIR=$INITIAL_DIR/templates/default-distribution-templates
+DISTRIB_TEMPLATES_DIR=$INITIAL_DIR/templates/distribution-templates
 DISTRIB_FILES_DIR=$INITIAL_DIR/distribution-specifics/$SOFTWARE_NAME
 
 
@@ -56,7 +56,7 @@ DISTRIB_TEMPLATES_DIR=`realpath -m $DISTRIB_TEMPLATES_DIR`
 DISTRIB_FILES_DIR=`realpath -m $DISTRIB_FILES_DIR`
 
 ## Regular expressions for templates
-NAME_REGEX="s|%SOFTWARE_NAME%|$SOFTWARE_NAME|g"
+NAME_REGEX="s|%SOFTWARE_NAME%|$SOFTWARE_NAME|g;s|%SOFTWARE_AND_VERSION%|$SOFTWARE_AND_VERSION|g"
 # versions (not used at the moment)
 # versions (supporting legact macros)
 #OLD_VERSION_REGEX="s|\%RECIPE_VERSION\%|$RECIPE_VERSION|g;s|\%VERSION\%|$SOFTWARE_VERSION|g;s|\%DEBIAN_REVISION\%|$DEBIAN_REVISION|g;s|\%COMPOUND_VERSION\%|$COMPOUND_VERSION|g"

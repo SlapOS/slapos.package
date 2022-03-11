@@ -1,0 +1,54 @@
+
+PY = $(PYTHON)
+#INSTALL_DIR = $(DESTDIR)/opt/test
+#TARGET_DIR = /opt/slapos
+# This templates are replaced by build-scripts/template_stage.sh
+# according to the values and regular expressions defined in
+# build-scripts/configuration_information.sh
+# The variable TARGET_DIR is pretty useless atm
+TARGET_DIR = %TARGET_DIR%
+TARBALL_DIR = $(shell pwd)
+BUILD_DIR = $(TARBALL_DIR)/build
+INSTALL_DIR = $(DESTDIR)$(TARGET_DIR)
+RUN_BUILDOUT_DIR = $(BUILD_DIR)$(TARGET_DIR)
+#PATCHES_DIR := $(shell pwd)/patches
+# get the path of the BUILD_DIR of the first build (performed to prepare the cache for OBS)
+OLD_TARBALL_DIR := $(shell cat local_build_directory)
+
+#Use to get path of buildout correct
+#ORIGINAL_DIRECTORY := $(shell cat ./original_directory)
+
+all: build
+
+build: build-stamp
+build-stamp:
+	@echo "Fixing buildout path to $(TARBALL_DIR) rather than $(OLD_TARBALL_DIR) for buildout"
+################################################################################ 
+#	grep -rIl '$(OLD_DIRECTORY)' $(BUILD_DIR) 2> /dev/null | \
+#		xargs sed -i 's#$(OLD_DIRECTORY)#$(BUILD_DIR)#g' || \
+#		echo "No path to fix."
+################################################################################ 
+	ls -l $(RUN_BUILDOUT_DIR) # DEBUG
+	ls -l $(RUN_BUILDOUT_DIR)/bin/ # DEBUG
+	cd $(RUN_BUILDOUT_DIR); sed -i 's#$(OLD_TARBALL_DIR)#$(TARBALL_DIR)#g' buildout.cfg bin/*
+	echo RUN_BUILDOUT_DIR = $(RUN_BUILDOUT_DIR) \; PY = $(PY)
+	cd $(RUN_BUILDOUT_DIR) && \
+		$(PY) ./bin/buildout -v
+
+	@touch build-stamp
+
+clean:
+	# TODO: implement a proper cleaning
+	#rm -rf $(BUILD_DIR)
+	rm -f *-stamp
+
+install: all
+	#cd slapos; make install
+	mkdir -p $(INSTALL_DIR)/bin
+	mkdir -p $(INSTALL_DIR)/share/
+	#cp `find $(RUN_BUILDOUT_DIR) | grep -e "^$(RUN_BUILDOUT_DIR)/[^/][^/]*/bin/*` $(DESTDIR)/usr/bin/
+	-cp -r $(RUN_BUILDOUT_DIR)/parts/fluent-bit/bin/* $(INSTALL_DIR)/bin/
+	-cp -r $(RUN_BUILDOUT_DIR)/parts/fluent-bit/share/* $(INSTALL_DIR)/share/
+	ls -Rl $(INSTALL_DIR)/bin/ # DEBUG
+
+.PHONY: build all clean install
