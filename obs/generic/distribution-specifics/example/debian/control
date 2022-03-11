@@ -1,4 +1,4 @@
-Source: mca
+Source: example
 Maintainer: Francois Gagnard <francois.gagnard@nexedi.com>
 Section: net
 Priority: optional
@@ -21,4 +21,4 @@ Depends: ${misc:Depends},
 # devperm manager plugin wants to use lsblk
          util-linux
 Conflicts:
-Description: mca packaging test
+Description: example packaging test
