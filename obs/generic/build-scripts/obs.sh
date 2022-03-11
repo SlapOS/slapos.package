@@ -9,7 +9,7 @@ TMP_DIR=`realpath -m $TMP_DIR`
 echo TMP_DIR = $TMP_DIR
 
 # copy the Makefile at the root of the tarball
-cp $TEMPLATE_DIR/tmp/Makefile $TARBALL_DIR/Makefile
+cp $COMPILATION_TEMPLATES_DIR/tmp/Makefile $TARBALL_DIR/Makefile
 # save the local TARBALL_DIR to replace it with the TARBALL_DIR of OBS' VM
 echo $TARBALL_DIR > $TARBALL_DIR/cache_creation_build_directory
 # restore bin/buildout

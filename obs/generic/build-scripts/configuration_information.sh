@@ -9,7 +9,7 @@ INITIAL_DIR="$(pwd)"/
 SOFTWARE_VERSION=1
 #RECIPE_VERSION=1
 DEBIAN_REVISION=1
-SOFTWARE_NAME=mca
+SOFTWARE_NAME=example
 
 # For the version format, see: https://www.debian.org/doc/manuals/debian-faq/pkg-basics.en.html#pkgname
 # here, in <foo>_<VersionNumber>-<DebianRevisionNumber>_<DebianArchitecture>.deb
@@ -33,11 +33,13 @@ TARBALL_DIR=$INITIAL_DIR/tarballs/$SOFTWARE_AND_VERSION
 #SR_PATH=$TARBALL_DIR/software_release/component/$SOFTWARE_NAME/buildout.cfg
 SR_PATH=$TARBALL_DIR/software_release/software/$SOFTWARE_NAME/software.cfg
 
-TEMPLATE_DIR=$INITIAL_DIR/templates
+COMPILATION_TEMPLATES_DIR=$INITIAL_DIR/templates/compilation-templates
 # BUILD_DIR was formerly BUILD_ROOT_DIRECTORY
 BUILD_DIR=$TARBALL_DIR/build/
 # RUN_BUILDOUT_DIR is where the parts/ directory will be ; formerly BUILD_DIRECTORY
 RUN_BUILDOUT_DIR=$BUILD_DIR/$TARGET_DIR
+DISTRIB_TEMPLATES_DIR=$INITIAL_DIR/templates/default-distribution-templates
+DISTRIB_FILES_DIR=$INITIAL_DIR/distribution-specifics/$SOFTWARE_NAME
 
 
 # Path normalization
@@ -47,9 +49,11 @@ OBS_DIR=`realpath -m $OBS_DIR`
 DIST_DIR=`realpath -m $DIST_DIR`
 TARBALL_DIR=`realpath -m $TARBALL_DIR`
 SR_PATH=`realpath -m $SR_PATH`
-TEMPLATE_DIR=`realpath -m $TEMPLATE_DIR`
+COMPILATION_TEMPLATES_DIR=`realpath -m $COMPILATION_TEMPLATES_DIR`
 BUILD_DIR=`realpath -m $BUILD_DIR`
 RUN_BUILDOUT_DIR=`realpath -m $RUN_BUILDOUT_DIR`
+DISTRIB_TEMPLATES_DIR=`realpath -m $DISTRIB_TEMPLATES_DIR`
+DISTRIB_FILES_DIR=`realpath -m $DISTRIB_FILES_DIR`
 
 ## Regular expressions for templates
 NAME_REGEX="s|%SOFTWARE_NAME%|$SOFTWARE_NAME|g"

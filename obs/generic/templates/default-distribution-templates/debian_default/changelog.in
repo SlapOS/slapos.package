@@ -1,4 +1,4 @@
-lunzip (1-1) UNRELEASED; urgency=medium
+%SOFTWARE_NAME% (%COMPOUND_VERSION%) UNRELEASED; urgency=medium
 
   * Initial release. (Closes: #XXXXXX)
 
