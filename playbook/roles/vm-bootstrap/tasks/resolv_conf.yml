@@ -9,4 +9,3 @@
 
   - name: Delete nameserver 8.8.8.8
     lineinfile: dest=/etc/resolv.conf line="nameserver 8.8.8.8" state=absent
-    when: is_playbook_ok in [False, "False"]
