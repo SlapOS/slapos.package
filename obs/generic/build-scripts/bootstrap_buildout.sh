@@ -29,4 +29,4 @@ BACKUP_DIR=$TARBALL_DIR/../backup.$SOFTWARE_AND_VERSION
 BACKUP_DIR=`realpath -m $BACKUP_DIR`
 # Delete the potential old backup and backup the newly created build tree instead.
 rm -rf $BACKUP_DIR
-cp -r $TARBAL_DIR $BACKUP_DIR
+cp -r $TARBALL_DIR $BACKUP_DIR

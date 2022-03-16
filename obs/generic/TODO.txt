@@ -1,9 +1,15 @@
 
-SHORT RUN
-"Merge" BUILD_DIR and RUN_BUILDOUT_DIR. Don't forgot the templates.
-In Makefile.in, allow to select some parts to copy.
-Set the versions to 1-1 instead of 0-1?
+SHORT TERM
+Document the project.
+Do not rename the plugin library (libfluentbit-wendelin.so to fluentbit-wendelin.so). The fix first has to be made upstream (in the metadata-collect-agent project).
+
+MID TERM
+Add a fonction in build-scripts/configuration-information.sh to delete the go/ directory?
+Re-add networkcached to the building process.
+Use a ./configure script?
+- In particular, in $ARCHIVE_NAME/Makefile there are some operations which should be in the template stage.
+Make the clean_* suite reversible.
+Write tests to test the compilation and the reversibility with clean_*.
 
 LONG RUN
-Use a ./configure script?
-In particular, in $ARCHIVE_NAME/Makefile there are some operations which should be in the template stage.
+Write standards to that other people can adapt the project without breaking it.
