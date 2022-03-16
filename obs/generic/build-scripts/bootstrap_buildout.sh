@@ -22,3 +22,11 @@ cp $COMPILATION_TEMPLATES_DIR/tmp/$SOFTWARE_NAME/local_buildout.cfg buildout.cfg
 # 3rd cmd: run buildout (which apparently modifies itself)
 (python2.7 -S bootstrap-buildout.py --buildout-version 2.7.1+slapos016 --setuptools-version 44.1.1 --setuptools-to-dir eggs -f http://www.nexedi.org/static/packages/source/slapos.buildout/ && cp bin/buildout bin/backup.buildout && ./bin/buildout -v)
 #cp $COMPILATION_TEMPLATES_DIR/tmp/buildout_with_gcc.cfg buildout.cfg
+
+cd $INITIAL_DIR
+# the following should simply add "backup." before the directory name pointed to by $TARBALL_DIR
+BACKUP_DIR=$TARBALL_DIR/../backup.$SOFTWARE_AND_VERSION
+BACKUP_DIR=`realpath -m $BACKUP_DIR`
+# Delete the potential old backup and backup the newly created build tree instead.
+rm -rf $BACKUP_DIR
+cp -r $TARBAL_DIR $BACKUP_DIR
