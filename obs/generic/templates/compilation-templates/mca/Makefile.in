@@ -48,11 +48,21 @@ install: all
 	mkdir -p $(INSTALL_DIR)/etc/
 	mkdir -p $(INSTALL_DIR)/lib/
 	mkdir -p $(INSTALL_DIR)/share/
+	mkdir -p $(INSTALL_DIR)/include/
 	#cp `find $(RUN_BUILDOUT_DIR) | grep -e "^$(RUN_BUILDOUT_DIR)/[^/][^/]*/bin/*` $(DESTDIR)/usr/bin/
-	-cp -r $(RUN_BUILDOUT_DIR)/parts/mca/bin/* $(INSTALL_DIR)/bin/
+	# no -r because there must be no subdirectories
+	# see https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch04s04.html
+	# and https://refspecs.linuxfoundation.org/FHS_3.0/fhs/ch03s13.html
+	-cp $(RUN_BUILDOUT_DIR)/parts/mca/bin/* $(INSTALL_DIR)/bin/
 	-cp -r $(RUN_BUILDOUT_DIR)/parts/mca/etc/* $(INSTALL_DIR)/etc/
-	-cp -r $(RUN_BUILDOUT_DIR)/parts/{mca,openssl}/lib/* $(INSTALL_DIR)/lib/
-	-cp -r $(RUN_BUILDOUT_DIR)/parts/{mca,openssl}/share/* $(INSTALL_DIR)/share/
+	-cp -r $(RUN_BUILDOUT_DIR)/parts/openssl/lib/* $(INSTALL_DIR)/lib/
+	# TODO: the next "cp" line is temporary renaming the library and this should be fixed asap
+	# the fix has to be made primarily in the MCA project
+	-cp $(RUN_BUILDOUT_DIR)/parts/fluentbit-plugin-wendelin/lib/libfluentbit_wendelin.so $(INSTALL_DIR)/lib/fluentbit_wendelin.so
+	-cp $(RUN_BUILDOUT_DIR)/parts/fluentbit-plugin-wendelin/include/libfluentbit_wendelin.h $(INSTALL_DIR)/include/libfluentbit_wendelin.h
+	-cp -r $(RUN_BUILDOUT_DIR)/parts/mca/share/* $(INSTALL_DIR)/share/
+	-cp -r $(RUN_BUILDOUT_DIR)/parts/openssl/share/* $(INSTALL_DIR)/share/
+	-cp -r $(RUN_BUILDOUT_DIR)/parts/fluentbit-plugin-wendelin/share/* $(INSTALL_DIR)/share/
 	ls -Rl $(INSTALL_DIR)/bin/ # DEBUG
 
 .PHONY: build all clean install
