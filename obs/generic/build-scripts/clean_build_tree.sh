@@ -4,6 +4,10 @@ set -e
 source build-scripts/configuration_information.sh
 
 cd $INITIAL_DIR
+# For some reason the user does not have the "write" permission on some directories of go/. As it is
+# needed on a directory to delete a file in it, the following line add the permissions to every
+# directories in go/.
+find $RUN_BUILDOUT_DIR/go -name "*" -type d -exec chmod u+xw {} +
 rm -rf $TARBALL_DIR
 
 exit # TODO: separate the tree building from the software release retrieving
