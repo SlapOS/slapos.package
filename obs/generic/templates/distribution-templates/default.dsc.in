@@ -1,5 +1,5 @@
 Format: 3.0 (native)
 Source: %SOFTWARE_NAME%
 Architecture: any
-Version: %SOFTWARE_VERSION%
+Version: %COMPOUND_VERSION%
 Build-Depends: debhelper (>= 4.1.16), chrpath, po-debconf, wget, python (>= 2.7)

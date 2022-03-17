@@ -41,6 +41,6 @@ cd $INITIAL_DIR
 # add "backup." before the directory name pointed to by $TARBALL_DIR
 BACKUP_DIR=$TARBALL_DIR/../backup.$SOFTWARE_AND_VERSION
 BACKUP_DIR=`realpath -m $BACKUP_DIR`
-# Delete the potential old backup and backup the newly created build tree instead.
+# Delete the potential previous backup and backup the newly created build tree instead.
 rm -rf $BACKUP_DIR
 cp -r $TARBALL_DIR $BACKUP_DIR

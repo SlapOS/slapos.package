@@ -46,7 +46,7 @@ install: all
 	# mkdir
 	mkdir -p $(INSTALL_DIR)/bin
 	mkdir -p $(INSTALL_DIR)/etc/
-	mkdir -p $(INSTALL_DIR)/include/
+	#mkdir -p $(INSTALL_DIR)/include/
 	mkdir -p $(INSTALL_DIR)/lib/
 	mkdir -p $(INSTALL_DIR)/share/
 
@@ -62,30 +62,37 @@ install: all
 
 	# etc
 	-cp -r $(RUN_BUILDOUT_DIR)/parts/mca/etc/* $(INSTALL_DIR)/etc/
+	# next line: in case flb.conf is moved to from mca to fluentbit-plugin-wendelin
+	-cp -r $(RUN_BUILDOUT_DIR)/parts/fluentbit-plugin-wendelin/etc/* $(INSTALL_DIR)/etc/
 	-cp -r $(RUN_BUILDOUT_DIR)/parts/openssl/etc/* $(INSTALL_DIR)/etc/
 	# remove links to certs in parts/ca-certificates/[...]: not supported for now
 	-rm -rf $(INSTALL_DIR)/etc/ssl/certs
 
 	# include
-	-cp -r $(RUN_BUILDOUT_DIR)/parts/fluentbit-plugin-wendelin/include/* $(INSTALL_DIR)/include/
-	-cp -r $(RUN_BUILDOUT_DIR)/parts/openssl/include/* $(INSTALL_DIR)/include/
+	#-cp -r $(RUN_BUILDOUT_DIR)/parts/fluentbit-plugin-wendelin/include/* $(INSTALL_DIR)/include/
+	#-cp -r $(RUN_BUILDOUT_DIR)/parts/openssl/include/* $(INSTALL_DIR)/include/
 
 	# lib
-	-cp -r $(RUN_BUILDOUT_DIR)/parts/openssl/lib/* $(INSTALL_DIR)/lib/
-	# TODO: the next "cp" line is temporary renaming the library and this should be fixed asap
-	# the fix has to be made primarily in the MCA project
-	-cp $(RUN_BUILDOUT_DIR)/parts/fluentbit-plugin-wendelin/lib/libfluentbit_wendelin.so $(INSTALL_DIR)/lib/fluentbit_wendelin.so
+	#-cp -r $(RUN_BUILDOUT_DIR)/parts/openssl/lib/libcrypto* $(INSTALL_DIR)/lib/
+	-cp $(RUN_BUILDOUT_DIR)/parts/fluentbit-plugin-wendelin/lib/* $(INSTALL_DIR)/lib/
+	# LIBCRYPTO
+	# TODO: then next "cp" is a workaroung because libcrypto.so or libcrypto.a from slapos doesn't work
+	# this should be fixed asap
+	#-cp /lib/x86_64-linux-gnu/libcrypto.so.1.1 $(INSTALL_DIR)/lib/
+	# LIBFMT
+	#-cp -r $(RUN_BUILDOUT_DIR)/parts/fmtlib/lib/libfmt.so* $(INSTALL_DIR)/lib/
 
 	# share
 	-cp -r $(RUN_BUILDOUT_DIR)/parts/mca/share/* $(INSTALL_DIR)/share/
-	-cp -r $(RUN_BUILDOUT_DIR)/parts/openssl/share/* $(INSTALL_DIR)/share/
+	# TODO: what is it actually needed from openssl...?
+	#-cp -r $(RUN_BUILDOUT_DIR)/parts/openssl/share/* $(INSTALL_DIR)/share/
 	-cp -r $(RUN_BUILDOUT_DIR)/parts/fluentbit-plugin-wendelin/share/* $(INSTALL_DIR)/share/
 
 
 	# DEBUG
 	ls -Rl $(INSTALL_DIR)/bin/ # DEBUG
 	ls -Rl $(INSTALL_DIR)/etc/ # DEBUG
-	ls -Rl $(INSTALL_DIR)/include/ # DEBUG
+	#ls -Rl $(INSTALL_DIR)/include/ # DEBUG
 	ls -Rl $(INSTALL_DIR)/lib/ # DEBUG
 	ls -Rl $(INSTALL_DIR)/share/ # DEBUG
 
