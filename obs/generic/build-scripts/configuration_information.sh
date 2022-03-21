@@ -9,7 +9,7 @@ INITIAL_DIR="$(pwd)"/
 SOFTWARE_VERSION=1
 #RECIPE_VERSION=1
 DEBIAN_REVISION=1
-SOFTWARE_NAME=example
+SOFTWARE_NAME=light-build-dependencies-mca
 
 # For the version format, see: https://www.debian.org/doc/manuals/debian-faq/pkg-basics.en.html#pkgname
 # here, in <foo>_<VersionNumber>-<DebianRevisionNumber>_<DebianArchitecture>.deb
