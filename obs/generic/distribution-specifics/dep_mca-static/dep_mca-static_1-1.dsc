@@ -1,5 +1,5 @@
 Format: 3.0 (native)
-Source: light-build-dependencies-mca
+Source: dep_mca-static
 Architecture: any
 Version: 1
 Build-Depends: debhelper (>= 4.1.16),

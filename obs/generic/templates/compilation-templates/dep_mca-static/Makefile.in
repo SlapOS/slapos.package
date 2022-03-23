@@ -73,14 +73,14 @@ install: all
 	#-cp -r $(RUN_BUILDOUT_DIR)/parts/openssl/include/* $(INSTALL_DIR)/include/
 
 	# lib
-	-cp -r $(RUN_BUILDOUT_DIR)/parts/openssl/lib/libcrypto* $(INSTALL_DIR)/lib/
+	#-cp -r $(RUN_BUILDOUT_DIR)/parts/openssl/lib/libcrypto* $(INSTALL_DIR)/lib/
 	-cp $(RUN_BUILDOUT_DIR)/parts/fluentbit-plugin-wendelin/lib/* $(INSTALL_DIR)/lib/
 	# LIBCRYPTO
 	# TODO: then next "cp" is a workaroung because libcrypto.so or libcrypto.a from slapos doesn't work
 	# this should be fixed asap
 	#-cp /lib/x86_64-linux-gnu/libcrypto.so.1.1 $(INSTALL_DIR)/lib/
 	# LIBFMT
-	-cp -r $(RUN_BUILDOUT_DIR)/parts/fmtlib/lib/libfmt.so* $(INSTALL_DIR)/lib/
+	#-cp -r $(RUN_BUILDOUT_DIR)/parts/fmtlib/lib/libfmt.so* $(INSTALL_DIR)/lib/
 
 	# share
 	-cp -r $(RUN_BUILDOUT_DIR)/parts/mca/share/* $(INSTALL_DIR)/share/
