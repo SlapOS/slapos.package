@@ -1,7 +1,7 @@
 Format: 3.0 (native)
-Source: light-build-dependencies-mca
+Source: dep--mca
 Architecture: any
-Version: 1
+Version: 1-1
 Build-Depends: debhelper (>= 4.1.16),
                chrpath,
                wget,

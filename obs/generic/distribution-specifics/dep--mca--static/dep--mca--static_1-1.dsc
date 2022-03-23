@@ -1,7 +1,7 @@
 Format: 3.0 (native)
-Source: dep_mca-static
+Source: dep--mca--static
 Architecture: any
-Version: 1
+Version: 1-1
 Build-Depends: debhelper (>= 4.1.16),
                chrpath,
                wget,

@@ -1,0 +1,29 @@
+Source: dep--mca
+Maintainer: Francois Gagnard <francois.gagnard@nexedi.com>
+Section: net
+Priority: optional
+Build-Depends: debhelper (>= 4.1.16),
+               chrpath,
+               wget,
+               python (>= 2.7),
+               python3 (>= 3.7),
+               python3-dev (>= 3.7),
+               golang (>= 2:1.15~1),
+               cmake (>= 3.18)
+
+Package: dep--mca
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         ucf,
+         uml-utilities,
+# slapgrid-sr needed by most recipes
+	 libc6-dev | libc-dev,
+         gcc | c-compiler,
+         g++ | c++-compiler,
+         make,
+         patch,
+# devperm manager plugin wants to use lsblk
+         util-linux
+Conflicts:
+Description: dep--mca packaging test
