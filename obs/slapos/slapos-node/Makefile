@@ -2,7 +2,7 @@
 # -*- makefile -*-
 
 build: 
-	cd slapos; make build
+	cd slapos; make build PYTHON=python3
 
 all: build
 

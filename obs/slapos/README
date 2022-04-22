@@ -19,7 +19,7 @@ Requirements
 ------------
 - A computer
 - Internet connection
-- gcc, g++, make, patch, wget, python, chrpath, osc, devscripts
+- gcc, g++, make, patch, wget, python3, chrpath, osc, devscripts
 - An account on OBS
 
 Documentation
@@ -31,20 +31,20 @@ Documentation
 Directory Organisation
 ----------------------
 
-- prepare_slapos_build.sh : This is the script you have to run to prepare the packet.
-  You can choose the version you want to build in it.
+- Makefile : makefile containing all the commands to prepare the packet.
+- release_configuration.sh : script defining the version of slapos-node
+  package. Version is automaticallmy detected but you can decide to override
+  it.
 - ./home:VIFIBnexedi:branches:home:VIFIBnexedi/SlapOS-Node : This is the directory for OBS.
   It is the one used to generate unreleased package and testing it.
-  If you have/want to use another directory, update its path in prepare_slapos_build.sh
+  If you have/want to use another directory, update its path in release_configuration.sh
 - templates/ : Contain templates to build the package.
-  	     - debian/ : contain configuration files for .deb packaging
 	     - Makefile.in : Makefile to build slapos
-	     - offline.sh.in : Prepare network-cache build building once slapos
 	     - slapos.dsc.in : File needed by obs to build .deb package
 	     - slapos.spec.in : configuration file for rpm packaging
+- debian/ : contain configuration files for .deb packaging
 - slapos-node/ : Template to build package
   	       - Makefile : Makefile to build slapos and add files for package
-	       - template/ : template files for package (cron.d, service)
 	       - slapos/ : to build slapos. Contain buildout.cfg.in
 
 
@@ -59,15 +59,15 @@ You need in particular an OBS directory (for example, the vifib test directory):
   $ cd home:VIFIBnexedi:branches:home:VIFIBnexedi/SlapOS-Node
   $ osc up
 
-SlapOS is build using buildout and need an internet connection to fetch all elements.
-On obs package are build on virtual machines without internet access.
-prepare_slapos_build.sh will compile slapos on your computer and build a network-cache thanks to offline.sh script.
+SlapOS is built using buildout and need an internet connection to fetch all elements.
+On OBS, packages are built on virtual machines without internet access.
+Makefile will compile slapos on your computer and build a network-cache thanks to prepare_download_cache.sh script.
 At the end it remove slapos installation and only keep cache.
-It makes a tarball out of it to be used by obs.
-It then fetch packaging configuration from templates directory. Everything is then commit to obs thanks to osc.
+It makes a tarball out of it to be used by OBS.
+It then fetch packaging configuration from templates directory. Everything is then commit to OBS thanks to osc.
 
 So to build package just run:
-# bash prepare_slapos_build.sh
+# make all
 
 About cron file
 ---------------
