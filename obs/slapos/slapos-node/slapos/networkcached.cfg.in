@@ -8,8 +8,19 @@ extensions =
 parts =
   networkcached
 
+# Add location for modified non-official slapos.buildout
+find-links +=
+  http://www.nexedi.org/static/packages/source/
+  http://www.nexedi.org/static/packages/source/slapos.buildout/
+
 [networkcached]
 recipe = zc.recipe.egg
 eggs =
   slapos.libnetworkcache
   zc.buildout
+
+[versions]
+setuptools = 44.1.1
+zc.buildout = 2.7.1+slapos018
+slapos.libnetworkcache = 0.25
+zc.recipe.egg = 2.0.3+slapos003

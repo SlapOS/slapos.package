@@ -9,7 +9,7 @@ source release_configuration.sh
 TARGET_DIRECTORY=/opt/slapos
 BUILD_ROOT_DIRECTORY="$CURRENT_DIRECTORY/$SLAPOS_DIRECTORY/slapos/build"
 BUILD_DIRECTORY=$BUILD_ROOT_DIRECTORY$TARGET_DIRECTORY
-BUILDOUT_VERSION="2.5.2+slapos013"
+BUILDOUT_VERSION="2.7.1+slapos018"
 
 rm -rf $BUILD_ROOT_DIRECTORY
 
@@ -26,8 +26,8 @@ NETWORKCACHED_DIRECTORY=$BUILD_DIRECTORY/tmp-networkcached
 sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../networkcached.cfg.in > $NETWORKCACHED_DIRECTORY/buildout.cfg
 cd $NETWORKCACHED_DIRECTORY
 # Download  bootstrap file
-wget https://bootstrap.pypa.io/bootstrap-buildout.py -O bootstrap.py
-(python2.7 -S bootstrap.py \
+wget https://lab.nexedi.com/nexedi/slapos.buildout/raw/master/bootstrap/bootstrap.py
+(python3 -S bootstrap.py \
   --buildout-version $BUILDOUT_VERSION \
   --setuptools-version 44.1.1 \
   --setuptools-to-dir eggs \
