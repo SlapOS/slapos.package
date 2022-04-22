@@ -107,7 +107,6 @@ rm -rf $RPM_BUILD_ROOT/opt/slapos/rebootstrap/parts/python2.7/lib/python2.7/test
 /etc/systemd/system
 /etc/firewalld
 /usr/bin/slapos
-/usr/sbin/slapos-tweak
 %defattr(-,root,root)
 
 %pre
