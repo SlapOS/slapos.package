@@ -32,7 +32,8 @@ wget https://lab.nexedi.com/nexedi/slapos.buildout/raw/master/bootstrap/bootstra
   --setuptools-version 44.1.1 \
   --setuptools-to-dir eggs \
   -f http://www.nexedi.org/static/packages/source/slapos.buildout/ && \
-./bin/buildout -v)
+sed -i 's/^#!\(.*\)python3\(.*\)/#!\1python3\2 -S/' bin/buildout && \
+bin/buildout -v)
 
 # build locally everything with gcc
 sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../buildout_with_gcc.cfg.in > $BUILD_DIRECTORY/buildout.cfg
