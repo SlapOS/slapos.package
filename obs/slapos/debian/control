@@ -4,7 +4,7 @@ Section: net
 Priority: optional
 Build-Depends: debhelper,
                chrpath,
-               python
+               python3 (>=3.7) | python
 Homepage: https://slapos.nexedi.com
 
 Package: slapos-node

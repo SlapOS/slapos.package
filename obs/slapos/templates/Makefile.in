@@ -4,7 +4,6 @@
 VERSION = %VERSION%
 RECIPE_VERSION = %RECIPE_VERSION%
 
-PY = $(PYTHON)
 INSTALL_DIRECTORY = $(DESTDIR)/opt/slapos
 TARGET_DIRECTORY = /opt/slapos
 BUILD_ROOT_DIRECTORY := $(shell pwd)/build
@@ -22,9 +21,13 @@ build-stamp:
 		xargs sed -i 's#$(ORIGINAL_DIRECTORY)#$(BUILD_ROOT_DIRECTORY)#g' || \
 		echo "No path to fix."
 
+	@echo "Bootstrapping buildout"
+	cd $(BUILD_DIRECTORY) && \
+		$(SLAPOS_BOOTSTRAP_SYSTEM_PYTHON) ./bootstrap
+
 	@echo 'Preparing source tarball (recipe version: $(RECIPE_VERSION))'
 	cd $(BUILD_DIRECTORY) && \
-		$(PY) ./bin/buildout -v
+		$(SLAPOS_BOOTSTRAP_SYSTEM_PYTHON) ./bin/buildout -v
 
 	@touch build-stamp
 

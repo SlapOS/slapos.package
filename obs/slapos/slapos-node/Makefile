@@ -2,15 +2,13 @@
 # -*- makefile -*-
 
 build: 
-	cd slapos; make build
+	make -C slapos build SLAPOS_BOOTSTRAP_SYSTEM_PYTHON=$(shell which python2.7 2> /dev/null || echo python3)
 
 all: build
 
 install: all
-	cd slapos; make install
+	make -C slapos install
 	mkdir -p $(DESTDIR)/usr/bin/
-	mkdir -p $(DESTDIR)/usr/sbin/
-	sed -i "s/\/opt\/slapos\/rebootstrap\/parts/\/opt\/slapos\/parts/g" $(DESTDIR)/opt/slapos/bin/*
 	cp $(DESTDIR)/opt/slapos/bin/slapos $(DESTDIR)/usr/bin/
 	mkdir -p $(DESTDIR)/etc/opt/slapos/
 	mkdir -p $(DESTDIR)/etc/firewalld/

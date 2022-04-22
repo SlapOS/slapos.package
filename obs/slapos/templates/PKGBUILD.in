@@ -1,4 +1,4 @@
-# Maintainer: Rafael Monnerat <rafael@nexedi.com>
+# Maintainer: Thomas Gambier <thomas.gambier@nexedi.com>
 pkgname=slapos-node
 pkgver=%VERSION%+%RECIPE_VERSION%+%RELEASE%
 pkgdesc="Slapos node"
@@ -6,15 +6,15 @@ pkgrel=1
 arch=('x86_64' 'i686')
 url="http://www.slapos.org"
 license=('GPL')
-depends=(python2 python2-distribute iptables iproute2)
-makedepends=(patch wget chrpath inetutils)
+depends=(iptables iproute2)
+makedepends=(patch wget chrpath inetutils python3)
 install='slapos-node.install'
 source=(${pkgname}_${pkgver}.tar.gz)
 md5sums=(%SOURCEMD5%)
 
 build() {
 	cd "${srcdir}/${pkgname}_${pkgver}"
-	make PYTHON=python2
+	make
 }
 
 package() {
