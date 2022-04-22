@@ -13,3 +13,8 @@ recipe = zc.recipe.egg
 eggs =
   slapos.libnetworkcache
   zc.buildout
+
+[versions]
+setuptools = 44.1.1
+zc.buildout = 2.7.1+slapos018
+slapos.libnetworkcache = 0.25
