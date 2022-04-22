@@ -1,9 +1,11 @@
 [buildout]
 rootdir = %TARGET_DIRECTORY%
-destdir = %BUILD_ROOT_DIRECTORY% 
+destdir = %BUILD_ROOT_DIRECTORY%
 builddir = %BUILD_DIRECTORY%
 extends =
   %BUILD_ROOT_DIRECTORY%/../slapos_repository/component/slapos/obs.cfg
+extends-cache = extends-cache
+download-cache = download-cache
 
 [gcc]
 # force usage of gcc from slapos to have it in the cache
