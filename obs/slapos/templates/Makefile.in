@@ -22,6 +22,10 @@ build-stamp:
 		xargs sed -i 's#$(ORIGINAL_DIRECTORY)#$(BUILD_ROOT_DIRECTORY)#g' || \
 		echo "No path to fix."
 
+	@echo "Rebootstrapping"
+	cd $(BUILD_DIRECTORY) && \
+		$(PY) ./rebootstrap
+
 	@echo 'Preparing source tarball (recipe version: $(RECIPE_VERSION))'
 	cd $(BUILD_DIRECTORY) && \
 		$(PY) ./bin/buildout -v

@@ -41,7 +41,7 @@ echo "downloading good version of setuptools and zc.buildout"
 sed -i '1s/$/ -S/' bin/buildout
 sed -i "/def _satisfied(/s/\(\bsource=\)None/\11/" eggs/zc.buildout-*/zc/buildout/easy_install.py # no wheel
 bin/buildout buildout:newest=true -v
-[ "$(ls download-cache/dist/*.whl)" != "" ] || { echo "There shouldn't be any wheel in download-cache" ; exit 1 ; }
+ls download-cache/dist/*.whl && { echo "There shouldn't be any wheel in download-cache" ; exit 1 ; }
 
 # 3) compile very simple buildout with networkcache
 echo "Preparing networkcached zc.buildout"
@@ -83,9 +83,8 @@ find . -regextype posix-extended -type f \
 ##############################
 # prepare rebootstrap script #
 ##############################
-
+cp $CURRENT_DIRECTORY/rebootstrap $BUILD_DIRECTORY
 
 # in OBS build, don't force gcc build
 sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../buildout_without_gcc.cfg.in > $BUILD_DIRECTORY/buildout.cfg
-exit 1
 
