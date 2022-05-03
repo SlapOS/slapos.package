@@ -207,7 +207,7 @@ def deb(task):
     d["Version"] = VERSION
     d["Architecture"] = b["Architecture"] = "any"
     d["Build-Depends"] = s["Build-Depends"] = (
-        "python (>= 2.7), debhelper (>= 9.20120909),"
+        "python (>= 2.7) | python2 | python3, debhelper (>= 9.20120909),"
         " debhelper (>= 10) | dh-systemd,"
         " iproute2 | iproute"
     )
