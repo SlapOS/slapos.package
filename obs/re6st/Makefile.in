@@ -1,4 +1,4 @@
-# Note that this file and related scripts (rebootstrap, install-eggs) don't
+# Note that this file and related scripts (bootstrap, install-eggs) don't
 # contain anything specific to re6stnet. They could be reused as is for SlapOS.
 
 # We don't strip ELF files because all dists automatically do it.
@@ -22,7 +22,7 @@ install: _install
 endif
 
 $(BUILD)/bin/buildout:
-	cd $(BUILD) && $(PYTHON2) -S $(CURDIR)/rebootstrap
+	cd $(BUILD) && $(PYTHON2) -S $(CURDIR)/bootstrap
 
 $(BUILD)/.installed.cfg: $(BUILD)/bin/buildout $(BUILD)/buildout.cfg
 	cd $(BUILD) && bin/buildout babeld-repository:recipe=

@@ -160,7 +160,7 @@ def upstream(task):
     task.outputs = glob("re6stnet/docs/*.[1-9]")
 
 @task((upstream, buildout, __file__,
-       "Makefile.in", "cleanup", "install-eggs", "rebootstrap"))
+       "Makefile.in", "cleanup", "install-eggs", "bootstrap"))
 def tarball(task):
     prefix = "%s-%s/" % (PACKAGE, VERSION)
     def xform(path):
