@@ -2,12 +2,12 @@
 # -*- makefile -*-
 
 build: 
-	cd slapos; make build PYTHON=python3
+	make -C slapos build PYTHON=$(shell which python2.7 2> /dev/null || echo python3)
 
 all: build
 
 install: all
-	cd slapos; make install
+	make -C slapos install
 	mkdir -p $(DESTDIR)/usr/bin/
 	mkdir -p $(DESTDIR)/usr/sbin/
 	sed -i "s/\/opt\/slapos\/rebootstrap\/parts/\/opt\/slapos\/parts/g" $(DESTDIR)/opt/slapos/bin/*
