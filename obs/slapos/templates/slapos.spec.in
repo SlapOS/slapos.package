@@ -44,11 +44,22 @@ Group: Application/Network
 Source0: slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}.tar.gz
 URL: http://community.slapos.org/ 
 Vendor: Vifib
-Packager: Rafael Monnerat <rafael@nexedi.com>
+Packager: Thomas Gambier <thomas.gambier@nexedi.com>
 
-BuildRequires: gcc-c++, make, patch, wget, python3, chrpath, openssl-devel
-
-Requires: bridge-utils, gcc-c++, make, patch, wget, lm_sensors
+BuildRequires: gcc-c++
+BuildRequires: make
+BuildRequires: patch
+BuildRequires: wget
+BuildRequires: chrpath
+BuildRequires: openssl-devel
+%if 0%{?centos_version} <= 700 || 0%{?rhel_version} <= 700 || 0%{?suse_version} < 1300 || 0%{?sle_version} < 130000
+BuildRequires: python
+BuildRequires: python-devel
+%else
+BuildRequires: python3
+BuildRequires: python3-devel
+%endif
+Requires: gcc-c++, make, patch, wget, lm_sensors
 
 AutoReqProv: no
 
@@ -77,7 +88,7 @@ zcat $RPM_SOURCE_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_n
 
 %build
 cd $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}
-make PYTHON=python3
+make
 
 %install
 cd $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}/
