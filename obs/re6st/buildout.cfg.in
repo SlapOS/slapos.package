@@ -47,3 +47,8 @@ environment +=
 shared = false
 prefix = %(TARGET)s/parts/${:_buildout_section_name_}
 make-install-extra = DESTDIR=%(ROOT)s
+
+[file]
+# For old GCC like 4.8.5 on SLE 12 SP5.
+environment +=
+  CFLAGS=-std=c99 -g -O2
