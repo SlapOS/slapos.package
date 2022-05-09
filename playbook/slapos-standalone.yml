@@ -107,6 +107,72 @@
         destination: lab.nexedi.com
         jump: ACCEPT
 
+    # Allow to access github.com and raw.githubusercontent.com
+    # Somehow not working
+    - name: Allow to access github.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        dst_range: 140.82.121.3-140.82.121.4
+        jump: ACCEPT
+
+    - name: Allow to access github.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 80
+        dst_range: 140.82.121.3-140.82.121.4
+        jump: ACCEPT
+
+    - name: Allow to access github.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 80
+        destination: github.com
+        jump: ACCEPT
+
+    - name: Allow to access raw.githubusercontent.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 80
+        destination: raw.githubusercontent.com
+        jump: ACCEPT
+        
+    - name: Allow to access github.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: github.com
+        jump: ACCEPT
+
+    - name: Allow to access raw.githubusercontent.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: raw.githubusercontent.com
+        jump: ACCEPT
+
+    # Workaround to allow to access registry.npmjs.org
+    - name: Allow to access registry.npmjs.org 
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        dst_range: 104.16.16.35-104.16.27.35
+        jump: ACCEPT
+        
     # This is for connect to the test suite and upload the test result.
     # You need to replace it with your own ERP5 instance domain s
     - name: Allow to access ERP5 test suite address
