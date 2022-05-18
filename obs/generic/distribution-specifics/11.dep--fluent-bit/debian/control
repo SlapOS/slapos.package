@@ -1,4 +1,4 @@
-Source: dep--mca--static
+Source: dep--fluent-bit
 Maintainer: Francois Gagnard <francois.gagnard@nexedi.com>
 Section: net
 Priority: optional
@@ -8,11 +8,9 @@ Build-Depends: debhelper (>= 4.1.16),
                python (>= 2.7),
                python3 (>= 3.7),
                python3-dev (>= 3.7),
-               golang (>= 2:1.11~1),
-               cmake (>= 3.13.4-1),
-               git (>= 2.20.1-2)
+               cmake (>= 3.18)
 
-Package: dep--mca--static
+Package: dep--fluent-bit
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
@@ -27,4 +25,4 @@ Depends: ${misc:Depends},
 # devperm manager plugin wants to use lsblk
          util-linux
 Conflicts:
-Description: dep--mca--static packaging test
+Description: dep--fluent-bit packaging test
