@@ -50,22 +50,17 @@
     copy: src="etc_systemd_system_cron_service_d_override.conf" dest="/etc/systemd/system/cron.service.d/override.conf" mode=0644 owner=root group=root
     when: systemd_version.stdout | int > 228
 
-  - stat: path=/etc/opt/slapos/slapos.cfg
-    register: slapos_cfg
+  - stat: path=/etc/opt/slapcache.cfg
+    register: slapcache_cfg
 
-  - name: Remove invalid shacache certificate title
+  - name: Add missing download-dir-url entry in slapcache.cfg
     lineinfile:
-      dest: /etc/opt/slapos/slapos.cfg
-      line: "#   Romain Courteaud"
-      state: absent
-    when: slapos_cfg.stat.exists == True
-
-  - name: Remove invalid shacache certificate
-    replace:
-      dest: /etc/opt/slapos/slapos.cfg
-      regexp: '^signature-certificate-list =$[^.*$]+^\s+QUUGLQ==\s^.*END\sCERTIFICATE-----$'
-      replace: 'signature-certificate-list ='
-    when: slapos_cfg.stat.exists == True
+      dest: /etc/opt/slapcache.cfg
+      regexp: "^download-dir-url"
+      line: "download-dir-url = http://shadir.nxdcdn.com"
+      insertafter: "^download-binary-dir-url"
+      state: present
+    when: slapcache_cfg.stat.exists == True
 
   - name: Prevent mei_me module from being loaded
     lineinfile:
