@@ -98,6 +98,11 @@
         destination_port: 443
         jump: ACCEPT
 
+    - name: Change the goproxy in the hosts
+      lineinfile:
+        line: "47.246.23.229 goproxy.cn"
+        dest: /etc/hosts
+
     - name: Allow to access lab.nexedi.com
       iptables:
         action: append
@@ -145,6 +150,24 @@
         destination: raw.githubusercontent.com
         jump: ACCEPT
         
+    - name: Allow to access goproxy.cn
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 80
+        destination: 47.246.23.229
+        jump: ACCEPT
+
+    - name: Allow to access goproxy.cn
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: 47.246.23.229
+        jump: ACCEPT
+
     - name: Allow to access github.com
       iptables:
         action: append
@@ -283,8 +306,33 @@
         ctstate: ESTABLISHED,RELATED
         jump: ACCEPT
 
-    - name: Reject all output connect
+    - name: Reject all ipv4 output connect
       iptables:
+        chain: OUTPUT
+        table: filter
+        jump: REJECT
+
+    - name: Allow to use localhost
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        source: localhost
+        destination: localhost
+        jump: ACCEPT
+
+    - name: Allow to use localhost
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        source: localhost
+        destination: localhost
+        jump: ACCEPT
+
+    - name: Reject all ipv6 output connect
+      iptables:
+        ip_version: ipv6
         chain: OUTPUT
         table: filter
         jump: REJECT
