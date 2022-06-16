@@ -182,7 +182,7 @@
     - name: Upload a list of images to shacache, there is no verification for now
       shell: |
         FILE=output-{{ item.distro }}-{{ item.size }}G-{{ item.name }}/packer-{{ item.distro }}-{{ item.size }}G-{{ item.name }}.gz
-        networkcache-upload --prefix-key packerimage- --url $FILE --file $FILE /etc/opt/shacache/shacache.cfg
+        networkcache-upload --prefix-key packerimage- --url $FILE --file $FILE --config /etc/opt/shacache/shacache.cfg
         SHA512SUM=$(cat SHA512SUM.txt | grep packer-{{ item.distro }}-{{ item.size }}G-{{ item.name }}.gz | cut -d ' ' -f1)
         BASE_URL=$(cat /etc/opt/shacache/shacache.cfg | grep 'download-cache-url' | cut -d ' ' -f3)
         MD5SUM=$(cat MD5SUM.txt | grep packer-{{ item.distro }}-{{ item.size }}G-{{ item.name }}.gz | cut -d ' ' -f1)
