@@ -137,6 +137,29 @@
         destination: github.com
         jump: ACCEPT
 
+    - name: Allow to access raw.githubusercontent.com ipv4
+      lineinfile:
+        line: "185.199.110.133  githubusercontent.com"
+        dest: /etc/hosts
+
+    - name: Allow to access raw.githubusercontent.com ipv4
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: githubusercontent.com
+        jump: ACCEPT
+
+    - name: Allow to access githubusercontent.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 80
+        destination: githubusercontent.com
+        jump: ACCEPT
+
     - name: Allow to access raw.githubusercontent.com ipv6
       lineinfile:
         line: "2606:50c0:8003::154  raw.githubusercontent.com"
@@ -172,6 +195,20 @@
       lineinfile:
         line: "47.96.233.62  npmmirror.com"
         dest: /etc/hosts
+
+    - name: Allow to access cdn.npmmirror.com
+      lineinfile:
+        line: "8.25.82.226  cdn.npmmirror.com"
+        dest: /etc/hosts
+
+    - name: Allow to access cdn.npmmirror.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: cdn.npmmirror.com
+        jump: ACCEPT
 
     # You can see I allowed the default npmmirror regsitry too
     # This is because that is for the pure npm installation
@@ -235,6 +272,7 @@
         destination_port: 80
         destination: raw.githubusercontent.com
         jump: ACCEPT
+
     - name: Allow to access goproxy.cn
       iptables:
         action: append
@@ -332,6 +370,133 @@
         protocol: tcp
         destination_port: 443
         destination: registry.npmjs.org
+        jump: ACCEPT
+
+          #    - name: This is an IP behinde the taobao npm registry...
+          #      iptables:
+          #        action: append
+          #        chain: OUTPUT
+          #        protocol: tcp
+          #        destination_port: 443
+          #        dst_range: 47.246.48.225-47.246.48.230
+          #        jump: ACCEPT
+
+    - name: This is an IP behinde the taobao npm registry...
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: 8.48.85.1
+        jump: ACCEPT
+
+    - name: Allow to access metabase.com
+      lineinfile:
+        line: "185.199.108.153  metabase.com"
+        dest: /etc/hosts
+
+    - name: Allow to access metabase.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: metabase.com
+        jump: ACCEPT
+
+    - name: Allow to access metabase.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 80
+        destination: metabase.com
+        jump: ACCEPT
+
+    - name: Allow to access metabase.com ipv6
+      lineinfile:
+        line: "2606:50c0:8000::153  metabase.com"
+        dest: /etc/hosts
+
+    - name: Allow to access metabase.com ipv6
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: metabase.com
+        jump: ACCEPT
+
+    # cypress using 2 steps of downloading
+    # so set two entries in the hosts file
+    - name: Allow to access download.cypress.io
+      lineinfile:
+        line: "104.26.6.176  download.cypress.io"
+        dest: /etc/hosts
+
+    - name: Allow to access cdn.cypress.io
+      lineinfile:
+        line: "104.26.6.176  cdn.cypress.io"
+        dest: /etc/hosts
+
+    - name: Allow to access cypress.io
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: cdn.cypress.io
+        jump: ACCEPT
+        
+    - name: Allow to access localhost:8086
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8086
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    - name: Allow to access localhost:8180
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8180
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    - name: Allow to access localhost:8196, required by test caddy-frontend
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8990
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    - name: Allow to access localhost:8196, required by test jscrawler
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8196
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    - name: Allow to access localhost:9083, required by test jscrawler
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 9083
+        destination: 2001:67c:1254:105:28ad::d94
         jump: ACCEPT
 
     # This is for connect to the test suite and upload the test result.
