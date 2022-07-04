@@ -1,0 +1,3 @@
+---
+- name: Download and run the test script
+  raw: "wget https://lab.nexedi.com/nexedi/initramfs-with-mca/raw/master/installation/automation-script.sh && source automation-script.sh"
