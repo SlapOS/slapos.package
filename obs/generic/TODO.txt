@@ -1,15 +1,12 @@
 
 SHORT TERM
-Document the project.
-Do not rename the plugin library (libfluentbit-wendelin.so to fluentbit-wendelin.so). The fix first has to be made upstream (in the metadata-collect-agent project).
+- Document the project.
+- Display some information about the variables. In 00env.sh ?
 
 MID TERM
-Add a fonction in build-scripts/configuration-information.sh to delete the go/ directory?
-Re-add networkcached to the building process.
-Use a ./configure script?
-- In particular, in $ARCHIVE_NAME/Makefile there are some operations which should be in the template stage.
-Make the clean_* suite reversible.
-Write tests to test the compilation and the reversibility with clean_*.
+- Make the clean_* suite reversible.
+- Write tests to test the compilation and the reversibility with clean_*.
+- Write a script that automatically creates a new OBS project.
 
 LONG RUN
-Write standards to that other people can adapt the project without breaking it.
+- Write standards so that other people can adapt the project without breaking it.
