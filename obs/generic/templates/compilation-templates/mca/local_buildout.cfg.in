@@ -3,7 +3,7 @@ rootdir = %TARGET_DIR%
 destdir = %BUILD_DIR%
 builddir = %RUN_BUILDOUT_DIR%
 extends =
-  %SR_PATH%
+  %BUILDOUT_ENTRY_POINT%
 versions = versions
 extends-cache = extends-cache
 download-cache = download-cache
