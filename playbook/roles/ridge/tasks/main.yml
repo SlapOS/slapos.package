@@ -1,0 +1,9 @@
+  - name: Create configuration from template
+    shell: "sed '{{conf_regex}}' {{mca_path}}/etc/flb.conf.in > {{mca_path}}/etc/flb.conf"
+
+  - name: Scan directory
+    shell: "{{binary}} /sbin {{flb}} {{flb_plugin}} {{flb_conf}} {{log}}"
+    shell: "{{binary}} /bin {{flb}} {{flb_plugin}} {{flb_conf}} {{log}}"
+
+  - name: Indicate success in the logs
+    shell: "echo -e \"{{sucess_string}}\""
