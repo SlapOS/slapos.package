@@ -1,0 +1,22 @@
+## PACKAGES
+mca_name_and_version: dep--mca--static_1-1
+fluentbit_name_and_verson: dep--fluent-bit_1-1
+mca_path: /opt/{{mca_name_and_version}}/
+flb_path: /opt/{{fluentbit_name_and_version}}/
+mca_conf_path: {{mca_path}}/etc/
+
+## WENDELIN CONFIGURATION
+wendelin_reference: test-suite-001
+# the deployment is still a WIP but a solution has to be found not to display the password of the production Wendelin instance
+wendelin_pwd: qxrfkwod
+
+## OTHER
+conf_regex: s|%WENDELIN_REFERENCE%|{{wendelin_reference}}|g;s|%WENDELIN_PWD%|{{wendelin_pwd}}|g
+
+binary: {{mca_path}}/bin/metadata-collect-agent
+flb: {{flb_path}}/bin/fluent-bit
+flb_plugin: {{mca_path}}/lib/libfluentbit_wendelin.so
+flb_conf: {{mca_path}}/etc/flb.conf
+log: /var/log/metadata_collect.log
+
+sucess_string: "\n(success string:) Build successful, connect to:\n"
