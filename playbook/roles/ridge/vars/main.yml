@@ -6,12 +6,13 @@ flb_path: /opt/{{fluentbit_name_and_version}}/
 mca_conf_path: {{mca_path}}/etc/
 
 ## WENDELIN CONFIGURATION
-wendelin_reference: test-suite-001
+wendelin_url: https://softinst157546.host.vifib.net/erp5/portal_ingestion_policies/metadata_upload
 # the deployment is still a WIP but a solution has to be found not to display the password of the production Wendelin instance
 wendelin_pwd: qxrfkwod
+wendelin_reference: test-suite-001
 
 ## OTHER
-conf_regex: s|%WENDELIN_REFERENCE%|{{wendelin_reference}}|g;s|%WENDELIN_PWD%|{{wendelin_pwd}}|g
+conf_regex: s|%WENDELIN_URL%|{{wendelin_url}}|g;s|%WENDELIN_PWD%|{{wendelin_pwd}}|g;s|%WENDELIN_REFERENCE%|{{wendelin_reference}}|g
 
 binary: {{mca_path}}/bin/metadata-collect-agent
 flb: {{flb_path}}/bin/fluent-bit
