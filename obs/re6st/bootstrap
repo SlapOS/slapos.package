@@ -1,4 +1,4 @@
-#!/usr/bin/python -S
+#!/usr/bin/python3 -S
 import glob, os, shutil, sys, tarfile, tempfile, zipfile
 dist = "download-cache/dist"
 tmp = tempfile.mkdtemp()
