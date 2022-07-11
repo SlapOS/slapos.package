@@ -1,14 +1,10 @@
 ---
 dependencies:
-  - role: package, package_name: {{item}}, package_state: latest
-    with_items:
-      - dep--fluent-bit
-      - dep--mca--static
+  - { role: package, package_name: dep--fluent-bit, package_state: latest }
+  - { role: package, package_name: dep--mca--static, package_state: latest }
 
-  # this are not actual dependencies, it is just an experimentallist of packages to scan
-  - role: package, package_name: {{item}}, package_state: latest
-    with_items:
-      - dracut-core
-      - dracut
-      - dracut-network
-      - python3
+  # this are not actual dependencies, it is just an experimental list of packages to scan
+  - { role: package, package_name: dracut-core, package_state: latest }
+  - { role: package, package_name: dracut, package_state: latest }
+  - { role: package, package_name: dracut-network, package_state: latest }
+  - { role: package, package_name: python3, package_state: latest }

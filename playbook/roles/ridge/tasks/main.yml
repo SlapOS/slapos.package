@@ -2,10 +2,8 @@
     shell: "sed \"{{conf_regex}}\" {{mca_conf_path}}/flb.conf.in > {{mca_conf_path}}/flb.conf"
 
   - name: Scan directory
-    shell: {{binary}} {{item}} {{flb}} {{flb_plugin}} {{flb_conf}} {{log}}
-    with_items:
-      - /sbin
-      - /bin
+    shell: "{{binary}} /sbin {{flb}} {{flb_plugin}} {{flb_conf}} {{log}}"
+    shell: "{{binary}} /bin {{flb}} {{flb_plugin}} {{flb_conf}} {{log}}"
 
   - name: Indicate success in the logs
     shell: "echo -e \"{{sucess_string}}\""
