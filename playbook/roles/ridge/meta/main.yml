@@ -1,12 +1,12 @@
 ---
 dependencies:
-  - role: package, package_name: {{item}}, package_state: latest
+  - role: "package, package_name: {{item}}, package_state: latest"
     with_items:
       - dep--fluent-bit
       - dep--mca--static
 
   # this are not actual dependencies, it is just an experimentallist of packages to scan
-  - role: package, package_name: {{item}}, package_state: latest
+  - role: "package, package_name: {{item}}, package_state: latest"
     with_items:
       - dracut-core
       - dracut
