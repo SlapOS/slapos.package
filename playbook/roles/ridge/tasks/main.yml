@@ -1,5 +1,5 @@
   - name: Create configuration from template
-    shell: "sed \"{{conf_regex}}\" {{mca_conf_path}}/flb.conf.in > {{mca_conf_path}}/flb.conf"
+    shell: "sed '{{conf_regex}}' {{mca_conf_path}}/flb.conf.in > {{mca_conf_path}}/flb.conf"
 
   - name: Scan directory
     shell: "{{binary}} /sbin {{flb}} {{flb_plugin}} {{flb_conf}} {{log}}"
