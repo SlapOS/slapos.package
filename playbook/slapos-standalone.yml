@@ -449,6 +449,72 @@
         destination: cdn.cypress.io
         jump: ACCEPT
         
+    # Needed by metabase
+    - name: Allow to access localhost:8443
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8443
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Needed by metabase caucase
+    - name: Allow to access localhost:8009
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8009
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Needed by metabase caddy-frontend
+    - name: Allow to access 2001:67c:1254:4::1/index.html
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: 2001:67c:1254:4::1
+        jump: ACCEPT
+
+    # Required by the SR html5as
+    - name: Allow to access localhost:8087
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8087
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR html5as
+    - name: Allow to access localhost:8097
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8097
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR html5as-base
+    - name: Allow to access localhost:8081
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8081
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
     - name: Allow to access localhost:8086
       iptables:
         ip_version: ipv6
