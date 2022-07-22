@@ -1,0 +1,13 @@
+Source: lunzip
+Maintainer: Ophelie Gagnard <ophelie.gagnard@nexedi.com>
+Section: utils
+Priority: optional
+Build-Depends: debhelper,
+               chrpath
+
+Package: lunzip
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+Conflicts:
+Description: lunzip, a non GNU zip tool

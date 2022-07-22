@@ -1,0 +1,7 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+# prevent Debian Helper to clean the buildout preparation before compiling
+override_dh_auto_clean:
