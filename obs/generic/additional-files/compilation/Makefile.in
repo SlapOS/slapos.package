@@ -7,17 +7,20 @@ TARBALL_DIR = $(shell pwd)
 BUILD_DIR = $(TARBALL_DIR)/build
 INSTALL_DIR = $(DESTDIR)$(TARGET_DIR)
 RUN_BUILDOUT_DIR = $(BUILD_DIR)$(TARGET_DIR)
-
+# get the path of the BUILD_DIR of the first build (performed to prepare the cache for OBS)
+OLD_TARBALL_DIR := $(shell cat local_tarball_directory_path)
 
 all: build
 
-build: build-stamp
-build-stamp:
+build:
+	@echo "Fixing buildout path to $(TARBALL_DIR) rather than $(OLD_TARBALL_DIR) for buildout"
+	cd "$(RUN_BUILDOUT_DIR)"; sed -i 's#$(OLD_TARBALL_DIR)#$(TARBALL_DIR)#g' buildout.cfg bin/*
 	cd "$(RUN_BUILDOUT_DIR)" && ./bin/buildout -v
 
-	@touch build-stamp
+	rm -f clean-stamp
 
-clean:
+clean: clean-stamp
+clean-stamp:
 	rm -rf "$(BUILD_DIR)"
 	rm -f *-stamp
 
