@@ -1,0 +1,5 @@
+Format: 3.0 (native)
+Source: lunzip
+Architecture: any
+Version: %COMPOUND_VERSION%
+Build-Depends: debhelper (>= 4.1.16), chrpath, python (>= 2.7),
