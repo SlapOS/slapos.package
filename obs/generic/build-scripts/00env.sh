@@ -35,6 +35,7 @@ BUILDOUT_ENTRY_POINT="$BUILDOUT_DIR/component/$SOFTWARE_NAME/buildout.cfg"
 COMPILATION_FILES_DIR="$INITIAL_DIR/additional-files/compilation/"
 BUILD_DIR="$TARBALL_DIR/build/"
 RUN_BUILDOUT_DIR="$BUILD_DIR/$TARGET_DIR"
+DISTRIB_FILES_DIR="$INITIAL_DIR/additional-files/distribution"
 
 
 ## Path normalization
@@ -48,6 +49,7 @@ BUILDOUT_ENTRY_POINT=$(realpath -m "$BUILDOUT_ENTRY_POINT")
 COMPILATION_FILES_DIR=$(realpath -m "$COMPILATION_FILES_DIR")
 BUILD_DIR=$(realpath -m "$BUILD_DIR")
 RUN_BUILDOUT_DIR=$(realpath -m "$RUN_BUILDOUT_DIR")
+DISTRIB_FILES_DIR=$(realpath -m "$DISTRIB_FILES_DIR")
 
 ## Regular expressions for templates
 NAME_REGEX="s|%SOFTWARE_NAME%|$SOFTWARE_NAME|g;s|%SOFTWARE_AND_VERSION%|$SOFTWARE_AND_VERSION|g"

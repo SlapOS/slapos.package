@@ -1,0 +1,5 @@
+/opt/%SOFTWARE_AND_VERSION%/bin/
+/opt/%SOFTWARE_AND_VERSION%/include/
+/opt/%SOFTWARE_AND_VERSION%/etc/
+/opt/%SOFTWARE_AND_VERSION%/lib/
+/opt/%SOFTWARE_AND_VERSION%/share/
