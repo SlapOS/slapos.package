@@ -29,6 +29,7 @@ TARBALL_DIR="$INITIAL_DIR/tarballs/$SOFTWARE_AND_VERSION"
 COMPILATION_FILES_DIR="$INITIAL_DIR/additional-files/compilation"
 BUILD_DIR="$TARBALL_DIR/build"
 RUN_BUILDOUT_DIR="$BUILD_DIR/$TARGET_DIR"
+DISTRIB_FILES_DIR="$INITIAL_DIR/additional-files/distributions"
 
 ### BUILDOUT FILES AND VERSIONS ###
 GIT_REPOSITORY=https://lab.nexedi.com/nexedi/slapos
@@ -38,6 +39,15 @@ BUILDOUT_ENTRY_POINT="$BUILDOUT_DIR/component/$SOFTWARE_NAME/buildout.cfg"
 ## Versions
 SETUPTOOLS_VERSION=44.1.1
 ZC_BUILDOUT_VERSION=2.7.1+slapos016
+
+### OBS INFORMATION ###
+# Get the user from osc configuration file.
+OBS_USER="$(cat ~/.config/osc/oscrc | grep user= | cut -d'=' -f2)"
+OBS_PROJECT="home:$OBS_USER"
+OBS_DIR="$INITIAL_DIR/$OBS_PROJECT/$SOFTWARE_NAME"
+OBS_PACKAGE="$SOFTWARE_NAME"
+# a prompt will be asked if empty
+OBS_COMMIT_MSG=""
 
 
 ### MISCELLANEOUS ###
@@ -51,6 +61,7 @@ BUILDOUT_ENTRY_POINT=$(realpath -m "$BUILDOUT_ENTRY_POINT")
 COMPILATION_FILES_DIR=$(realpath -m "$COMPILATION_FILES_DIR")
 BUILD_DIR=$(realpath -m "$BUILD_DIR")
 RUN_BUILDOUT_DIR=$(realpath -m "$RUN_BUILDOUT_DIR")
+DISTRIB_FILES_DIR=$(realpath -m "$DISTRIB_FILES_DIR")
 
 ## Regular expressions for templates
 NAME_REGEX="s|%SOFTWARE_NAME%|$SOFTWARE_NAME|g;s|%SOFTWARE_AND_VERSION%|$SOFTWARE_AND_VERSION|g"
