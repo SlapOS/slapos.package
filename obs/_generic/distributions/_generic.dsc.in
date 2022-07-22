@@ -1,0 +1,5 @@
+Format: 3.0 (quilt)
+Source: %SOFTWARE_NAME%
+Architecture: %PACKAGE_ARCHITECTURE%
+Version: %COMPOUND_VERSION%
+Build-Depends: %PACKAGE_BUILD_DEPENDENCIES%
