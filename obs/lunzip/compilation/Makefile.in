@@ -1,0 +1,29 @@
+
+# This macros are replaced by build-scripts/template_stage.sh
+# according to the values and regular expressions defined in
+# build-scripts/configuration_information.sh
+TARGET_DIR = %TARGET_DIR%
+TARBALL_DIR = $(shell pwd)
+BUILD_DIR = $(TARBALL_DIR)/build
+INSTALL_DIR = $(DESTDIR)$(TARGET_DIR)
+RUN_BUILDOUT_DIR = $(BUILD_DIR)$(TARGET_DIR)
+
+
+build:
+	cd "$(RUN_BUILDOUT_DIR)" && ./bin/buildout -v
+
+	@touch clean-stamp
+
+clean: clean-stamp
+clean-stamp:
+	rm -rf "$(BUILD_DIR)"
+
+install: build
+	mkdir -p "$(INSTALL_DIR)/bin"
+	mkdir -p "$(INSTALL_DIR)/usr/share"
+	cp -r "$(RUN_BUILDOUT_DIR)/parts/lunzip/bin/"* "$(INSTALL_DIR)/bin"
+	cp -r "$(RUN_BUILDOUT_DIR)/parts/lunzip/share/"* "$(INSTALL_DIR)/usr/share"
+
+	rm -f clean-stamp
+
+.PHONY: build install clean
