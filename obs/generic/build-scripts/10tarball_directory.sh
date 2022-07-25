@@ -28,9 +28,12 @@ cd "$INITIAL_DIR"
 rm -f "$TARBALL_DIR/Makefile"
 rm -f "$RUN_BUILDOUT_DIR/buildout.cfg"
 
-sed "$ALL_REGEX" "$COMPILATION_FILES_DIR/Makefile.in" > "$TARBALL_DIR/Makefile"
-sed "$ALL_REGEX" "$COMPILATION_FILES_DIR/buildout.cfg.in" > "$RUN_BUILDOUT_DIR/buildout.cfg"
-
+# copy compilation files and override ones with lesser priority
+# priority order (example for lunzip_1-1): lunzip_1-1, lunzip, _generic
+copy_additional_files "$COMPILATION_FILES_DIR/_generic" "$TARBALL_DIR"
+copy_additional_files "$COMPILATION_FILES_DIR/$SOFTWARE_NAME" "$TARBALL_DIR"
+copy_additional_files "$COMPILATION_FILES_DIR/$SOFTWARE_AND_VERSION" "$TARBALL_DIR"
+mv "$TARBALL_DIR/local_buildout.cfg" "$RUN_BUILDOUT_DIR/buildout.cfg"
 
 # BUILDOUT: BOOTSTRAPING AND RUN
 
