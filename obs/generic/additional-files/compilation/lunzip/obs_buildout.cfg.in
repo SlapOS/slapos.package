@@ -1,0 +1,14 @@
+[buildout]
+rootdir = %TARGET_DIR%
+destdir = %BUILD_DIR%
+builddir = %RUN_BUILDOUT_DIR%
+extends =
+  %BUILDOUT_ENTRY_POINT%
+versions = versions
+extends-cache = extends-cache
+download-cache = download-cache
+
+[versions]
+setuptools = %SETUPTOOLS_VERSION%
+zc.buildout = %ZC_BUILDOUT_VERSION%
+zc.recipe.egg = %ZC_RECIPE_EGG_VERSION%
