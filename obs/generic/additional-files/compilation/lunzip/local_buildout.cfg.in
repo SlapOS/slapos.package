@@ -9,6 +9,6 @@ extends-cache = extends-cache
 download-cache = download-cache
 
 [versions]
-setuptools = 44.1.1
-zc.buildout = 2.7.1+slapos016
-zc.recipe.egg = 2.0.3+slapos003
+setuptools = %SETUPTOOLS_VERSION%
+zc.buildout = %ZC_BUILDOUT_VERSION%
+zc.recipe.egg = %ZC_RECIPE_EGG_VERSION%

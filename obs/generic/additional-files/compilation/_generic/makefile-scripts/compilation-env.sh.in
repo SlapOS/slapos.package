@@ -1,0 +1,11 @@
+PY="$PYTHON"
+# This templates are replaced by build-scripts/10tarball_directory.sh
+# according to the values and regular expressions defined in
+# build-scripts/00env.sh and build-scripts/custom-env/NAME_env.sh
+TARGET_DIR="%TARGET_DIR%"
+TARBALL_DIR="$(pwd)"
+BUILD_DIR="$TARBALL_DIR"/build
+INSTALL_DIR="$DESTDIR""$TARGET_DIR"
+RUN_BUILDOUT_DIR="$BUILD_DIR""$TARGET_DIR"
+# get the path of the BUILD_DIR of the first build (performed to prepare the cache for OBS)
+OLD_TARBALL_DIR="$(cat local_tarball_directory_path)"
