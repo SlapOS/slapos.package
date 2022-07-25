@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-source build-scripts/00env.sh
+source build-scripts/00variable-management.sh
 
 # BUILD TREE
 
