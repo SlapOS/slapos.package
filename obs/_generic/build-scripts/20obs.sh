@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-source lunzip/build-scripts/00env.sh
+source _generic/build-scripts/00variable-management.sh
 
 cd "$INITIAL_DIR"
 ### Prepare the distribution files in $OBS_DIR
