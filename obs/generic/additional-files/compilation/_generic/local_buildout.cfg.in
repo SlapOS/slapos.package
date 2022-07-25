@@ -7,9 +7,3 @@ extends =
 versions = versions
 extends-cache = extends-cache
 download-cache = download-cache
-
-[versions]
-setuptools = %SETUPTOOLS_VERSION%
-zc.buildout = %ZC_BUILDOUT_VERSION%
-zc.recipe.egg = %ZC_RECIPE_EGG_VERSION%
->>>>>>> 27a4f39 (WIP: obs/generic/: Genericize compilation templates.)

@@ -21,29 +21,22 @@ cd "$INITIAL_DIR"
 ### Prepare the build directories
 mkdir -p "$RUN_BUILDOUT_DIR"/{eggs,extends-cache,download-cache/dist}
 
-# COMPILATION TEMPLATES
+# COMPILATION FILES
 
 cd "$INITIAL_DIR"
-### Prepare the compilation templates
-rm -rf "$COMPILATION_TEMPLATES_DIR"/tmp/"$SOFTWARE_NAME"
-mkdir -p "$COMPILATION_TEMPLATES_DIR"/tmp/"$SOFTWARE_NAME"
-
-# if a custom directory exists for compilation templates, choose it
-# otherwise, default to .../_generic
-ACTUAL_TEMPLATES_DIR="$COMPILATION_TEMPLATES_DIR"/"$SOFTWARE_NAME"
-if [ ! -d "$ACTUAL_TEMPLATES_DIR" ]; then
-	ACTUAL_TEMPLATES_DIR="$COMPILATION_TEMPLATES_DIR"/_generic
-fi
-
-sed "$ALL_REGEX" "$ACTUAL_TEMPLATES_DIR"/local_buildout.cfg.in >        "$COMPILATION_TEMPLATES_DIR"/tmp/"$SOFTWARE_NAME"/local_buildout.cfg
-sed "$ALL_REGEX" "$ACTUAL_TEMPLATES_DIR"/Makefile.in >                  "$COMPILATION_TEMPLATES_DIR"/tmp/"$SOFTWARE_NAME"/Makefile
+# copy compilation files and override ones with lesser priority
+# priority order (example for lunzip_1-1): lunzip_1-1, lunzip, _generic
+copy_additional_files "$COMPILATION_FILES_DIR/_generic" "$TARBALL_DIR"
+copy_additional_files "$COMPILATION_FILES_DIR/$SOFTWARE_NAME" "$TARBALL_DIR"
+copy_additional_files "$COMPILATION_FILES_DIR/$SOFTWARE_AND_VERSION" "$TARBALL_DIR"
+mv "$TARBALL_DIR/local_buildout.cfg" "$RUN_BUILDOUT_DIR/buildout.cfg"
 
 # BUILDOUT: BOOTSTRAPING AND RUN
 
 cd "$INITIAL_DIR"
 ### Remove the products of the buildout bootstraping
 # remove the bootstrap script and associated files
-rm -f "$RUN_BUILDOUT_DIR"/{bootstrap.py,bootstrap-buildout.py,buildout.cfg}
+rm -f "$RUN_BUILDOUT_DIR"/{bootstrap.py,bootstrap-buildout.py}
 # remove the material created by the bootstrap script
 rm -rf "$RUN_BUILDOUT_DIR"/{bin/,egg/}
 ### Remove the material created by buildout itself
@@ -54,13 +47,6 @@ cd "$INITIAL_DIR"
 mkdir -p "$RUN_BUILDOUT_DIR"
 cd "$RUN_BUILDOUT_DIR"
 wget https://bootstrap.pypa.io/bootstrap-buildout.py
-
-cd "$INITIAL_DIR"
-### Copy the compilation files
-mkdir -p "$RUN_BUILDOUT_DIR"
-cd "$RUN_BUILDOUT_DIR"
-# should be with gcc here and without in OBS
-cp "$COMPILATION_TEMPLATES_DIR"/tmp/"$SOFTWARE_NAME"/local_buildout.cfg buildout.cfg
 
 ### Create a $RUN_BUILDOUT_DIR/bin/buildout (bootstraping) and run it (actual compilation).
 # Note: it creates a lot of things in $RUN_BUILDOUT_DIR/eggs/ and uses software_release/ at some point
@@ -79,7 +65,7 @@ cd "$INITIAL_DIR"
 # This is performed before copying the directory tree elsewhere so that every copy is fixed.
 # It also allows the cleaning script to delete the result of the current script.
 if [ -d "$RUN_BUILDOUT_DIR"/go ]; then
-	        find "$RUN_BUILDOUT_DIR"/go -name "*" -type d -exec chmod u+xw {} +
+	find "$RUN_BUILDOUT_DIR"/go -name "*" -type d -exec chmod u+xw {} +
 fi
 
 cd "$INITIAL_DIR"

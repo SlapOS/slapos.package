@@ -1,0 +1,24 @@
+Source: %SOFTWARE_NAME%
+Maintainer: Ophelie Gagnard <ophelie.gagnard@nexedi.com>
+Section: net
+Priority: optional
+Build-Depends: debhelper,
+               chrpath,
+               python
+
+Package: %SOFTWARE_NAME%
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         ucf,
+         uml-utilities,
+# slapgrid-sr needed by most recipes
+	 libc6-dev | libc-dev,
+         gcc | c-compiler,
+         g++ | c++-compiler,
+         make,
+         patch,
+# devperm manager plugin wants to use lsblk
+         util-linux
+Conflicts:
+Description: %SOFTWARE_NAME% packaging test
