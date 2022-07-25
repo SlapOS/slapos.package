@@ -67,6 +67,47 @@ DISTRIB_FILES_DIR=$(realpath -m "$DISTRIB_FILES_DIR")
 ## Regular expressions for templates
 NAME_REGEX=${NAME_REGEX:-s|%SOFTWARE_NAME%|$SOFTWARE_NAME|g;s|%SOFTWARE_AND_VERSION%|$SOFTWARE_AND_VERSION|g}
 VERSION_REGEX=${VERSION_REGEX:-s|%SOFTWARE_VERSION%|$SOFTWARE_VERSION|g;s|%DEBIAN_REVISION%|$DEBIAN_REVISION|g;s|%COMPOUND_VERSION%|$COMPOUND_VERSION|g}
+BUILDOUT_REGEX=${BUILDOUT_REGEX:-s|%SETUPTOOLS_VERSION%|$SETUPTOOLS_VERSION|g;s|%ZC_BUILDOUT_VERSION%|$ZC_BUILDOUT_VERSION|g;s|%ZC_RECIPE_EGG_VERSION%|$ZC_RECIPE_EGG_VERSION|g}
 DIR_REGEX=${DIR_REGEX:-s|%TARGET_DIR%|$TARGET_DIR|g;s|%BUILD_DIR%|$BUILD_DIR|g;s|%RUN_BUILDOUT_DIR%|$RUN_BUILDOUT_DIR|g}
 PATH_REGEX=${PATH_REGEX:-s|%BUILDOUT_ENTRY_POINT%|$BUILDOUT_ENTRY_POINT|g}
-ALL_REGEX=${ALL_REGEX:-$NAME_REGEX";"$VERSION_REGEX";"$DIR_REGEX";"$PATH_REGEX}
+ALL_REGEX=${ALL_REGEX:-$NAME_REGEX";"$VERSION_REGEX";"$BUILDOUT_REGEX";"$DIR_REGEX";"$PATH_REGEX}
+
+### FUNCTIONS ###
+copy_additional_files () {
+	# Take 2 directories' path as arguments: source and target.
+	# Copy every subdirectory of source in target and fill it with
+	# transformed templates and non-template files. Every file with
+	# .in extension is considered a template.
+	
+	if [ ! -d "$1" ]; then
+		echo "Directory does not exist, returning."
+		echo "$1"
+		return
+	fi
+
+	echo "------------------------------------"
+	echo "Copy additional files from $1 to $2"
+	echo
+
+	echo "Create corresponding subdirectories."
+	for directory in $(find "$1"/ -type d); do
+		subdirectory_name="${directory##$1/}"
+		mkdir -vp $2/"$subdirectory_name"
+	done
+
+	echo "Use template files."
+	for template in $(find "$1" -name "*.in" -type f); do
+		template_name="${template##$1/}"
+		echo "Creating $2/${template_name%.in} from $template"
+		sed "$ALL_REGEX" "$template" > "$2/${template_name%.in}"
+	done
+
+	echo "Copy non-template files."
+	for file in $(find "$1" -not -name "*.in" -type f); do
+		file_name="${file##$1/}"
+		cp -v "$file" "$2/$file_name"
+	done
+
+	echo "Copied additional files from $1 to $2"
+	echo "------------------------------------"
+}

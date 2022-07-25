@@ -32,7 +32,7 @@ if [ -f "$RUN_BUILDOUT_DIR"/bin/backup.buildout ]; then
 	mv "$RUN_BUILDOUT_DIR"/bin/backup.buildout "$RUN_BUILDOUT_DIR"/bin/buildout
 fi
 # clean the compilation related files
-rm -rf "$RUN_BUILDOUT_DIR"/{.installed.cfg,parts/}
+rm -rf "$RUN_BUILDOUT_DIR"/{.installed.cfg,parts}
 
 cd "$INITIAL_DIR"
 ### Prepare the archives for OBS
