@@ -1,0 +1,8 @@
+[buildout]
+rootdir = %TARGET_DIR%
+destdir = %BUILD_DIR%
+builddir = %RUN_BUILDOUT_DIR%
+extends =
+  %BUILDOUT_ENTRY_POINT%
+extends-cache = extends-cache
+download-cache = download-cache
