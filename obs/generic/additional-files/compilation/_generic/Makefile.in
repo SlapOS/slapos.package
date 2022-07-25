@@ -1,0 +1,12 @@
+
+build:
+	makefile-scripts/build.sh
+
+clean: clean-stamp
+clean-stamp:
+	makefile-scripts/clean.sh
+
+install: build
+	makefile-scripts/install.sh
+
+.PHONY: install
