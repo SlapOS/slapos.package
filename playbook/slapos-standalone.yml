@@ -103,6 +103,11 @@
         line: "47.246.20.229  goproxy.cn"
         dest: /etc/hosts
 
+    - name: Change the rubygems/bundle in the hosts
+      lineinfile:
+        line: "2a04:4e42:600::483 rubygems.org"
+        dest: /etc/hosts
+
     - name: Allow to access lab.nexedi.com
       iptables:
         action: append
@@ -112,12 +117,44 @@
         destination: lab.nexedi.com
         jump: ACCEPT
 
+    - name: Allow to access gitlab.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: gitlab.com
+        jump: ACCEPT
+
+    - name: Allow to access lab.nexedi.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 80
+        destination: lab.nexedi.com
+        jump: ACCEPT
+
     # Allow to access github.com and raw.githubusercontent.com
-    # Somehow not working
     - name: Change the github.com in the hosts
       lineinfile:
         line: "140.82.121.3  github.com"
         dest: /etc/hosts
+
+    # Allow to access gitlab.com, required by gitlab SR
+    #    - name: Pin the gitlab.com in the hosts
+    #      lineinfile:
+    #        line: "172.65.251.78  gitlab.com"
+    #        dest: /etc/hosts
+    #
+    #    - name: Allow to access gitlab.com
+    #      iptables:
+    #        action: append
+    #        chain: OUTPUT
+    #        protocol: tcp
+    #        destination_port: 443
+    #        destination: gitlab.com
+    #        jump: ACCEPT
 
     - name: Allow to access github.com
       iptables:
@@ -273,13 +310,14 @@
         destination: raw.githubusercontent.com
         jump: ACCEPT
 
-    - name: Allow to access goproxy.cn
+    - name: Allow to access rubygems/bundle
       iptables:
+        ip_version: ipv6
         action: append
         chain: OUTPUT
         protocol: tcp
-        destination_port: 80
-        destination: goproxy.cn
+        destination_port: 443
+        destination: rubygems.org
         jump: ACCEPT
 
     - name: Allow to access goproxy.cn
@@ -494,6 +532,237 @@
         jump: ACCEPT
 
     # Required by the SR html5as
+    - name: Allow to access localhost:8088
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8088
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR jstestnode
+    - name: Allow to access localhost:9443
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 9443
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR seleniumserver
+    - name: Allow to access localhost:8196
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8196
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slaprunner
+    - name: Allow to access localhost:8386
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8386
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slaprunner
+    - name: Allow to access localhost:8437
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8437
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slaprunner
+    - name: Allow to access localhost:9686
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 9686
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR backupserver
+    - name: Allow to access localhost:9687
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 9687
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR htmlvalidatorserver
+    - name: Allow to access localhost:8333
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8333
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR dream
+    - name: Allow to access localhost:18080
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 18080
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR fluentd
+    - name: Allow to access localhost:55337
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 55337
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR fluentd
+    - name: Allow to access localhost:39219
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 39219
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR fluentd
+    - name: Allow to access localhost:54015
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 54015
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2156
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2156
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2004
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2004
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2014
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2014
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2100
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2100
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2101
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2101
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2206
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2206
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2208
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2208
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR html5as
+    - name: Allow to access localhost:8198
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8198
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR html5as
+    - name: Allow to access localhost:8199
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8199
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR html5as
     - name: Allow to access localhost:8097
       iptables:
         ip_version: ipv6
@@ -501,6 +770,17 @@
         chain: OUTPUT
         protocol: tcp
         destination_port: 8097
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR html5as
+    - name: Allow to access localhost:8197
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8197
         destination: 2001:67c:1254:105:28ad::d94
         jump: ACCEPT
 
@@ -512,6 +792,17 @@
         chain: OUTPUT
         protocol: tcp
         destination_port: 8081
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR gitlab
+    - name: Allow to access localhost:7777
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 7777
         destination: 2001:67c:1254:105:28ad::d94
         jump: ACCEPT
 
