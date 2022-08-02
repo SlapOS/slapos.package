@@ -48,7 +48,7 @@ rm -f "$RUN_BUILDOUT_DIR"/{bootstrap.py,bootstrap-buildout.py}
 # remove the material created by the bootstrap script
 rm -rf "$RUN_BUILDOUT_DIR"/{bin,egg}
 ### Remove the material created by buildout itself
-rm -rf "$RUN_BUILDOUT_DIR"/parts
+rm -rf "$RUN_BUILDOUT_DIR"/{parts,go}
 
 cd "$INITIAL_DIR"
 ### Download the bootstrap script
@@ -63,6 +63,18 @@ wget https://bootstrap.pypa.io/bootstrap-buildout.py
 # 2nd cmd: backup $RUN_BUILDOUT_DIR/bin/buildout (to be restored for OBS)
 # 3rd cmd: run buildout (which modifies itself via rebootstrapping when compiling python)
 (python2.7 -S bootstrap-buildout.py --buildout-version "$ZC_BUILDOUT_VERSION" --setuptools-version "$SETUPTOOLS_VERSION" --setuptools-to-dir eggs -f http://www.nexedi.org/static/packages/source/slapos.buildout/ && cp bin/buildout bin/backup.buildout && ./bin/buildout -v)
+
+cd "$INITIAL_DIR"
+### Fix the go/ directory.
+
+# For some reason the user does not have the "write" permission on some directories within $RUN_BUILDOUT_DIR/go/. As it is
+# needed on a directory to delete a file in it, the if block adds the permissions to every
+# directories in go/.
+# This is performed before copying the directory tree elsewhere so that every copy is fixed.
+# It also allows the cleaning script to delete the result of the current script.
+if [ -d "$RUN_BUILDOUT_DIR"/go ]; then
+	find "$RUN_BUILDOUT_DIR"/go -name "*" -type d -exec chmod u+xw {} +
+fi
 
 cd "$INITIAL_DIR"
 ### Backup $TARBALL_DIR for debugging or other purpose
