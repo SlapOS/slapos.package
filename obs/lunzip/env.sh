@@ -2,6 +2,9 @@
 # Sourced in obs/_generic/build-scripts/00variable-management.sh
 ####################################################
 
+MAINTAINER_NAME="Ophelie"
+MAINTAINER_EMAIL="ophelie.gagnard@nexedi.com"
+
 ### DEBIAN_REVISION INFORMATION ###
 # Modify the following variables accordingly
 SOFTWARE_VERSION=1
