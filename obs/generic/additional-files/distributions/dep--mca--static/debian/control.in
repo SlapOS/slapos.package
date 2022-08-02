@@ -1,0 +1,19 @@
+Source: %SOFTWARE_NAME%
+Maintainer: %MAINTAINER_NAME% <%MAINTAINER_EMAIL%>
+Section: utils
+Priority: optional
+Build-Depends: debhelper (>= 4.1.16),
+               chrpath,
+               wget,
+               python (>= 2.7),
+               python3 (>= 3.7),
+               python3-dev (>= 3.7),
+               golang (>= 2:1.15~1),
+               cmake (>= 3.18)
+
+Package: %SOFTWARE_NAME%
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+Conflicts:
+Description:
