@@ -100,7 +100,12 @@
 
     - name: Change the goproxy in the hosts
       lineinfile:
-        line: "47.246.20.229  goproxy.cn"
+        line: "120.221.249.220  goproxy.cn"
+        dest: /etc/hosts
+
+    - name: Change the goproxy.cn(qiniucs.com) in the hosts
+      lineinfile:
+        line: "47.246.44.230  s3-cn-south-1.qiniucs.com"
         dest: /etc/hosts
 
     - name: Change the rubygems/bundle in the hosts
@@ -327,6 +332,24 @@
         protocol: tcp
         destination_port: 443
         destination: goproxy.cn
+        jump: ACCEPT
+
+    - name: Allow to access qiniucs.com(goproxy.cn)
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: s3-cn-south-1.qiniucs.com
+        jump: ACCEPT
+
+    - name: Allow to access the service behind goproxy.cn
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: 47.246.44.226
         jump: ACCEPT
 
     - name: Change the codeload.github.com in the hosts
@@ -664,6 +687,39 @@
         jump: ACCEPT
 
     # Required by the SR slapos-master
+    - name: Allow to access localhost:8003
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8003
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:8002
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8002
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2204
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2204
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
     - name: Allow to access localhost:2156
       iptables:
         ip_version: ipv6
@@ -737,6 +793,28 @@
         chain: OUTPUT
         protocol: tcp
         destination_port: 2208
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2153
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2153
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR matomo
+    - name: Allow to access localhost:9988
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 9988
         destination: 2001:67c:1254:105:28ad::d94
         jump: ACCEPT
 
