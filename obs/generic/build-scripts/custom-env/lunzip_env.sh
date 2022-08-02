@@ -2,6 +2,10 @@
 # Used in build-scripts/00env.sh: source lunzip_env.sh
 ####################################################
 
+MAINTAINER_NAME="Ophelie"
+MAINTAINER_EMAIL="ophelie.gagnard@nexedi.com"
+CURRENT_DATE="$(date -R)"
+
 ### DEBIAN_REVISION INFORMATION ###
 # Modify the following variables accordingly
 SOFTWARE_VERSION=1
