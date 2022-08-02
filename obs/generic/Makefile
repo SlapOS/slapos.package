@@ -13,6 +13,11 @@ lunzip:
 	NAME=lunzip make
 clean_lunzip:
 	NAME=lunzip make clean
+
+dep--mca--static:
+	NAME=dep--mca--static make
+clean_dep--mca--static:
+	NAME=dep--mca--static make clean
 	
 clean_all:
 	rm -rf tarballs
