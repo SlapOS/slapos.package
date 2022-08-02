@@ -1,5 +1,0 @@
-lunzip (%COMPOUND_VERSION%) UNRELEASED; urgency=medium
-
-  * Initial release. (Closes: #XXXXXX)
-
- -- Ophelie <ophelie.gagnard@nexedi.com>  Tue, 25 Jan 2022 18:27:17 +0100
