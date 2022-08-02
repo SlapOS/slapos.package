@@ -1,0 +1,5 @@
+%SOFTWARE_NAME% (%COMPOUND_VERSION%) UNRELEASED; urgency=medium
+
+  * Initial release. (Closes: #XXXXXX)
+
+ -- %MAINTAINER_NAME% <%MAINTAINER_EMAIL%>  %CURRENT_DATE% 
