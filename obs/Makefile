@@ -18,9 +18,14 @@ dep--mca--static:
 	NAME=dep--mca--static make
 clean_dep--mca--static:
 	NAME=dep--mca--static make clean
+
+dep--fluent-bit:
+	NAME=dep--fluent-bit make
+clean_dep--fluent-bit:
+	NAME=dep--fluent-bit make clean
 	
 clean_all:
 	rm -rf tarballs
 	rm -rf home:*
 
-.PHONY: generic clean clean_all lunzip clean_lunzip dep--mca--static clean_dep--mca--static
+.PHONY: generic clean clean_all lunzip clean_lunzip dep--mca--static clean_dep--mca--static dep--fluent-bit clean_dep--fluent-bit
