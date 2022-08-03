@@ -27,8 +27,22 @@ dep--mca--static_clean_obs:
 	rm -rf home:oph.nxd/dep--mca--static/*
 
 
+dep--fluent-bit: dep--fluent-bit_tarball_directory dep--fluent-bit_obs 
+clean_dep--fluent-bit: dep--fluent-bit_clean_obs dep--fluent-bit_clean_tarball_directory
+
+dep--fluent-bit_tarball_directory:
+	NAME=dep--fluent-bit build-scripts/10tarball_directory.sh
+dep--fluent-bit_clean_tarball_directory:
+	rm -rf tarballs/dep--fluent-bit_*
+
+dep--fluent-bit_obs:
+	NAME=dep--fluent-bit build-scripts/20obs.sh
+dep--fluent-bit_clean_obs:
+	rm -rf home:oph.nxd/dep--fluent-bit/*
+
+
 clean_all:
 	rm -rf tarballs
 	rm -rf home:oph.nxd
 
-.PHONY: lunzip clean_lunzip dep--mca--static clean_dep--mca--static
+.PHONY: lunzip clean_lunzip dep--mca--static clean_dep--mca--static dep--fluent-bit clean_dep--fluent-bit

@@ -1,5 +1,5 @@
 ####################################################
-# Used in build-scripts/00env.sh: source dep--mca--static_env.sh
+# Used in build-scripts/00env.sh: source dep--fluent-bit_env.sh
 ####################################################
 
 MAINTAINER_NAME=Ophelie
@@ -10,10 +10,10 @@ CURRENT_DATE="$(date -R)"
 # Modify the following variables accordingly
 SOFTWARE_VERSION=1
 DEBIAN_REVISION=1
-SOFTWARE_NAME=dep--mca--static
+SOFTWARE_NAME=dep--fluent-bit
 
 ### DISTRIBUTIONS INFORMATION ###
-PACKAGE_BUILD_DEPENDENCIES="debhelper (>= 4.1.16), chrpath, wget, python (>= 2.7), python3 (>= 3.7), python3-dev (>= 3.7), golang (>= 2:1.15~1), cmake (>= 3.18)"
+PACKAGE_BUILD_DEPENDENCIES="debhelper (>= 4.1.16), chrpath, wget, python (>= 2.7), python3 (>= 3.7), python3-dev (>= 3.7), cmake (>= 3.18)"
 
 ### BUILDOUT FILES AND VERSIONS ###
 GIT_REPOSITORY=https://lab.nexedi.com/Ophelie/slapos
