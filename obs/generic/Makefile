@@ -18,6 +18,11 @@ dep--mca--static:
 	NAME=dep--mca--static make
 clean_dep--mca--static:
 	NAME=dep--mca--static make clean
+
+dep--fluent-bit:
+	NAME=dep--fluent-bit make
+clean_dep--fluent-bit:
+	NAME=dep--fluent-bit make clean
 	
 clean_all:
 	rm -rf tarballs
