@@ -475,44 +475,6 @@
         destination: 8.48.85.1
         jump: ACCEPT
 
-    - name: Allow to access metabase.com
-      lineinfile:
-        line: "185.199.108.153  metabase.com"
-        dest: /etc/hosts
-
-    - name: Allow to access metabase.com
-      iptables:
-        action: append
-        chain: OUTPUT
-        protocol: tcp
-        destination_port: 443
-        destination: metabase.com
-        jump: ACCEPT
-
-    - name: Allow to access metabase.com
-      iptables:
-        action: append
-        chain: OUTPUT
-        protocol: tcp
-        destination_port: 80
-        destination: metabase.com
-        jump: ACCEPT
-
-    - name: Allow to access metabase.com ipv6
-      lineinfile:
-        line: "2606:50c0:8000::153  metabase.com"
-        dest: /etc/hosts
-
-    - name: Allow to access metabase.com ipv6
-      iptables:
-        ip_version: ipv6
-        action: append
-        chain: OUTPUT
-        protocol: tcp
-        destination_port: 443
-        destination: metabase.com
-        jump: ACCEPT
-
     # cypress using 2 steps of downloading
     # so set two entries in the hosts file
     - name: Allow to access download.cypress.io
