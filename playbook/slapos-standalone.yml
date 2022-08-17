@@ -672,6 +672,39 @@
         destination: 2001:67c:1254:105:28ad::d94
         jump: ACCEPT
 
+    # Required by the SR fluentd
+    - name: Allow to access localhost:54013
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 54013
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR repman
+    - name: Allow to access localhost:2199
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2199
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR repman
+    - name: Allow to access localhost:2099
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2099
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
     # Required by the SR slapos-master
     - name: Allow to access localhost:8003
       iptables:
@@ -790,6 +823,160 @@
         chain: OUTPUT
         protocol: tcp
         destination_port: 2153
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2204
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2204
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2221
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2221
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2225
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2225
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2251
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2251
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2241
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2241
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2160
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2160
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2231
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2231
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2211
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2211
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2154
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2154
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2308
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2308
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:3307
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 3307
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:2152
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 2152
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:8888
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 8888
+        destination: 2001:67c:1254:105:28ad::d94
+        jump: ACCEPT
+
+    # Required by the SR slapos-master
+    - name: Allow to access localhost:1234
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 1234
         destination: 2001:67c:1254:105:28ad::d94
         jump: ACCEPT
 
