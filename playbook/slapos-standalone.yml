@@ -113,6 +113,21 @@
         line: "2a04:4e42:600::483 rubygems.org"
         dest: /etc/hosts
 
+    - name: Change the wxPython.org in the hosts
+      lineinfile:
+        line: "173.212.231.191  wxpython.org"
+        dest: /etc/hosts
+
+    - name: Change the lab.nexedi.com in the hosts
+      lineinfile:
+        line: "88.99.67.114 lab.nexedi.com"
+        dest: /etc/hosts
+
+    - name: Change the lab.nexedi.com in the hosts
+      lineinfile:
+        line: "212.129.18.209 lab.nexedi.com"
+        dest: /etc/hosts
+
     - name: Allow to access lab.nexedi.com
       iptables:
         action: append
@@ -313,6 +328,15 @@
         protocol: tcp
         destination_port: 80
         destination: raw.githubusercontent.com
+        jump: ACCEPT
+
+    - name: Allow to access wxpython.org
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: wxpython.org
         jump: ACCEPT
 
     - name: Allow to access rubygems/bundle
