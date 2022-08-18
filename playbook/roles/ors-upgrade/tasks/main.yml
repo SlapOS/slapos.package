@@ -17,3 +17,15 @@
 
   - name: Enable init-sdr
     systemd: name=init-sdr enabled=yes
+
+  - name: Configure re6st
+    script: configure-re6st.sh
+
+  - name: Configure slapos
+    script: configure-slapos.py
+
+  - name: Create .amarisoft directory for SR
+    file: path=/opt/amarisoft/.amarisoft state=directory
+
+  - name: Copy keys for SR
+    copy: src=/root/.amarisoft dest=/opt/amarisoft owner=root mode=644
