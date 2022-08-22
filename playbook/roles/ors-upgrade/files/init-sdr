@@ -13,6 +13,7 @@ case "$1" in
     cd /root/trx_sdr/kernel;
     make clean;
     bash init.sh 2>> /opt/amarisoft/init-sdr.log >> /opt/amarisoft/init-sdr.log
+    /opt/amarisoft/v2022-07-29/lteenb-linux-2022-07-29/lte_init.sh 2>> /opt/amarisoft/init-sdr.log >> /opt/amarisoft/init-sdr.log
     ;;
   *)
     true
