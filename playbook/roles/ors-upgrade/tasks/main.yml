@@ -18,8 +18,11 @@
   - name: Enable init-sdr
     systemd: name=init-sdr enabled=yes
 
-  - name: Configure re6st
-    script: configure-re6st.sh
+  - name: Configure network
+    script: configure-network.sh
+
+  - name: Configure ssh
+    script: configure-ssh.sh
 
   - name: Configure slapos
     script: configure-slapos.py
