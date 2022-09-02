@@ -29,9 +29,7 @@
  
 
 %define slapversion %RECIPE_VERSION%
-%define version %VERSION%
-%define unmangled_version %VERSION%
-%define unmangled_version %VERSION%
+%define slapos_directory %SLAPOS_DIRECTORY%
 %define release_number %RELEASE%
 
 
@@ -41,7 +39,7 @@ Version:%{slapversion}
 Release:%{release_number}
 License:GPL
 Group: Application/Network
-Source0: slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}.tar.gz
+Source0: %{slapos_directory}.tar.gz
 URL: http://community.slapos.org/ 
 Vendor: Vifib
 Packager: Thomas Gambier <thomas.gambier@nexedi.com>
@@ -82,21 +80,21 @@ Conflicts: firewalld
 
 
 %prep
-rm -rf $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}
-zcat $RPM_SOURCE_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}.tar.gz | tar -xvf -
+rm -rf $RPM_BUILD_DIR/%{slapos_directory}
+zcat $RPM_SOURCE_DIR/%{slapos_directory}.tar.gz | tar -xvf -
 
 
 %build
-cd $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}
+cd $RPM_BUILD_DIR/%{slapos_directory}
 make
 
 %install
-cd $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}/
+cd $RPM_BUILD_DIR/%{slapos_directory}
 make DESTDIR=$RPM_BUILD_ROOT install 
 mkdir -p $RPM_BUILD_ROOT/etc/cron.d/
-cp $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}/slapos-node.cron.d $RPM_BUILD_ROOT/etc/cron.d/slapos-node
+cp $RPM_BUILD_DIR/%{slapos_directory}/slapos-node.cron.d $RPM_BUILD_ROOT/etc/cron.d/slapos-node
 mkdir -p $RPM_BUILD_ROOT/etc/logrotate.d/
-cp $RPM_BUILD_DIR/slapos-node_%{unmangled_version}+%{slapversion}+%{release_number}/slapos-node.logrotate $RPM_BUILD_ROOT/etc/logrotate.d/slapos.logrotate.conf
+cp $RPM_BUILD_DIR/%{slapos_directory}/slapos-node.logrotate $RPM_BUILD_ROOT/etc/logrotate.d/slapos.logrotate.conf
 mkdir -p $RPM_BUILD_ROOT/etc/systemd/system/
 mkdir -p $RPM_BUILD_ROOT/opt/slapos/log
 rm -rf $RPM_BUILD_ROOT/opt/slapos/eggs/setuptools-*.egg/setuptools/tests/test_easy_install.py
