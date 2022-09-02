@@ -1,4 +1,4 @@
-#!/opt/slapos/parts/python2.7/bin/python2.7
+#!/opt/slapos/parts/python3/bin/python3
 
 import os
 import sys
@@ -7,7 +7,7 @@ import time
 import getopt
 import sqlite3
 import ssl
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from xml.dom import minidom
 import json
 import hashlib
@@ -79,7 +79,7 @@ def get_connection_information(software_release):
 
 def check_tables():
   if 'partition' not in proxy_table_name_dict:
-    print "tables aren't ready yet, your build may have failed, check logs in /opt/slapos/log/"
+    print("tables aren't ready yet, your build may have failed, check logs in /opt/slapos/log/")
     sys.exit(0)
 
 def get_build_status(software_release):
@@ -146,30 +146,30 @@ def status():
       ctx.verify_mode = ssl.CERT_NONE
 
       try:
-        r1 = urllib2.urlopen(frontend, context=ctx)
+        r1 = urllib.request.urlopen(frontend, context=ctx)
         if 'Zope Management Interface' in r1.read():
           connected = True
         else:
-          print 'URL %s ready, but does not reply with Zope' % frontend
-      except urllib2.URLError, e:
-        print "Zope not available yet: %s" % e
+          print('URL %s ready, but does not reply with Zope' % frontend)
+      except urllib.error.URLError as e:
+        print("Zope not available yet: %s" % e)
 
     if zope_ip is None or frontend is None or frontend_ip is None or not connected:
-      print "Build successful, please wait for instantiation"
+      print("Build successful, please wait for instantiation")
       sys.exit(2)
 
-    print ("Build successful, connect to:\n"
-           "  " + frontend)
+    print(("Build successful, connect to:\n"
+           "  " + frontend))
     if pw is not None:
-      print (" with\n"
-             "  username: zope  password: " + pw)
+      print((" with\n"
+             "  username: zope  password: " + pw))
   elif not build:
     if 'error' in [software_release_list_status]:
-      print "An error occurred while building, check /opt/slapos/log/slapos-node-software-" + \
-            fmt_date() + ".log for details"
+      print("An error occurred while building, check /opt/slapos/log/slapos-node-software-" + \
+            fmt_date() + ".log for details")
       sys.exit(2)
     else:
-      print "Your software is still building, be patient it can take a while"
+      print("Your software is still building, be patient it can take a while")
       sys.exit(2)
 
   ipv6 = None
@@ -190,39 +190,39 @@ def status():
   ctx.verify_mode = ssl.CERT_NONE
 
   try:
-    r1 = urllib2.urlopen(zope_ip, context=ctx)
-  except urllib2.URLError, e:
-    print "At least one of your services isn't running! Check with slapos node"
-    print "restart a service with slapos node restart slappart:service"
-    print ""
-    print "DEBUG information: %s" % e
+    r1 = urllib.request.urlopen(zope_ip, context=ctx)
+  except urllib.error.URLError as e:
+    print("At least one of your services isn't running! Check with slapos node")
+    print("restart a service with slapos node restart slappart:service")
+    print("")
+    print("DEBUG information: %s" % e)
     sys.exit(2)
 
   if r1.getcode() != 200:
-    print "At least one of your services isn't running! Check with slapos node"
-    print "restart a service with slapos node restart slappart:service"
+    print("At least one of your services isn't running! Check with slapos node")
+    print("restart a service with slapos node restart slappart:service")
     sys.exit(2)
 
   if ipv6:
-    print ""
-    print "The URL above may require extra configuration if you want to access it"
-    print "from another machine. You can install an apache locally and include the"
-    print "the follow rewrite rule (http version):"
-    print """
+    print("")
+    print("The URL above may require extra configuration if you want to access it")
+    print("from another machine. You can install an apache locally and include the")
+    print("the follow rewrite rule (http version):")
+    print("""
   RewriteRule ^/(.*) %s/VirtualHostBase/http/%%{HTTP_HOST}/VirtualHostRoot/$1 [L,P]
 
 or (https version):
 
   RewriteRule ^/(.*) %s/VirtualHostBase/https/%%{HTTP_HOST}/VirtualHostRoot/$1 [L,P]
 
-""" % (original_zope_ip, original_zope_ip)
+""" % (original_zope_ip, original_zope_ip))
 
 
 def info(software_release):
   if get_build_status(software_release):
-    print get_connection_information(software_release)
+    print(get_connection_information(software_release))
   else:
-    print "Information unavailable at this time, run " + sys.argv[0] + " -s for details"
+    print("Information unavailable at this time, run " + sys.argv[0] + " -s for details")
 
 def usage():
   print ("Get the status and information of your ERP5 build\n"
@@ -239,7 +239,7 @@ def main(argv):
   # parse command line options
   try:
     opts, args = getopt.getopt(argv, "sihd", ["status", "info", "help", "dump"])
-  except getopt.error, msg:
+  except getopt.error as msg:
     usage()
     sys.exit(2)
   if len(opts) == 0:
