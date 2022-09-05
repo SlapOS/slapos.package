@@ -540,7 +540,7 @@
 
     - name: DROP INPUT
       iptables:
-        policy: DROP
+        policy: ACCEPT
         chain: INPUT
 
     - name: DROP OUTPUT
@@ -548,10 +548,11 @@
         policy: DROP
         chain: OUTPUT
 
+    # Incomming connection is not a problem for the shacache work
     - name: DROP IPV6 INPUT
       iptables:
         ip_version: ipv6
-        policy: DROP
+        policy: ACCEPT
         chain: INPUT
 
     - name: DROP IPV6 OUTPUT
