@@ -161,6 +161,12 @@
         line: "140.82.121.3  github.com"
         dest: /etc/hosts
 
+    # Allow to access api.github.com, needed by theia
+    - name: Change the github.com in the hosts
+      lineinfile:
+        line: "140.82.121.3  api.github.com"
+        dest: /etc/hosts
+
     # Allow to access gitlab.com, required by gitlab SR
     #    - name: Pin the gitlab.com in the hosts
     #      lineinfile:
@@ -175,6 +181,15 @@
     #        destination_port: 443
     #        destination: gitlab.com
     #        jump: ACCEPT
+
+    - name: Allow to access api.github.com
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: api.github.com
+        jump: ACCEPT
 
     - name: Allow to access github.com
       iptables:
