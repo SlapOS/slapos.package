@@ -538,9 +538,9 @@
         destination: slap.vifib.com
         jump: ACCEPT
 
-    - name: DROP INPUT
+    - name: ACCEPT INPUT
       iptables:
-        policy: DROP
+        policy: ACCEPT
         chain: INPUT
 
     - name: DROP OUTPUT
@@ -548,10 +548,11 @@
         policy: DROP
         chain: OUTPUT
 
-    - name: DROP IPV6 INPUT
+    # Incomming connection is not a problem for the shacache work
+    - name: ACCEPT IPV6 INPUT
       iptables:
         ip_version: ipv6
-        policy: DROP
+        policy: ACCEPT
         chain: INPUT
 
     - name: DROP IPV6 OUTPUT
