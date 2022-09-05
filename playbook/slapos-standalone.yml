@@ -599,6 +599,36 @@
         in_interface: lo
         jump: ACCEPT
 
+    - name: Allow KVM SSH IPV6 connection port 22200
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        match: tcp
+        protocol: tcp
+        destination_port: 22200
+        jump: ACCEPT
+
+    - name: Allow KVM SSH IPV6 connection port 22219
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        match: tcp
+        protocol: tcp
+        destination_port: 22219
+        jump: ACCEPT
+
+    - name: Allow KVM SSH IPV6 connection port 22210
+      iptables:
+        ip_version: ipv6
+        action: append
+        chain: INPUT
+        match: tcp
+        protocol: tcp
+        destination_port: 22210
+        jump: ACCEPT
+
     - name: Allow SSH IPV6 connection
       iptables:
         ip_version: ipv6
