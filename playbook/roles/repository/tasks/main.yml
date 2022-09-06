@@ -92,11 +92,11 @@
 
   - name: Install Ubuntu 22.04 repository key
     apt_key: url={{ base_open_build_url }}/xUbuntu_22.04/Release.key state=present
-    when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04"
+    when: (ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04") or (ansible_lsb.codename == "kylin" and ansible_lsb.major_release == "v10")
 
   - name: Install Ubuntu 22.04 repository
     apt_repository: repo='deb {{ base_open_build_url }}/xUbuntu_22.04/ ./' state=present
-    when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04"
+    when: (ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04") or (ansible_lsb.codename == "kylin" and ansible_lsb.major_release == "v10")
 
   - name: Install CentOS 7 Repository
     get_url: url=http://download.opensuse.org/repositories/home:/VIFIBnexedi/CentOS_7/home:VIFIBnexedi.repo dest=/etc/yum.repos.d/slapos.repo mode=0440
