@@ -10,7 +10,7 @@ cd $OBS_DIRECTORY
 osc up
 
 # Remove former configuration
-osc rm -f $SLAPOS_ORGINAL_DIRECTORY*.tar.gz
+osc rm -f $SLAPOS_DIRECTORY_PREFIX*.tar.gz
 osc rm -f slapos.spec
 
 # Prepare new tarball
