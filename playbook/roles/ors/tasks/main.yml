@@ -1,3 +1,6 @@
 ---
   - name: Install upgrader
     shell: ansible-playbook upgrader-run.yml --extra-vars "upgrader_playbook=ors-upgrade.yml upgrade_kernel=False"
+
+  - name: Set Cron
+    cron: name="Launch Startup with ansible" special_time=reboot job='cd /opt/upgrader/playbook && ansible-playbook ors-upgrade.yml -i hosts 2>>/opt/upgrader/startup.log >> /opt/upgrader/startup.log'

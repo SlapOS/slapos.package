@@ -12,17 +12,23 @@
   - name: Give permission to slapuser to remove tmp files owned by other slapuser
     copy: src=slapuser-rm-tmp dest=/etc/sudoers.d owner=root mode=440
 
-  - name: Add init-sdr service
-    copy: src=init-sdr dest=/etc/init.d owner=root mode=755
+  - name: Init SDR
+    script: init-sdr.sh
 
-  - name: Enable init-sdr
-    systemd: name=init-sdr enabled=yes
+  - name: Configure re6st
+    script: configure-re6st.sh
 
-  - name: Configure network
-    script: configure-network.sh
+  - name: Configure /etc/network/interfaces
+    copy: src=interfaces dest=/etc/network/interfaces owner=root mode=644
+
+  - name: Configure dhcp timeout
+    lineinfile: dest=/etc/dhcp/dhclient.conf regexp="^timeout (.*)" line="timeout 15" state=present
 
   - name: Configure ssh
-    script: configure-ssh.sh
+    lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin (.*)" line="PermitRootLogin yes" state=present
+
+  - name: Configure ssh
+    lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication (.*)" line="PasswordAuthentication yes" state=present
 
   - name: Configure slapos
     script: configure-slapos.py
@@ -32,3 +38,6 @@
 
   - name: Copy keys for SR
     copy: src=/root/.amarisoft dest=/opt/amarisoft owner=root mode=644
+
+  - name: Add kernel parameter
+    script: configure-grub.sh

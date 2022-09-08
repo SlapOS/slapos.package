@@ -1,0 +1,14 @@
+auto lo
+iface lo inet loopback
+
+auto enp2s0
+iface enp2s0 inet dhcp
+        post-up echo 1 > /proc/sys/net/ipv4/conf/all/forwarding
+        post-up iptables -t nat -A POSTROUTING -o enp2s0 -j MASQUERADE
+        post-up ip6tables -t nat -A POSTROUTING -o enp2s0 -j MASQUERADE
+
+auto enp0s31f6
+iface enp0s31f6 inet dhcp
+        post-up echo 1 > /proc/sys/net/ipv4/conf/all/forwarding
+        post-up iptables -t nat -A POSTROUTING -o enp0s31f6 -j MASQUERADE
+        post-up ip6tables -t nat -A POSTROUTING -o enp0s31f6 -j MASQUERADE
