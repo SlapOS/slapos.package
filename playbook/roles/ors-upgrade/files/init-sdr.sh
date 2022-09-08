@@ -1,3 +1,4 @@
+export PATH="/usr/bin:/usr/sbin:$PATH"
 cd /root/trx_sdr/kernel;
 make clean;
 bash init.sh 2>> /opt/amarisoft/init-sdr.log >> /opt/amarisoft/init-sdr.log
