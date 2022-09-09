@@ -22,7 +22,7 @@ sed $VERSION_REGEX $TEMPLATES_DIRECTORY/slapos.spec.in > slapos.spec
 osc add slapos.spec
 
 # Prepare new .dsc file
-osc rm -f slapos*.dsc
+osc rm -f $SLAPOS_DIRECTORY_PREFIX*.dsc
 sed $VERSION_REGEX $TEMPLATES_DIRECTORY/slapos.dsc.in > $SLAPOS_DIRECTORY.dsc
 osc add $SLAPOS_DIRECTORY.dsc
 
