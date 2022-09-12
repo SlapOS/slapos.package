@@ -34,7 +34,7 @@
 
 
 Summary:Client-side to deploy applications with SlapOS
-Name: slapos.node
+Name: slapos-node
 Version:%{slapversion}
 Release:%{release_number}
 License:GPL
