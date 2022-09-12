@@ -83,7 +83,7 @@ def check_tables():
     sys.exit(0)
 
 def get_build_status(software_release):
-  sr_hash = hashlib.md5(software_release).hexdigest()
+  sr_hash = hashlib.md5(software_release.encode()).hexdigest()
   try:
     os.stat(os.path.join('/opt/slapgrid', sr_hash, '.completed'))
   except OSError:
