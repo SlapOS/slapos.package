@@ -1,6 +1,7 @@
 ---
 
 base_open_build_url: https://download.opensuse.org/repositories/home:/VIFIBnexedi/
+base_open_build_url_http: http://download.opensuse.org/repositories/home:/VIFIBnexedi/
 
 is_ubuntu: "'{{ ansible_distribution }}' == 'Ubuntu'"
 is_debian: "'{{ ansible_distribution }}' == 'Debian'"
