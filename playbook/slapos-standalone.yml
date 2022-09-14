@@ -100,7 +100,7 @@
 
     - name: Change the goproxy in the hosts
       lineinfile:
-        line: "120.221.249.220  goproxy.cn"
+        line: "112.29.228.200  goproxy.cn"
         dest: /etc/hosts
 
     - name: Change the goproxy.cn(qiniucs.com) in the hosts
@@ -164,7 +164,7 @@
     # Allow to access api.github.com, needed by theia
     - name: Change the github.com in the hosts
       lineinfile:
-        line: "140.82.121.3  api.github.com"
+        line: "140.82.121.5  api.github.com"
         dest: /etc/hosts
 
     # Allow to access gitlab.com, required by gitlab SR
@@ -221,6 +221,20 @@
         protocol: tcp
         destination_port: 443
         destination: githubusercontent.com
+        jump: ACCEPT
+
+    - name: Allow to access objects.githubusercontent.com ipv4
+      lineinfile:
+        line: "185.199.108.133  githubusercontent.com"
+        dest: /etc/hosts
+
+    - name: Allow to access objects.githubusercontent.com ipv4
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: objects.githubusercontent.com
         jump: ACCEPT
 
     - name: Allow to access githubusercontent.com
@@ -333,6 +347,20 @@
         protocol: tcp
         destination_port: 443
         destination: npmmirror.com
+        jump: ACCEPT
+
+    - name: Pin the nodejs.org in the hosts
+      lineinfile:
+        line: "104.20.22.46 nodejs.org"
+        dest: /etc/hosts
+
+    - name: Allow to access nodejs.org
+      iptables:
+        action: append
+        chain: OUTPUT
+        protocol: tcp
+        destination_port: 443
+        destination: nodejs.org
         jump: ACCEPT
 
     - name: Allow to access raw.githubusercontent.com
