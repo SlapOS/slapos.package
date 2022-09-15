@@ -29,7 +29,7 @@ class TestSiteHttps(unittest.TestCase):
       ),
       result.content
     )
-    self.assertTrue('ERP5 Free Open Source ERP and CRM' in result.text)
+    self.assertIn('ERP5 Free Open Source ERP and CRM', result.text)
 
   def test_https_erp5(self):
     """Check that accessing site over HTTPS redirects to login_form"""
