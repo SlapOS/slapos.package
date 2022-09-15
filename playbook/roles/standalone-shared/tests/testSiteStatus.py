@@ -13,12 +13,10 @@ class TestSiteStatus(unittest.TestCase):
 
   def test_build(self):
     """Checks that site was correctly created"""
-    # expose output for debugging
-    print('Standard output:')
-    print(self.status_dict['stdout'])
-    print('Standard error:')
-    print(self.status_dict['stderr'])
-    self.assertTrue(self.status_dict['success'])
+    self.assertTrue(
+      self.status_dict['success'],
+      # expose output in case of failure for debugging
+      self.status_dict)
 
   def test_build_time(self):
     """Asserts that site was built in acceptable time"""
