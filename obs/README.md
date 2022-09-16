@@ -16,7 +16,7 @@ make
 
 Install OBS' ```osc``` command and log in (see [here](https://en.opensuse.org/openSUSE:OSC) and [here] (https://github.com/openSUSE/osc)).
 
-Add a directory ```obs/<software_name>```. In this directory you MUST create a file ```env.sh``` (in any shell compatible with bash) where you define and export at least the following variables: ```SOFTWARE_NAME, MAINTAINTER_NAME, MAINTAINER_EMAIL, OBS_USER```.
+Add a directory ```obs/<software_name>```. In this directory you MUST create a file ```env.sh``` (in any shell compatible with bash) where you define and export at least the following variables: ```SOFTWARE_NAME, MAINTAINTER_NAME, MAINTAINER_EMAIL```.
 
 ### Optional
 

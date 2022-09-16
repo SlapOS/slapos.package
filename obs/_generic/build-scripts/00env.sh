@@ -6,7 +6,6 @@
 # SOFTWARE_NAME -> the name of the software, which is the directory in obs/
 # MAINTAINER_NAME
 # MAINTAINER_EMAIL
-# OBS_USER
 
 ### The user CAN define the following variables
 ## Debian packaging information
@@ -42,8 +41,7 @@ BUILDOUT_RELATIVE_PATH=${BUILDOUT_RELATIVE_PATH:-software/$SOFTWARE_NAME/softwar
 SETUPTOOLS_VERSION=${SETUPTOOLS_VERSION:-63.2.0}
 ZC_BUILDOUT_VERSION=${ZC_BUILDOUT_VERSION:-2.7.1+slapos019}
 ## OBS information
-# Get the user from osc configuration file.
-OBS_PROJECT=${OBS_PROJECT:-home:$OBS_USER}
+OBS_PROJECT=${OBS_PROJECT:-home:VIFIBnexedi:branches:home:VIFIBnexedi}
 OBS_PACKAGE=${OBS_PACKAGE:-$SOFTWARE_NAME}
 # OBS_COMMIT_MSG can be used, a prompt will be asked if empty or undefined
 
