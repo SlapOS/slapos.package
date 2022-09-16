@@ -121,3 +121,7 @@
   - name: Install OpenSuse Leap 15 repository
     get_url: url={{ base_open_build_url }}/openSUSE_Leap_15.1/home:VIFIBnexedi.repo dest=/etc/zypp/repos.d/home_VIFIBnexedi.repo mode=0440
     when: ansible_os_family == "Suse" and ansible_distribution_major_version == "15"
+
+  - name: Install Fedora 32 repository
+    yum_repository: name='home_VIFIBnexedi' description='SlapOS-Node (Fedora_32)' baseurl='https://download.opensuse.org/repositories/home:/VIFIBnexedi/Fedora_32/' gpgkey='https://download.opensuse.org/repositories/home:/VIFIBnexedi/Fedora_32/repodata/repomd.xml.key' gpgcheck=yes enabled=yes
+    when: ansible_distribution == "Fedora" and ansible_distribution_major_version == "32"
