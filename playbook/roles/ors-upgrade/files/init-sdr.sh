@@ -1,5 +1,10 @@
-export PATH="/usr/bin:/usr/sbin:$PATH"
-cd /root/trx_sdr/kernel;
+#!/bin/bash
+
+AMARISOFT_PATH="/opt/amarisoft/$(ls -1 /opt/amarisoft | grep "^v[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}$" | sort | tail -n1)"
+
+$AMARISOFT_PATH/trx_sdr/sdr_util version && exit;
+lsmod | grep -q sdr || rmmod sdr;
+cd $AMARISOFT_PATH/trx_sdr/kernel;
 make clean;
-bash init.sh 2>> /opt/amarisoft/init-sdr.log >> /opt/amarisoft/init-sdr.log
-$(find /opt/amarisoft -type f -wholename "*v*/*lteenb*/*lte_init.sh*") 2>> /opt/amarisoft/init-sdr.log >> /opt/amarisoft/init-sdr.log
+bash init.sh;
+$AMARISOFT_PATH/enb/lte_init.sh;
