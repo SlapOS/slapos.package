@@ -43,8 +43,6 @@ python2.7 -S bootstrap-buildout.py \
 	--buildout-version "$ZC_BUILDOUT_VERSION" \
 	--setuptools-version "$SETUPTOOLS_VERSION" \
 	--setuptools-to-dir eggs -f http://www.nexedi.org/static/packages/source/slapos.buildout/
-# backup $RUN_BUILDOUT_DIR/bin/buildout (to be restored for OBS)
-cp bin/buildout bin/backup.buildout
 # run $RUN_BUILDOUT_DIR/bin/buildout (note that it modifies itself via rebootstrapping when compiling python)
 ./bin/buildout -v
 
