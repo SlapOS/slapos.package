@@ -90,11 +90,11 @@
 
   - name: Install Ubuntu 20.04 repository key
     apt_key: url={{ base_open_build_url }}/xUbuntu_20.04/Release.key state=present
-    when: (ansible_distribution == "Ubuntu" and ansible_distribution_version == "20.04") or (ansible_lsb.codename == "kylin" and ansible_lsb.major_release == "v10")
+    when: (ansible_distribution == "Ubuntu" and ansible_distribution_version == "20.04") or (ansible_lsb.codename is defined and ansible_lsb.codename == "kylin" and ansible_lsb.major_release == "v10")
 
   - name: Install Ubuntu 20.04 repository
     apt_repository: repo='deb {{ base_open_build_url }}/xUbuntu_20.04/ ./' state=present
-    when: (ansible_distribution == "Ubuntu" and ansible_distribution_version == "20.04") or (ansible_lsb.codename == "kylin" and ansible_lsb.major_release == "v10")
+    when: (ansible_distribution == "Ubuntu" and ansible_distribution_version == "20.04") or (ansible_lsb.codename is defined and ansible_lsb.codename == "kylin" and ansible_lsb.major_release == "v10")
 
   - name: Install Ubuntu 22.04 repository key
     apt_key: url={{ base_open_build_url }}/xUbuntu_22.04/Release.key state=present
@@ -121,3 +121,7 @@
   - name: Install OpenSuse Leap 15 repository
     get_url: url={{ base_open_build_url }}/openSUSE_Leap_15.1/home:VIFIBnexedi.repo dest=/etc/zypp/repos.d/home_VIFIBnexedi.repo mode=0440
     when: ansible_os_family == "Suse" and ansible_distribution_major_version == "15"
+
+  - name: Install Fedora 32 repository
+    yum_repository: name='home_VIFIBnexedi' description='SlapOS-Node (Fedora_32)' baseurl='https://download.opensuse.org/repositories/home:/VIFIBnexedi/Fedora_32/' gpgkey='https://download.opensuse.org/repositories/home:/VIFIBnexedi/Fedora_32/repodata/repomd.xml.key' gpgcheck=yes enabled=yes
+    when: ansible_distribution == "Fedora" and ansible_distribution_major_version == "32"
