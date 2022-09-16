@@ -15,6 +15,18 @@
   - name: Init SDR
     script: init-sdr.sh
 
+  - name: Check if Service Exists
+    stat: path=/etc/init.d/init-sdr
+    register: init_sdr_service
+
+  - name: Reload daemon
+    systemd: daemon_reload=yes
+    when: init_sdr_service.stat.exists
+
+  - name: Disable old init-sdr service
+    systemd: name=init-sdr enabled=no
+    when: init_sdr_service.stat.exists
+
   - name: Configure re6st
     script: configure-re6st.sh
 
