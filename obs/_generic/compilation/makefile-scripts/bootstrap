@@ -1,0 +1,36 @@
+#!/usr/bin/python3 -S
+import glob, os, shutil, sys, tarfile, tempfile, zipfile
+dist = "download-cache/dist"
+tmp = tempfile.mkdtemp()
+try:
+    setuptools, = glob.glob(dist + "/setuptools-*")
+    if setuptools.endswith(".zip"):
+        zipfile.ZipFile(setuptools).extractall(tmp)
+    else:
+        tarfile.TarFile.open(setuptools, "r:*").extractall(tmp)
+    x, = os.listdir(tmp)
+    sys.path.insert(0, os.path.join(tmp, x))
+    from setuptools.command.easy_install import main
+    for x in "bin", "eggs":
+        try:
+            os.mkdir(x)
+        except OSError:
+            pass
+    main(["-f", dist, "-mxd", x, setuptools, "zc.buildout"])
+finally:
+  shutil.rmtree(tmp)
+
+with os.fdopen(os.open("bin/buildout", os.O_CREAT|os.O_WRONLY|os.O_TRUNC, 0o777), 'w') as f:
+    f.write("""\
+#!%s -S
+import os, sys
+d = os.path.dirname(os.path.abspath(os.path.realpath(__file__)))
+d = os.path.dirname(d) + %r
+sys.path[:0] = (%s)
+from zc.buildout.buildout import main
+sys.exit(main())
+""" % (
+    sys.executable,
+    "/%s/" % x,
+    ", ".join(map("d + %r".__mod__, os.listdir(x))),
+    ))

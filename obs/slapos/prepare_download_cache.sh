@@ -84,7 +84,7 @@ find . -regextype posix-extended -type f \
 # prepare compilation inside OBS #
 ##################################
 # we need the very first bootstrap script
-cp $CURRENT_DIRECTORY/../re6st/bootstrap $BUILD_DIRECTORY
+cp $CURRENT_DIRECTORY/../_generic/compilation/makefile-scripts/bootstrap $BUILD_DIRECTORY
 
 # we need the original directory to do a sed inside OBS
 # TODO remove this and properly use extends-cache instead
