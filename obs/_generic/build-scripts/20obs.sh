@@ -15,7 +15,6 @@ cd "$INITIAL_DIR"
 # copy compilation files and override the files from _generic
 # with the one from <software_name>
 copy_and_solve_templates "$DISTRIB_FILES_GENERIC_DIR" "$OBS_DIR"
-mv "$OBS_DIR"/_generic.dsc "$OBS_DIR/$SOFTWARE_AND_VERSION.dsc"
 copy_and_solve_templates "$DISTRIB_FILES_SOFTWARE_DIR" "$OBS_DIR"
 
 # ARCHIVES FILES
