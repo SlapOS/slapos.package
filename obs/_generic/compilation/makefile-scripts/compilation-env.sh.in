@@ -8,4 +8,4 @@ INSTALL_DIR="$DESTDIR""$TARGET_DIR"
 RUN_BUILDOUT_DIR="$BUILD_DIR""$TARGET_DIR"
 # get the path of the BUILD_DIR of the first build (performed to prepare the cache for OBS)
 OLD_TARBALL_DIR="$(cat local_tarball_directory_path)"
-SLAPOS_BOOTSTRAP_SYSTEM_PYTHON=$(shell which python2.7 2> /dev/null || echo python3)
+SLAPOS_BOOTSTRAP_SYSTEM_PYTHON=$(which python2.7 2> /dev/null || echo python3)
