@@ -84,9 +84,19 @@ copy_and_solve_templates () {
 
 	for descriptor in "$1"/*; do
 		cp -r "$descriptor" "$2"
-		for template_path in $(find "$2/${descriptor##$1/}" -name *.in -type f); do
+		item=${descriptor##$1/}
+		for template_path in $(find "$2/$item" -name *.in -type f); do
 			sed "$ALL_REGEX" "$template_path" > "${template_path%.in}"
 			rm "$template_path"
+		done
+		[ -f "$2/$(basename $item .in)" ] && item=$(basename $item .in)
+		# if something is called _generic.XXX replace with $SOFTWARE_NAME.XXX
+		for gen in $(find "$2/$item" -name _generic.* -type f); do
+			filename=$(basename -- "$gen")
+			extension="${filename##*.}"
+			if [ "$filename" = _generic."$extension" ] ; then
+				mv $gen $(dirname -- "$gen")/"$SOFTWARE_NAME"."$extension"
+			fi
 		done
 	done
 }
