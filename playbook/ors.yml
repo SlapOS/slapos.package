@@ -3,8 +3,7 @@
   connection: local
 
   vars_files:
-    - settings/ors-upgrade.yml
+    - settings/ors.yml
 
   roles:
-    - ors-upgrade
     - ors

@@ -1,55 +1,16 @@
 ---
-  - name: Get hostname
-    shell: hostname
-    register: hostname
 
-  - name: Check hostname
-    debug: var=hostname
+# ORS playbook is installed before deleting ors-upgrade cron to make sure either ors or ors-upgrade is in the cron
 
-  - name: Install rm-tmp-lte script
-    copy: src=rm-tmp-lte dest={{ install_folder }} owner=root mode=770
+  - name: Install ors playbook
+    shell: ansible-playbook ors.yml
 
-  - name: Give permission to slapuser to remove tmp files owned by other slapuser
-    copy: src=slapuser-rm-tmp dest=/etc/sudoers.d owner=root mode=440
+# Delete ors-upgrade.yml cron which is replaced by ors.yml
 
-  - name: Init SDR
-    script: init-sdr.sh
+  - name: Delete ors-upgrade cron
+    cron: name="Launch Upgrader with ansible" state=absent
 
-  - name: Check if Service Exists
-    stat: path=/etc/init.d/init-sdr
-    register: init_sdr_service
+# Reinstall ORS playbook again since previous task deletes the vifib cron from the same name
 
-  - name: Reload daemon
-    systemd: daemon_reload=yes
-    when: init_sdr_service.stat.exists
-
-  - name: Disable old init-sdr service
-    systemd: name=init-sdr enabled=no
-    when: init_sdr_service.stat.exists
-
-  - name: Configure re6st
-    script: configure-re6st.sh
-
-  - name: Configure /etc/network/interfaces
-    copy: src=interfaces dest=/etc/network/interfaces owner=root mode=644
-
-  - name: Configure dhcp timeout
-    lineinfile: dest=/etc/dhcp/dhclient.conf regexp="^timeout (.*)" line="timeout 15" state=present
-
-  - name: Configure ssh
-    lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin (.*)" line="PermitRootLogin yes" state=present
-
-  - name: Configure ssh
-    lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication (.*)" line="PasswordAuthentication yes" state=present
-
-  - name: Configure slapos
-    script: configure-slapos.py
-
-  - name: Create .amarisoft directory for SR
-    file: path=/opt/amarisoft/.amarisoft state=directory
-
-  - name: Copy keys for SR
-    copy: src=/root/.amarisoft dest=/opt/amarisoft owner=root mode=644
-
-  - name: Add kernel parameter
-    script: configure-grub.sh
+  - name: Install ors playbook again
+    shell: ansible-playbook ors.yml

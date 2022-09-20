@@ -1,6 +1,71 @@
 ---
-  - name: Install upgrader
-    shell: ansible-playbook upgrader-run.yml --extra-vars "upgrader_playbook=ors-upgrade.yml upgrade_kernel=False"
+  - name: Install periodic cron
+    cron: name="Launch ors playbook every 3 hours" minute="15" hour="*/3" job='cd /opt/upgrader/playbook && ansible-playbook ors.yml 2>> /opt/upgrader/latest_ors.log >> /opt/upgrader/latest_ors.log'
 
-  - name: Set Cron
-    cron: name="Launch Startup with ansible" special_time=reboot job='sleep 20 && cd /opt/upgrader/playbook && ansible-playbook ors-upgrade.yml -i hosts 2>>/opt/upgrader/startup.log >> /opt/upgrader/startup.log'
+  - name: Install reboot cron
+    cron: name="Launch ors playbook at reboot" special_time=reboot job='sleep 20 && cd /opt/upgrader/playbook && ansible-playbook ors.yml 2>> /opt/upgrader/startup_ors.log >> /opt/upgrader/startup_ors.log'
+
+  - name: Check if vifib playbook is installed
+    shell: 'crontab -l | grep -A1 "#Ansible: Launch Upgrader with ansible" | tail -n1 | grep -v ors-upgrade | grep -q upgrader'
+    ignore_errors: yes
+    register: vifib_cron
+
+  - name: Install vifib-base playbook
+    shell: ansible-playbook vifib-base.yml
+    when: vifib_cron.rc != 0
+
+  - name: Get hostname
+
+    shell: hostname
+    register: hostname
+
+  - name: Check hostname
+    debug: var=hostname
+
+  - name: Install rm-tmp-lte script
+    copy: src=rm-tmp-lte dest={{ install_folder }} owner=root mode=770
+
+  - name: Give permission to slapuser to remove tmp files owned by other slapuser
+    copy: src=slapuser-rm-tmp dest=/etc/sudoers.d owner=root mode=440
+
+  - name: Init SDR
+    script: init-sdr.sh
+
+  - name: Check if Service Exists
+    stat: path=/etc/init.d/init-sdr
+    register: init_sdr_service
+
+  - name: Reload daemon
+    systemd: daemon_reload=yes
+    when: init_sdr_service.stat.exists
+
+  - name: Disable old init-sdr service
+    systemd: name=init-sdr enabled=no
+    when: init_sdr_service.stat.exists
+
+  - name: Configure re6st
+    script: configure-re6st.sh
+
+  - name: Configure /etc/network/interfaces
+    copy: src=interfaces dest=/etc/network/interfaces owner=root mode=644
+
+  - name: Configure dhcp timeout
+    lineinfile: dest=/etc/dhcp/dhclient.conf regexp="^timeout (.*)" line="timeout 15" state=present
+
+  - name: Configure ssh
+    lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin (.*)" line="PermitRootLogin yes" state=present
+
+  - name: Configure ssh
+    lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication (.*)" line="PasswordAuthentication yes" state=present
+
+  - name: Configure slapos
+    script: configure-slapos.py
+
+  - name: Create .amarisoft directory for SR
+    file: path=/opt/amarisoft/.amarisoft state=directory
+
+  - name: Copy keys for SR
+    copy: src=/root/.amarisoft dest=/opt/amarisoft owner=root mode=644
+
+  - name: Add kernel parameter
+    script: configure-grub.sh
