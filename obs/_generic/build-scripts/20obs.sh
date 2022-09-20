@@ -16,6 +16,7 @@ cd "$INITIAL_DIR"
 # with the one from <software_name>
 copy_and_solve_templates "$DISTRIB_FILES_GENERIC_DIR" "$OBS_DIR"
 mv "$OBS_DIR"/_generic.dsc "$OBS_DIR/$SOFTWARE_AND_VERSION.dsc"
+mv "$OBS_DIR"/_generic.spec "$OBS_DIR/$SOFTWARE_NAME.spec"
 copy_and_solve_templates "$DISTRIB_FILES_SOFTWARE_DIR" "$OBS_DIR"
 
 # ARCHIVES FILES
