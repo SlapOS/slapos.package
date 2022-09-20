@@ -9,7 +9,7 @@ source _generic/build-scripts/00env.sh
 osc checkout "$OBS_PROJECT" "$OBS_PACKAGE" || true
 cd "$OBS_DIR"
 osc update
-osc rm -f "$SOFTWARE_AND_VERSION$ARCHIVE_EXT" "$SOFTWARE_AND_VERSION".dsc
+osc rm "$SOFTWARE_AND_VERSION$ARCHIVE_EXT" "$SOFTWARE_AND_VERSION".dsc || true
 cd "$INITIAL_DIR"
 
 # copy compilation files and override the files from _generic
@@ -22,19 +22,13 @@ copy_and_solve_templates "$DISTRIB_FILES_SOFTWARE_DIR" "$OBS_DIR"
 
 ### Finalize the tarball directory preparation
 # switch to the buildout wrapper for OBS
-mv "$TARBALL_DIR/obs_buildout.cfg" "$RUN_BUILDOUT_DIR/buildout.cfg"
+cp "$TARBALL_DIR/obs_buildout.cfg" "$RUN_BUILDOUT_DIR/buildout.cfg"
 # save the local $TARBALL_DIR path so that it is replaced by the $TARBALL_DIR path from OBS' VM
 echo "$TARBALL_DIR" > "$TARBALL_DIR"/local_tarball_directory_path
 # add a stamp so that OBS does not clean the local preparation before compiling
 touch "$TARBALL_DIR/clean-stamp"
-# restore bin/buildout
-# note: when installing python, buildout "rebootstraps" itself to use the installed python:
-# it modifies its own shebang, which would fail on OBS' VM (no such file or directory)
-if [ -f "$RUN_BUILDOUT_DIR"/bin/backup.buildout ]; then
-	mv "$RUN_BUILDOUT_DIR"/bin/backup.buildout "$RUN_BUILDOUT_DIR"/bin/buildout
-fi
 # clean the compilation related files
-rm -rf "$RUN_BUILDOUT_DIR"/{.installed.cfg,parts}
+rm -rf "$RUN_BUILDOUT_DIR"/{.installed.cfg,downloads,parts,eggs,develop-eggs,bin,rebootstrap}
 
 ### Prepare the archives for OBS
 # -C option allows to give tar an absolute path without archiving the directory from / (i.e. home/user/[...])
@@ -44,7 +38,7 @@ tar czf "$OBS_DIR/debian$ARCHIVE_EXT" -C "$OBS_DIR" debian
 # OBS COMMIT
 
 cd "$OBS_DIR"
-osc add *.dsc *"$ARCHIVE_EXT"
+osc add *.spec *.dsc *"$ARCHIVE_EXT"
 if [ -n "$OBS_COMMIT_MSG" ]; then
 	osc commit -m "$OBS_COMMIT_MSG"
 else
