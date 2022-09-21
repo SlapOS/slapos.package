@@ -1,0 +1,51 @@
+# Turn off the brp-python-bytecompile script
+%global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
+ 
+%define compound_version %SOFTWARE_VERSION%.%DEBIAN_REVISION%
+%define unzipped_tarball %SOFTWARE_AND_VERSION%
+
+Summary:%PACKAGE_SHORT_DESCRIPTION%
+Name: %SOFTWARE_NAME%
+Version:%{compound_version}
+Release:%{compound_version}
+Source0: %{unzipped_tarball}.tar.gz
+Packager: %MAINTAINER_NAME% %MAINTAINER_EMAIL%
+
+BuildRequires: gcc-c++
+BuildRequires: make
+BuildRequires: patch
+BuildRequires: wget
+BuildRequires: chrpath
+BuildRequires: openssl-devel
+%if 0%{?centos_version} <= 700 || 0%{?rhel_version} <= 700 || 0%{?suse_version} < 1300 || 0%{?sle_version} < 130000
+BuildRequires: python
+BuildRequires: python-devel
+%else
+BuildRequires: python3
+BuildRequires: python3-devel
+%endif
+
+AutoReqProv: no
+
+%prep
+rm -rf $RPM_BUILD_DIR/%{unzipped_tarball}
+zcat $RPM_SOURCE_DIR/%{unzipped_tarball}.tar.gz | tar -xvf -
+
+
+%build
+cd $RPM_BUILD_DIR/%{unzipped_tarball}
+make
+
+%install
+cd $RPM_BUILD_DIR/%{unzipped_tarball}
+
+%files
+%defattr(-,root,root)
+
+%pre
+
+%post
+
+%preun
+
+%postun

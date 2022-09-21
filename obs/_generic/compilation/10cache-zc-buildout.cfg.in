@@ -1,0 +1,24 @@
+[buildout]
+rootdir = %TARGET_DIRECTORY%
+destdir = %BUILD_ROOT_DIRECTORY%
+builddir = %BUILD_DIRECTORY%
+extensions =
+extends-cache = extends-cache
+download-cache = download-cache
+parts =
+  zc.buildout
+
+# Add location for modified non-official slapos.buildout
+find-links +=
+  http://www.nexedi.org/static/packages/source/
+  http://www.nexedi.org/static/packages/source/slapos.buildout/
+
+[zc.buildout]
+recipe = zc.recipe.egg
+eggs =
+  zc.buildout
+
+[versions]
+setuptools = %SETUPTOOLS_VERSION%
+zc.buildout = %ZC_BUILDOUT_VERSION%
+zc.recipe.egg = %ZC_RECIPE_EGG_VERSION%

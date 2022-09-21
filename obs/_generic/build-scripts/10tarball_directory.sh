@@ -26,25 +26,49 @@ mkdir -p "$RUN_BUILDOUT_DIR"/{eggs,extends-cache,download-cache/dist}
 # with the one from <software_name>
 copy_and_solve_templates "$COMPILATION_FILES_GENERIC_DIR" "$TARBALL_DIR"
 copy_and_solve_templates "$COMPILATION_FILES_SOFTWARE_DIR" "$TARBALL_DIR"
-mv "$TARBALL_DIR/local_buildout.cfg" "$RUN_BUILDOUT_DIR/buildout.cfg"
 
 # BUILDOUT: BOOTSTRAPING AND RUN
 
 ### Download the bootstrap script
 mkdir -p "$RUN_BUILDOUT_DIR"
 cd "$RUN_BUILDOUT_DIR"
-wget https://bootstrap.pypa.io/bootstrap-buildout.py
+wget https://lab.nexedi.com/nexedi/slapos.buildout/raw/master/bootstrap/bootstrap.py
 
 ### Run buildout
 # Note: it creates a lot of things in $RUN_BUILDOUT_DIR/eggs/ and uses software_release/ at some point
 
-# bootstrap buildout (creates $RUN_BUILDOUT_DIR/bin/buildout)
-python2.7 -S bootstrap-buildout.py \
-	--buildout-version "$ZC_BUILDOUT_VERSION" \
-	--setuptools-version "$SETUPTOOLS_VERSION" \
-	--setuptools-to-dir eggs -f http://www.nexedi.org/static/packages/source/slapos.buildout/
-# run $RUN_BUILDOUT_DIR/bin/buildout (note that it modifies itself via rebootstrapping when compiling python)
-./bin/buildout -v
+# 00) Bootstrap buildout with an old version.
+#    no --buildout-version option, so it uses an upstream version of buildout
+#    creates $RUN_BUILDOUT_DIR/bin/buildout
+echo "[buildout]" > buildout.cfg # dummy .cfg file only for boostraping
+echo "Bootsrapping buildout..."
+python3 -S bootstrap.py \
+	--setuptools-version 44.1.0 \
+	--setuptools-to-dir eggs
+
+# 10) Get newest version of zc.buildout and setuptools.
+#    note that we can't directly do setuptools + zc.buildout +
+#    slapos.libnetworkcache because buildout would be relaunched in the middle
+#    without the "-S" option to python
+echo "Downloading the desired version of setuptools and zc.buildout..."
+cp "$TARBALL_DIR"/10cache-zc-buildout.cfg buildout.cfg
+sed -i '1s/$/ -S/' bin/buildout
+sed -i "/def _satisfied(/s/\(\bsource=\)None/\11/" eggs/zc.buildout-*/zc/buildout/easy_install.py # no wheel
+bin/buildout buildout:newest=true -v
+ls download-cache/dist/*.whl && { echo "There shouldn't be any wheel in download-cache" ; exit 1 ; }
+
+# 20) Compile a very simple buildout with networkcache.
+echo "Preparing networkcached zc.buildout..."
+cp "$TARBALL_DIR"/20cache-and-use-libnetworkcache.cfg buildout.cfg
+sed -i '1s/$/ -S/' bin/buildout
+bin/buildout buildout:newest=true -v
+
+# 30) Run $RUN_BUILDOUT_DIR/bin/buildout.
+#    note that it modifies itself via rebootstrapping when compiling python
+#    build locally everything with gcc to get download-cache and extends-cache ready
+echo "Finally running buildout for the local compilation..."
+cp "$TARBALL_DIR"/30local_buildout.cfg buildout.cfg
+bin/buildout buildout:newest=true -v
 
 ### Fix the go/ directory.
 

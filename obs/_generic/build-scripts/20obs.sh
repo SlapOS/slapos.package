@@ -15,20 +15,25 @@ cd "$INITIAL_DIR"
 # copy compilation files and override the files from _generic
 # with the one from <software_name>
 copy_and_solve_templates "$DISTRIB_FILES_GENERIC_DIR" "$OBS_DIR"
-mv "$OBS_DIR"/_generic.dsc "$OBS_DIR/$SOFTWARE_AND_VERSION.dsc"
+mv "$OBS_DIR"/_generic.dsc "$OBS_DIR/$SOFTWARE_NAME.dsc"
+mv "$OBS_DIR"/_generic.spec "$OBS_DIR/$SOFTWARE_NAME.spec"
 copy_and_solve_templates "$DISTRIB_FILES_SOFTWARE_DIR" "$OBS_DIR"
 
 # ARCHIVES FILES
 
 ### Finalize the tarball directory preparation
 # switch to the buildout wrapper for OBS
-cp "$TARBALL_DIR/obs_buildout.cfg" "$RUN_BUILDOUT_DIR/buildout.cfg"
+cp "$TARBALL_DIR"/40obs_buildout.cfg "$RUN_BUILDOUT_DIR"/buildout.cfg
 # save the local $TARBALL_DIR path so that it is replaced by the $TARBALL_DIR path from OBS' VM
 echo "$TARBALL_DIR" > "$TARBALL_DIR"/local_tarball_directory_path
 # add a stamp so that OBS does not clean the local preparation before compiling
 touch "$TARBALL_DIR/clean-stamp"
+# copy required eggs that are not cached
 # clean the compilation related files
 rm -rf "$RUN_BUILDOUT_DIR"/{.installed.cfg,downloads,parts,eggs,develop-eggs,bin,rebootstrap}
+
+rm -rf "$BUILDOUT_DIR"/.git # lighten what is sent to OBS
+# TODO: support extends-cache
 
 ### Prepare the archives for OBS
 # -C option allows to give tar an absolute path without archiving the directory from / (i.e. home/user/[...])
