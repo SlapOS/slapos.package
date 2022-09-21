@@ -1,1 +1,26 @@
-i2c_bus_number: "3"
+# This i2c bus number should relate to the port of the Olimex
+# board "A20-OLinuXino-LIME2", where the sensor is plugged in the
+# following picture:
+#
+#   https://wendelin.nexedi.com/wendelin-Tutorial.Setup.Sensor.IOTGateway/olimex-sensor.Photo?format=
+#
+# This picture belongs to the Wendelin Learning Track:
+#
+#   https://wendelin.nexedi.com/wendelin-Tutorial.Setup.Sensor.IOTGateway/WebPage_viewAsWeb
+#
+# This i2c bus number is expected to represent the given port
+# if the running OS is one of the Olimex provided Debian images
+# (starting from Debian 11). It is possible that at any given
+# moment Olimex may decide to change the i2c bus number mapping.
+# The mapping is defined in the following devicetree:
+#
+#   https://github.com/torvalds/linux/blob/4e0d439/arch/arm/boot/dts/sun7i-a20.dtsi#L1439-L1450
+#
+# If respective parts in this file are changed, we may need to
+# adapt the 'i2c_bus_number' if the playbook shall work with
+# newer Olimex Debian images.
+#
+# Please find more information in the following note:
+#
+#   https://lab.nexedi.com/nexedi/slapos.package/commit/7c5a2effb5d7f25d3753f31db3bb7fcf44f2ebd2#note_167627
+i2c_bus_number: "2"
