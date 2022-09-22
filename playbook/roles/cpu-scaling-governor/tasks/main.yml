@@ -9,7 +9,14 @@
   with_items: '{{ cpus.stdout_lines }}'
   register: scaling_governor_stat
 
-- name: Set CPU Scaling Governor
-  shell: 'echo {{ value }} > {{ item.item }}/cpufreq/scaling_governor'
+- name: Check if CPUs are offine
+  shell: grep -q 0 {{ item.item }}/online
+  register: cpu_offline
+  ignore_errors: yes
   with_items: '{{ scaling_governor_stat.results }}'
   when: item.stat.exists
+
+- name: Set CPU Scaling Governor
+  shell: 'echo {{ value }} > {{ item.item.item }}/cpufreq/scaling_governor'
+  with_items: '{{ cpu_offline.results }}'
+  when: item.rc != 0
