@@ -19,4 +19,4 @@
 - name: Set CPU Scaling Governor
   shell: 'echo {{ value }} > {{ item.item.item }}/cpufreq/scaling_governor'
   with_items: '{{ cpu_offline.results }}'
-  when: item.rc != 0
+  when: ('rc' in item) and (item.rc != 0)
