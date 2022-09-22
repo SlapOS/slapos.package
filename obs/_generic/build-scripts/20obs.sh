@@ -9,7 +9,7 @@ source _generic/build-scripts/00env.sh
 osc checkout "$OBS_PROJECT" "$OBS_PACKAGE" || true
 cd "$OBS_DIR"
 osc update
-osc rm "$SOFTWARE_AND_VERSION$ARCHIVE_EXT" "$SOFTWARE_AND_VERSION".dsc || true
+osc rm "$SOFTWARE_NAME"_*"$ARCHIVE_EXT" "$SOFTWARE_AND_VERSION".dsc || true
 cd "$INITIAL_DIR"
 
 # copy compilation files and override the files from _generic
