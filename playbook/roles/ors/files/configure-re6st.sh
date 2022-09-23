@@ -1,5 +1,11 @@
 #!/bin/bash
-IFACE="$(ip route | grep default | sed 's/.*dev \(\w*\)\( .*$\|$\)/\1/g')"
+if ip -6 a show dev enp0s31f6 | grep -q fe80; then
+  IFACE="enp0s31f6"
+elif ip -6 a show dev enp2s0 | grep -q fe80; then
+  IFACE="enp2s0"
+else
+  exit;
+fi
 CONF="/etc/re6stnet/re6stnet.conf"
 sed -i '/^interface/d' $CONF
 # Don't run re6st with interface option at Lille Office
