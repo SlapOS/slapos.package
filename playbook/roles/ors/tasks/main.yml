@@ -12,7 +12,7 @@
     cron: name="Launch ors playbook at reboot" special_time=reboot job='sleep 20 && cd /opt/upgrader/playbook && ansible-playbook ors.yml 2>> /opt/upgrader/startup_ors.log >> /opt/upgrader/startup_ors.log'
 
   - name: Check if vifib playbook is installed
-    shell: 'crontab -l | grep -A1 "#Ansible: Launch Upgrader with ansible" | tail -n1 | grep -v ors-upgrade | grep -q upgrader'
+    shell: 'crontab -l | grep -A1 "#Ansible: Launch Upgrader with ansible" | grep -v ors-upgrade | grep -q upgrader'
     ignore_errors: yes
     register: vifib_cron
 
