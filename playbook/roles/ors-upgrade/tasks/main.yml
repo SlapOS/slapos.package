@@ -1,16 +1,6 @@
 ---
 
-# ORS playbook is installed before deleting ors-upgrade cron to make sure either ors or ors-upgrade is in the cron
+# ors-upgrade playbook is deprecated, use ors playbook instead
 
   - name: Install ors playbook
-    shell: ansible-playbook ors.yml
-
-# Delete ors-upgrade.yml cron which is replaced by ors.yml
-
-  - name: Delete ors-upgrade cron
-    cron: name="Launch Upgrader with ansible" state=absent
-
-# Reinstall ORS playbook again since previous task deletes the vifib cron from the same name
-
-  - name: Install ors playbook again
     shell: ansible-playbook ors.yml
