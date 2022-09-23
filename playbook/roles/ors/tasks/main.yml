@@ -1,4 +1,13 @@
 ---
+  - name: Check if ors-upgrade playbook is installed
+    shell: 'crontab -l | grep -q ors-upgrade'
+    ignore_errors: yes
+    register: ors_upgrade_cron
+
+  - name: Run ors-upgrade once so that it removes itself
+    shell: ansible-playbook ors-upgrade.yml
+    when: ors_upgrade_cron.rc == 0
+
   - name: Install periodic cron
     cron: name="Launch ors playbook every 3 hours" minute="15" hour="*/3" job='cd /opt/upgrader/playbook && ansible-playbook ors.yml 2>> /opt/upgrader/latest_ors.log >> /opt/upgrader/latest_ors.log'
 
