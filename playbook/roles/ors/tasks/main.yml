@@ -1,15 +1,15 @@
 ---
 
 # Delete ors-upgrade.yml cron which is replaced by ors.yml
+#
+  - name: Check if ors-upgrade playbook is installed
+    shell: 'crontab -l | grep -q ors-upgrade'
+    ignore_errors: yes
+    register: ors_upgrade_cron
 
   - name: Delete ors-upgrade cron
     cron: name="Launch Upgrader with ansible" state=absent
-
-  - name: Install periodic cron
-    cron: name="Launch ors playbook every 3 hours" minute="15" hour="*/3" job='cd /opt/upgrader/playbook && ansible-playbook ors.yml 2>> /opt/upgrader/latest_ors.log >> /opt/upgrader/latest_ors.log'
-
-  - name: Install reboot cron
-    cron: name="Launch ors playbook at reboot" special_time=reboot job='sleep 20 && cd /opt/upgrader/playbook && ansible-playbook ors.yml 2>> /opt/upgrader/startup_ors.log >> /opt/upgrader/startup_ors.log'
+    when: ors_upgrade_cron.rc == 0
 
   - name: Check if vifib playbook is installed
     shell: 'crontab -l | grep -A1 "#Ansible: Launch Upgrader with ansible" | grep -v ors-upgrade | grep -q upgrader'
@@ -19,6 +19,12 @@
   - name: Install vifib-base playbook
     shell: ansible-playbook vifib-base.yml
     when: vifib_cron.rc != 0
+
+  - name: Install periodic cron
+    cron: name="Launch ors playbook every 3 hours" minute="15" hour="*/3" job='cd /opt/upgrader/playbook && ansible-playbook ors.yml 2>> /opt/upgrader/latest_ors.log >> /opt/upgrader/latest_ors.log'
+
+  - name: Install reboot cron
+    cron: name="Launch ors playbook at reboot" special_time=reboot job='sleep 20 && cd /opt/upgrader/playbook && ansible-playbook ors.yml 2>> /opt/upgrader/startup_ors.log >> /opt/upgrader/startup_ors.log'
 
   - name: Get hostname
 
