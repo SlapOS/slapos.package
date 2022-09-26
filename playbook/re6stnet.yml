@@ -13,6 +13,11 @@
       private: no
       default: "http://re6stnet.nexedi.com/"
 
+    - name: "location"
+      prompt: 'Manually enter your location (ignore if you want it detected automatically, format is "country code,continent code", e.g. "FR,EU")'
+      private: no
+      default: ""
+
     - name: "re6sttoken"
       prompt: "Please insert your re6stnet token:"
       private: no 
