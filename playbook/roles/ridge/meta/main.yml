@@ -1,7 +1,7 @@
 ---
 dependencies:
-  - { role: package, package_name: dep--fluent-bit, package_state: latest }
-  - { role: package, package_name: dep--mca--static, package_state: latest }
+  - { role: package, package_name: fluent-bit, package_state: latest }
+  - { role: package, package_name: mca--static, package_state: latest }
 
   # this are not actual dependencies, it is just an experimental list of packages to scan
   - { role: package, package_name: dracut-core, package_state: latest }
