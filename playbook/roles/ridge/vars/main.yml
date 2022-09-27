@@ -1,6 +1,6 @@
 ## PACKAGES
-mca_name_: mca--static
-fluentbit_namen: fluent-bit
+mca_name: mca--static
+fluentbit_name: fluent-bit
 mca_path: /opt/{{mca_name}}
 flb_path: /opt/{{fluentbit_name}}
 
