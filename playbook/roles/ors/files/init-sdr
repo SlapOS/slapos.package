@@ -8,4 +8,3 @@ lsmod | grep -q sdr && rmmod sdr;
 cd $AMARISOFT_PATH/trx_sdr/kernel;
 make clean;
 bash init.sh;
-$AMARISOFT_PATH/enb/lte_init.sh;
