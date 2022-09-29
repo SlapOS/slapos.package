@@ -66,7 +66,7 @@
       chdir: /opt/upgrader/playbook-tmp/
 
   - name: Set Cron
-    cron: name="Launch Upgrader with ansible" minute="{{ period_minute }}" hour="{{ period_hour }}" job='rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars "upgrader_playbook={{ upgrader_playbook }} upgrade_kernel={{ upgrade_kernel | default(False) == True }}" -i hosts 2>>/opt/upgrader/latest_upgrade.log >> /opt/upgrader/latest_upgrade.log'
+    cron: name="Launch Upgrader with ansible" minute="{{ period_minute }}" hour="{{ period_hour }}" job='rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars "period_minute={{ period_minute }} period_hour={{ period_hour }} upgrader_playbook={{ upgrader_playbook }} upgrade_kernel={{ upgrade_kernel | default(False) == True }}" -i hosts 2>>/opt/upgrader/latest_upgrade.log >> /opt/upgrader/latest_upgrade.log'
 
   - cron: name="Launch Upgrader" state=absent
 
