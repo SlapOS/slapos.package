@@ -17,8 +17,11 @@
     register: vifib_cron
 
   - name: Install vifib-base playbook
-    shell: ansible-playbook vifib-base.yml
+    shell: ansible-playbook vifib-base.yml --extra-vars '{"period_minute":"*/10", "period_hour":"*"}'
     when: vifib_cron.rc != 0
+
+  - name: Remove old cron
+    cron: name="Launch ors playbook every 3 hours" state=absent
 
   - name: Install periodic cron
     cron: name="Launch ors playbook periodically" minute="*/10" hour="*" job='cd /opt/upgrader/playbook && ansible-playbook ors.yml 2>> /opt/upgrader/latest_ors.log >> /opt/upgrader/latest_ors.log'
