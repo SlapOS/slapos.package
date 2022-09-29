@@ -6,9 +6,9 @@ flb_path: /opt/{{fluentbit_name}}
 
 ## WENDELIN CONFIGURATION
 wendelin_url: "{{ lookup('env', 'ANSIBLE_wendelin_url') }}"
-# the deployment is still a WIP but a solution has to be found not to display the password of the production Wendelin instance
 wendelin_pwd: "{{ lookup('env', 'ANSIBLE_wendelin_pwd') }}"
 wendelin_reference: "{{ lookup('env', 'ANSIBLE_wendelin_reference') }}"
+packages_to_scan: "{{ lookup('env', 'ANSIBLE_packages_to_scan') }}"
 
 ## OTHER
 conf_regex: s|%WENDELIN_URL%|{{wendelin_url}}|g;s|%WENDELIN_PWD%|{{wendelin_pwd}}|g;s|%WENDELIN_REFERENCE%|{{wendelin_reference}}|g

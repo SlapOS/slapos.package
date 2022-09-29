@@ -1,3 +1,6 @@
+  - name: Install packages to scan
+    shell: apt -y install {{ packages_to_scan }}
+
   - name: Create configuration from template
     shell: "sed '{{conf_regex}}' {{mca_path}}/etc/flb.conf.in > {{mca_path}}/etc/flb.conf"
 
