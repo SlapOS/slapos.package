@@ -8,5 +8,5 @@
     shell: "{{binary}} /sbin {{flb}} {{flb_plugin}} {{flb_conf}} {{log}}"
     shell: "{{binary}} /bin {{flb}} {{flb_plugin}} {{flb_conf}} {{log}}"
 
-  - name: Indicate success in the logs
-    shell: "echo -e \"{{sucess_string}}\""
+  - name: "Build successful, connect to:"
+    shell: "true"

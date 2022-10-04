@@ -18,5 +18,3 @@ flb: "{{flb_path}}/bin/fluent-bit"
 flb_plugin: "{{mca_path}}/lib/libfluentbit_wendelin.so"
 flb_conf: "{{mca_path}}/etc/flb.conf"
 log: /var/log/metadata_collect.log
-
-sucess_string: "\n(success string:) Build successful, connect to:\n"
