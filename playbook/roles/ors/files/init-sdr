@@ -8,4 +8,5 @@ lsof /dev/sdr0 && exit;
 lsmod | grep -q sdr && rmmod sdr;
 cd $AMARISOFT_PATH/trx_sdr/kernel;
 make clean;
+make;
 bash init.sh;
