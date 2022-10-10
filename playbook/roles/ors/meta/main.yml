@@ -1,3 +1,4 @@
 ---
 dependencies:
   - { role: package, package_name: patchelf, package_state: present  }
+  - { role: package, package_name: util-linux, package_state: present  }
