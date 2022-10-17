@@ -1,3 +1,4 @@
+slapuser0 ALL=NOPASSWD:/opt/amarisoft/init-enb
 slapuser1 ALL=NOPASSWD:/opt/amarisoft/init-enb
 slapuser2 ALL=NOPASSWD:/opt/amarisoft/init-enb
 slapuser3 ALL=NOPASSWD:/opt/amarisoft/init-enb

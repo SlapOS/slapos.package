@@ -1,3 +1,4 @@
+slapuser0 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte
 slapuser1 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte
 slapuser2 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte
 slapuser3 ALL=NOPASSWD:/opt/amarisoft/rm-tmp-lte

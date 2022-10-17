@@ -1,3 +1,4 @@
+slapuser0 ALL=NOPASSWD:/opt/amarisoft/init-sdr
 slapuser1 ALL=NOPASSWD:/opt/amarisoft/init-sdr
 slapuser2 ALL=NOPASSWD:/opt/amarisoft/init-sdr
 slapuser3 ALL=NOPASSWD:/opt/amarisoft/init-sdr
