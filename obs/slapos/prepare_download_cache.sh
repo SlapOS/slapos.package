@@ -32,7 +32,7 @@ sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DI
 
 wget https://lab.nexedi.com/nexedi/slapos.buildout/raw/master/bootstrap/bootstrap.py
 python3 -S bootstrap.py \
-  --setuptools-version 40.8.0 \
+  --setuptools-version 41.6.0 \
   --setuptools-to-dir eggs
 
 # 2) get newest version of zc.buildout and setuptools
