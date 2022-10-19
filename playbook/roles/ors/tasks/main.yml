@@ -36,21 +36,21 @@
     copy: src=slapuser-rm-tmp dest=/etc/sudoers.d owner=root mode=440
 
   - name: Give permission to slapuser to launch init-sdr script
-    copy: src=slapuser-init-sdr dest=/etc/sudoers.d owner=root mode=770
+    copy: src=slapuser-init-sdr dest=/etc/sudoers.d owner=root mode=440
 
   - name: Give permission to slapuser to launch init-enb script
-    copy: src=slapuser-init-enb dest=/etc/sudoers.d owner=root mode=770
+    copy: src=slapuser-init-enb dest=/etc/sudoers.d owner=root mode=440
 
   - name: Check if /opt/amarisoft exists
     stat: path=/opt/amarisoft
     register: opt_amarisoft
 
   - name: Copy init SDR script
-    copy: src=init-sdr dest=/opt/amarisoft owner=root
+    copy: src=init-sdr dest=/opt/amarisoft owner=root mode=770
     when: opt_amarisoft.stat.exists
 
   - name: Copy init eNB script
-    copy: src=init-enb dest=/opt/amarisoft owner=root
+    copy: src=init-enb dest=/opt/amarisoft owner=root mode=770
     when: opt_amarisoft.stat.exists
 
   - name: Init SDR
