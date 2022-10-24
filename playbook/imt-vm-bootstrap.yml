@@ -39,9 +39,9 @@
     - name: Remove periodical call of the ansible playbook
       file: path=/etc/cron.d/ansible-vm-bootstrap state=absent
 
-    - name: Wait 6 minutes to be sure logs are uploaded
+    - name: Wait 16 minutes to be sure logs are uploaded
       wait_for:
-        timeout: 360
+        timeout: 960
 
     - name: Remove periodical call of the upload log
       file: path=/etc/cron.d/ansible-upload-log state=absent
