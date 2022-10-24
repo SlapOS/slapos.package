@@ -1,9 +1,0 @@
-  - name: configuring systemd-resolved (add search)
-    lineinfile: dest=/etc/systemd/resolved.conf line="Domains=tl.teralab-datascience.fr"
-
-  - name: configuring systemd-resolved (add DNS)
-    lineinfile: dest=/etc/systemd/resolved.conf line="DNS=10.200.218.1"
-
-  - name: configuring systemd-resolved (no FallbackDNS)
-    lineinfile: dest=/etc/systemd/resolved.conf line="FallbackDNS="
-    notify: restart systemd-resolved

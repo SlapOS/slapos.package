@@ -53,12 +53,6 @@
     script: format_hosts /tmp/hosts tl.teralab-datascience.fr 
     when: cluster_hash.stat.exists == True
 
-  - include: resolv_conf.yml
-    when: ansible_distribution != "Ubuntu" or ansible_distribution_major_version|int < 18
-
-  - include: resolv_conf_systemd.yml
-    when: ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18
-
   - name: Turn off dhclient if it's running
     shell: pkill dhclient
     ignore_errors: True
