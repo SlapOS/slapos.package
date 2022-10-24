@@ -3,4 +3,4 @@
     when: ansible_distribution == "Fedora" and ansible_distribution_major_version == "26"
  
   - yum: name=redhat-lsb-core state=present update_cache=yes
-    when: ansible_distribution == "Fedora"
+    when: ansible_os_family == "RedHat"
