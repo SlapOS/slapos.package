@@ -7,7 +7,7 @@
     set_fact:
       base_open_build_url: "{{ base_open_build_url_http }}"
     when: (ansible_distribution == "Debian" and ansible_distribution_major_version|int < 11) or
-          (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int < 18)
+          (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int < 22)
 
   - name: Remove {{ base_open_build_url }} key (and add later) on every upgrade, as expiration date is quite short (2 months).
     apt_key: id=94A63987 state=absent
