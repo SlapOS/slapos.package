@@ -5,13 +5,13 @@
       "boot_command": [
         "c<wait>",
         "linux /casper/vmlinuz --- autoinstall ds=\"nocloud-net;seedfrom=http://{{.HTTPIP}}:{{.HTTPPort}}/\"",
-        "<enter><wait>",
+        "<enter><wait><wait><wait>",
         "initrd /casper/initrd",
-        "<enter><wait>",
+        "<enter><wait><wait><wait><wait>",
         "boot",
         "<enter>"
       ],
-      "boot_wait": "2s",
+      "boot_wait": "10s",
       "cpus": 2,
       "disk_size": "{{ user `disk_size`}}000",
       "format": "qcow2",
