@@ -1,39 +1,7 @@
 {
-  "variables": {
-    "user": "slapos",
-    "password": "slapos",
-    "domain": "",
-    "disk_size": "6",
-    "name": "image",
-    "custom_script": "scripts/empty.sh",
-    "re6st_token": "{{env `RE6STTOKEN`}}",
-    "computer_token": "{{env `COMPUTERTOKEN`}}",
-    "computer_name": "{{env `COMPUTERNAME`}}"
-  },
-
-  "builders":
-  [
+  "builders": [
     {
-      "name": "debian9-rs-base-{{ user `disk_size`}}G-{{ user `name`}}",
-
-      "type": "qemu",
-      "format": "raw",
       "accelerator": "kvm",
-      "disk_size": "{{ user `disk_size`}}000",
-
-      "iso_url": "https://cdimage.debian.org/mirror/cdimage/archive/9.9.0/amd64/iso-cd/debian-9.9.0-amd64-netinst.iso",
-      "iso_checksum": "e494e78d531352f0f3fdb210f13f7577",
-      "iso_checksum_type": "md5",
-
-      "http_directory": "http",
-
-      "ssh_username": "{{user `user`}}",
-      "ssh_password": "{{user `password`}}",
-      "ssh_wait_timeout": "1800s",
-      "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -h now",
-
-      "headless": true,
-      "boot_wait": "2s",
       "boot_command": [
         "<esc><wait><wait>",
         "install auto ",
@@ -41,24 +9,36 @@
         "debian-installer=en_US locale=en_US keymap=fr ",
         "netcfg/get_hostname={{ .Name }} ",
         "netcfg/get_domain={{ user `domain`}} ",
-
         "fb=false debconf/frontend=noninteractive ",
-
         "passwd/user-fullname={{user `user`}} ",
         "passwd/user-password={{user `password`}} ",
         "passwd/user-password-again={{user `password`}} ",
         "passwd/username={{user `user`}} ",
-
         "<enter>"
-      ]
+      ],
+      "boot_wait": "2s",
+      "disk_size": "{{ user `disk_size`}}000",
+      "format": "raw",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum": "md5:e494e78d531352f0f3fdb210f13f7577",
+      "iso_url": "https://cdimage.debian.org/mirror/cdimage/archive/9.9.0/amd64/iso-cd/debian-9.9.0-amd64-netinst.iso",
+      "name": "debian9-rs-base-{{ user `disk_size`}}G-{{ user `name`}}",
+      "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -h now",
+      "ssh_password": "{{user `password`}}",
+      "ssh_timeout": "1800s",
+      "ssh_username": "{{user `user`}}",
+      "type": "qemu"
     }
   ],
-
   "provisioners": [
     {
-      "type": "shell",
+      "environment_vars": [
+        "re6st_token={{ user `re6st_token` }}",
+        "computer_name={{user `computer_name`}}",
+        "computer_token={{ user `computer_token` }}"
+      ],
       "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
-      "environment_vars": ["re6st_token={{ user `re6st_token` }}", "computer_name={{user `computer_name`}}", "computer_token={{ user `computer_token` }}"],
       "scripts": [
         "scripts/update.sh",
         "scripts/packages.sh",
@@ -66,8 +46,20 @@
         "scripts/cleanup.sh",
         "scripts/setup-base-slapos.sh",
         "{{ user `custom_script` }}"
-      ]
+      ],
+      "type": "shell"
     }
-  ]
+  ],
+  "variables": {
+    "computer_name": "{{env `COMPUTERNAME`}}",
+    "computer_token": "{{env `COMPUTERTOKEN`}}",
+    "custom_script": "scripts/empty.sh",
+    "disk_size": "6",
+    "domain": "",
+    "name": "image",
+    "password": "slapos",
+    "re6st_token": "{{env `RE6STTOKEN`}}",
+    "user": "slapos"
+  }
 }
 

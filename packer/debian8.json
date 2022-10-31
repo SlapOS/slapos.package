@@ -1,36 +1,7 @@
 {
-  "variables": {
-    "user": "slapos",
-    "password": "slapos",
-    "domain": "",
-    "disk_size": "100",
-    "name": "image",
-    "custom_script": "scripts/empty.sh"
-  },
-
-  "builders":
-  [
+  "builders": [
     {
-      "name": "debian8-{{ user `disk_size`}}G-{{ user `name`}}",
-
-      "type": "qemu",
-      "format": "qcow2",
       "accelerator": "kvm",
-      "disk_size": "{{ user `disk_size`}}000",
-
-      "iso_url": "http://cdimage.debian.org/mirror/cdimage/archive/8.11.1/amd64/iso-cd/debian-8.11.1-amd64-netinst.iso",
-      "iso_checksum": "df0ce86d0b1d81e232ad08eef58754ed",
-      "iso_checksum_type": "md5",
-
-      "http_directory": "http",
-
-      "ssh_username": "{{user `user`}}",
-      "ssh_password": "{{user `password`}}",
-      "ssh_wait_timeout": "1800s",
-      "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -h now",
-
-      "headless": true,
-      "boot_wait": "2s",
       "boot_command": [
         "<esc><wait><wait>",
         "install auto ",
@@ -38,30 +9,47 @@
         "debian-installer=en_US locale=en_US keymap=fr ",
         "netcfg/get_hostname={{ .Name }} ",
         "netcfg/get_domain={{ user `domain`}} ",
-
         "fb=false debconf/frontend=noninteractive ",
-
         "passwd/user-fullname={{user `user`}} ",
         "passwd/user-password={{user `password`}} ",
         "passwd/user-password-again={{user `password`}} ",
         "passwd/username={{user `user`}} ",
-
         "<enter>"
-      ]
+      ],
+      "boot_wait": "2s",
+      "disk_size": "{{ user `disk_size`}}000",
+      "format": "qcow2",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum": "md5:df0ce86d0b1d81e232ad08eef58754ed",
+      "iso_url": "http://cdimage.debian.org/mirror/cdimage/archive/8.11.1/amd64/iso-cd/debian-8.11.1-amd64-netinst.iso",
+      "name": "debian8-{{ user `disk_size`}}G-{{ user `name`}}",
+      "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -h now",
+      "ssh_password": "{{user `password`}}",
+      "ssh_timeout": "1800s",
+      "ssh_username": "{{user `user`}}",
+      "type": "qemu"
     }
   ],
-
   "provisioners": [
     {
-      "type": "shell",
       "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
       "scripts": [
         "scripts/update.sh",
         "scripts/packages.sh",
         "scripts/cleanup.sh",
         "{{ user `custom_script` }}"
-      ]
+      ],
+      "type": "shell"
     }
-  ]
+  ],
+  "variables": {
+    "custom_script": "scripts/empty.sh",
+    "disk_size": "100",
+    "domain": "",
+    "name": "image",
+    "password": "slapos",
+    "user": "slapos"
+  }
 }
 

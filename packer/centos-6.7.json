@@ -1,49 +1,30 @@
 {
-  "variables": {
-    "user": "slapos",
-    "password": "slapos",
-    "domain": "",
-    "disk_size": "100",
-    "name": "image",
-    "custom_script": "scripts/empty.sh"
-  },
-
-  "builders":
-  [
+  "builders": [
     {
-      "name": "centos-6-{{ user `disk_size`}}G-{{ user `name`}}",
-
-      "type": "qemu",
-      "format": "qcow2",
       "accelerator": "kvm",
-      "disk_size": "{{ user `disk_size`}}000",
-
-      "iso_url": "http://mirrors.kernel.org/centos/6.8/isos/x86_64/CentOS-6.8-x86_64-minimal.iso",
-      "iso_checksum": "0ca12fe5f28c2ceed4f4084b41ff8a0b",
-      "iso_checksum_type": "md5",
-
-
-      "http_directory": "http",
-
-      "ssh_username": "{{user `user`}}",
-      "ssh_password": "{{user `password`}}",
-      "ssh_wait_timeout": "1800s",
-      "shutdown_command": "sudo poweroff",
-
-      "headless": true,
-      "boot_wait": "2s",
       "boot_command": [
         "<esc>",
         "<wait>",
         "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos67-anaconda-ks.cfg",
         "<enter>"
-      ]
+      ],
+      "boot_wait": "2s",
+      "disk_size": "{{ user `disk_size`}}000",
+      "format": "qcow2",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum": "md5:0ca12fe5f28c2ceed4f4084b41ff8a0b",
+      "iso_url": "http://mirrors.kernel.org/centos/6.8/isos/x86_64/CentOS-6.8-x86_64-minimal.iso",
+      "name": "centos-6-{{ user `disk_size`}}G-{{ user `name`}}",
+      "shutdown_command": "sudo poweroff",
+      "ssh_password": "{{user `password`}}",
+      "ssh_timeout": "1800s",
+      "ssh_username": "{{user `user`}}",
+      "type": "qemu"
     }
   ],
-
   "provisioners": [
     {
-      "type": "shell",
       "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
       "scripts": [
         "scripts/update-centos.sh",
@@ -51,8 +32,17 @@
         "scripts/cleanup-centos.sh",
         "scripts/centos6-install-base.sh",
         "{{ user `custom_script` }}"
-      ]
+      ],
+      "type": "shell"
     }
-  ]
+  ],
+  "variables": {
+    "custom_script": "scripts/empty.sh",
+    "disk_size": "100",
+    "domain": "",
+    "name": "image",
+    "password": "slapos",
+    "user": "slapos"
+  }
 }
 

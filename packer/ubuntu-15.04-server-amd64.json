@@ -1,64 +1,54 @@
 {
-  "variables": {
-    "user": "slapos",
-    "password": "slapos",
-    "domain": "",
-    "disk_size": "100",
-    "name": "image",
-    "custom_script": "scripts/empty.sh"
-  },
-
-  "builders":
-  [
+  "builders": [
     {
-      "name": "ubuntu-15-server-{{ user `disk_size`}}G-{{ user `name`}}",
-
-      "type": "qemu",
-      "format": "qcow2",
       "accelerator": "kvm",
-      "disk_size": "{{ user `disk_size`}}000",
-      "headless": true,
-      "iso_url": "http://releases.ubuntu.com/15.04/ubuntu-15.04-server-amd64.iso",
-      "iso_checksum": "487f4a81f22f8597503db3d51a1b502e",
-      "iso_checksum_type": "md5",
-
-      "http_directory": "http",
-
-      "ssh_username": "{{user `user`}}",
-      "ssh_password": "{{user `password`}}",
-      "ssh_wait_timeout": "1800s",
-      "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -P now",
-
-      "boot_wait": "2s",
       "boot_command": [
         "<esc><esc><enter><wait>",
         "/install/vmlinuz url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-ubuntu.cfg ",
         "debian-installer=en_US auto locale=en_US kbd-chooser/method=fr ",
         "hostname={{ .Name }} ",
-
         "keyboard-configuration/modelcode=pc101 ",
         "keyboard-configuration/layoutcode=fr ",
-
         "passwd/user-fullname={{user `user`}} ",
         "passwd/user-password-again={{user `password`}} ",
         "passwd/user-password={{user `password`}} ",
         "passwd/username={{user `user`}} ",
-
         "initrd=/install/initrd.gz -- <enter>"
-            ]
+      ],
+      "boot_wait": "2s",
+      "disk_size": "{{ user `disk_size`}}000",
+      "format": "qcow2",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum": "md5:487f4a81f22f8597503db3d51a1b502e",
+      "iso_url": "http://releases.ubuntu.com/15.04/ubuntu-15.04-server-amd64.iso",
+      "name": "ubuntu-15-server-{{ user `disk_size`}}G-{{ user `name`}}",
+      "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -P now",
+      "ssh_password": "{{user `password`}}",
+      "ssh_timeout": "1800s",
+      "ssh_username": "{{user `user`}}",
+      "type": "qemu"
     }
   ],
-
   "provisioners": [
     {
-      "type": "shell",
       "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
       "scripts": [
         "scripts/update-ubuntu.sh",
         "scripts/packages-ubuntu.sh",
         "scripts/network-ubuntu.sh",
         "{{ user `custom_script` }}"
-      ]
+      ],
+      "type": "shell"
     }
-  ]
+  ],
+  "variables": {
+    "custom_script": "scripts/empty.sh",
+    "disk_size": "100",
+    "domain": "",
+    "name": "image",
+    "password": "slapos",
+    "user": "slapos"
+  }
 }
+

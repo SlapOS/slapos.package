@@ -1,36 +1,7 @@
 {
-  "variables": {
-    "user": "slapos",
-    "password": "slapos",
-    "domain": "",
-    "disk_size": "100",
-    "name": "image",
-    "custom_script": "scripts/empty.sh"
-  },
-
-  "builders":
-  [
+  "builders": [
     {
-      "name": "ubuntu-16-server-{{ user `disk_size`}}G-{{ user `name`}}",
-
-      "type": "qemu",
-      "format": "qcow2",
       "accelerator": "kvm",
-      "disk_size": "{{ user `disk_size`}}000",
-      "headless": true,
-
-      "iso_url": "http://releases.ubuntu.com/16.10/ubuntu-16.10-server-amd64.iso",
-      "iso_checksum": "7d6de832aee348bacc894f0a2ab1170d",
-      "iso_checksum_type": "md5",
-
-      "http_directory": "http",
-
-      "ssh_username": "{{user `user`}}",
-      "ssh_password": "{{user `password`}}",
-      "ssh_wait_timeout": "1800s",
-      "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -P now",
-
-      "boot_wait": "2s",
       "boot_command": [
         "<esc><esc><enter><wait>",
         "/install/vmlinuz ",
@@ -46,21 +17,41 @@
         "noapic ",
         "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-ubuntu16.04.cfg ",
         "-- <enter>"
-      ]
+      ],
+      "boot_wait": "2s",
+      "disk_size": "{{ user `disk_size`}}000",
+      "format": "qcow2",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum": "md5:7d6de832aee348bacc894f0a2ab1170d",
+      "iso_url": "http://releases.ubuntu.com/16.10/ubuntu-16.10-server-amd64.iso",
+      "name": "ubuntu-16-server-{{ user `disk_size`}}G-{{ user `name`}}",
+      "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -P now",
+      "ssh_password": "{{user `password`}}",
+      "ssh_timeout": "1800s",
+      "ssh_username": "{{user `user`}}",
+      "type": "qemu"
     }
   ],
-
   "provisioners": [
     {
-      "type": "shell",
       "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
       "scripts": [
         "scripts/update-ubuntu.sh",
         "scripts/packages-ubuntu.sh",
         "scripts/grub-ubuntu.sh",
         "{{ user `custom_script` }}"
-      ]
+      ],
+      "type": "shell"
     }
-  ]
+  ],
+  "variables": {
+    "custom_script": "scripts/empty.sh",
+    "disk_size": "100",
+    "domain": "",
+    "name": "image",
+    "password": "slapos",
+    "user": "slapos"
+  }
 }
 
