@@ -1,0 +1,51 @@
+{
+  "builders": [
+    {
+      "accelerator": "kvm",
+      "boot_command": [
+        "c<wait>",
+        "linux /casper/vmlinuz --- autoinstall ds=\"nocloud-net;seedfrom=http://{{.HTTPIP}}:{{.HTTPPort}}/\"",
+        "<enter><wait>",
+        "initrd /casper/initrd",
+        "<enter><wait>",
+        "boot",
+        "<enter>"
+      ],
+      "boot_wait": "2s",
+      "cpus": 2,
+      "disk_size": "{{ user `disk_size`}}000",
+      "format": "qcow2",
+      "headless": false,
+      "http_directory": "http",
+      "iso_checksum": "sha256:10f19c5b2b8d6db711582e0e27f5116296c34fe4b313ba45f9b201a5007056cb",
+      "iso_url": "https://releases.ubuntu.com/22.04/ubuntu-22.04.1-live-server-amd64.iso",
+      "memory": 2048,
+      "name": "ubuntu-22.04-server-{{ user `disk_size`}}G-{{ user `name`}}",
+      "shutdown_command": "echo '{{user `password`}}'|sudo -S poweroff",
+      "ssh_password": "{{user `password`}}",
+      "ssh_timeout": "1800s",
+      "ssh_username": "{{user `user`}}",
+      "type": "qemu"
+    }
+  ],
+  "provisioners": [
+    {
+      "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+      "scripts": [
+        "scripts/update-ubuntu.sh",
+        "scripts/grub-ubuntu.sh",
+        "{{ user `custom_script` }}"
+      ],
+      "type": "shell"
+    }
+  ],
+  "variables": {
+    "custom_script": "scripts/empty.sh",
+    "disk_size": "20",
+    "domain": "",
+    "name": "image",
+    "password": "slapos",
+    "user": "slapos"
+  }
+}
+

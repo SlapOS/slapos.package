@@ -1,0 +1,31 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US
+  keyboard:
+    layout: fr
+  early-commands:
+    - systemctl stop ssh
+  identity:
+    hostname: ubuntu-22.04-server-packer
+    password: $6$Vp3f6376c$drEet9S.22yaIgY6.tiYVzRgGmWfsMjIWcwOWoGB.uuWD8SbpSz0TR8BOeWvjt2/IAcEXMa171WcmGXMuXNzI/
+    username: slapos
+  storage:
+    layout:
+      name: direct
+  network:
+    network:
+      version: 2
+      ethernets:
+        ens3: {dhcp4: true}
+  ssh:
+    install-server: true
+    allow-pw: true
+  packages:
+    - openssh-server
+    - sudo
+    - curl
+    - vim
+  user-data:
+    disable_root: false
+    timezone: UTC
