@@ -19,7 +19,7 @@
         "passwd/user-password={{user `password`}} ",
         "passwd/username={{user `user`}} ",
         "noapic ",
-        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-ubuntu18.04.cfg ",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-ubuntu.cfg ",
         "-- <enter>"
       ],
       "boot_wait": "2s",
