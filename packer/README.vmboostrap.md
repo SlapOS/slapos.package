@@ -19,7 +19,7 @@ How to build VM with differents images size?
 
   Packer use qemu to build vm images, you need to install it first.
 
-  apt-get install qemu
+  apt-get install qemu-system-x86
 
 
 3) Use ansible to build all VMs and compress them in local folder
