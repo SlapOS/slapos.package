@@ -44,7 +44,8 @@ echo "[buildout]" > buildout.cfg # dummy .cfg file only for boostraping
 echo "Bootsrapping buildout..."
 python3 -S bootstrap.py \
 	--setuptools-version "$OLD_SETUPTOOLS_VERSION" \
-	--setuptools-to-dir eggs
+	--setuptools-to-dir eggs \
+	--buildout-version 2.13.8
 
 # 10) Get newest version of zc.buildout and setuptools.
 #    note that we can't directly do setuptools + zc.buildout +
