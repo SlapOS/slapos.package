@@ -43,7 +43,7 @@ wget https://lab.nexedi.com/nexedi/slapos.buildout/raw/master/bootstrap/bootstra
 echo "[buildout]" > buildout.cfg # dummy .cfg file only for boostraping
 echo "Bootsrapping buildout..."
 python3 -S bootstrap.py \
-	--setuptools-version 44.1.0 \
+	--setuptools-version "$OLD_SETUPTOOLS_VERSION" \
 	--setuptools-to-dir eggs
 
 # 10) Get newest version of zc.buildout and setuptools.

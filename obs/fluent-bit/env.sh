@@ -12,7 +12,6 @@ export PACKAGE_BUILD_DEPENDENCIES="debhelper (>= 4.1.16), chrpath, wget, python 
 export GIT_REPOSITORY=https://lab.nexedi.com/Ophelie/slapos.git
 export GIT_BRANCH_OR_COMMIT=fluent-bit_tmp
 export BUILDOUT_RELATIVE_PATH=component/fluent-bit/dep--fluent-bit.cfg
-export SETUPTOOLS_VERSION=44.1.1
 export ZC_BUILDOUT_VERSION=2.7.1+slapos019
 
 export OBS_COMMIT_MSG="Yet another push in OBS."
