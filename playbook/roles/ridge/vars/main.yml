@@ -1,20 +1,23 @@
 ## PACKAGES
 mca_name: mca--static
 fluentbit_name: fluent-bit
+plugin_name: plugin-fluentbit-to-wendelin
 mca_path: /opt/{{mca_name}}
 flb_path: /opt/{{fluentbit_name}}
+plugin_path: /opt/{{plugin_name}}
 
 ## WENDELIN CONFIGURATION
 wendelin_url: "{{ lookup('env', 'ANSIBLE_wendelin_url') }}"
+wendelin_user: "{{ lookup('env', 'ANSIBLE_wendelin_user') }}"
 wendelin_pwd: "{{ lookup('env', 'ANSIBLE_wendelin_pwd') }}"
 wendelin_reference: "{{ lookup('env', 'ANSIBLE_wendelin_reference') }}"
 packages_to_scan: "{{ lookup('env', 'ANSIBLE_packages_to_scan') }}"
 
 ## OTHER
-conf_regex: s|%WENDELIN_URL%|{{wendelin_url}}|g;s|%WENDELIN_PWD%|{{wendelin_pwd}}|g;s|%WENDELIN_REFERENCE%|{{wendelin_reference}}|g
-
-binary: "{{mca_path}}/bin/metadata-collect-agent"
+mca: "{{mca_path}}/bin/metadata-collect-agent"
 flb: "{{flb_path}}/bin/fluent-bit"
-flb_plugin: "{{mca_path}}/lib/libfluentbit_wendelin.so"
-flb_conf: "{{mca_path}}/etc/flb.conf"
+plugin: "{{plugin_path}}/lib/libfluentbit_wendelin.so"
+conf: "{{plugin_path}}/etc/flb.conf"
 log: /var/log/metadata_collect.log
+
+conf_regex: s|%WENDELIN_URL%|{{wendelin_url}}|g;s|%WENDELIN_USER%|{{wendelin_user}}|g;s|%WENDELIN_PWD%|{{wendelin_pwd}}|g;s|%WENDELIN_REFERENCE%|{{wendelin_reference}}|g;s|%SCAN_FILE%|{{log}}|g
