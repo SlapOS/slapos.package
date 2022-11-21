@@ -9,7 +9,7 @@
     # TODO: store fluent-bit's PID to wait for it at the end
 
   - name: Pre-scan
-    shell: "sleep 1"
+    shell: 'sleep 1; echo "{\"beginning_date\": \"{{ ansible_date_time.iso8601 }}\"}" >> {{log}}'
 
   - name: Scan /sbin
     shell: "{{mca}} /sbin {{log}}"
@@ -18,7 +18,7 @@
     shell: "{{mca}} /bin {{log}}"
 
   - name: Post-scan
-    shell: 'echo "{end_marker: \"fluentbit_end\"}" >> {{log}}'
+    shell: 'echo "{\"end_date\": \"{{ ansible_date_time.iso8601 }}\", \"end_marker\": \"fluentbit_end\"}" >> {{log}}'
 
   - name: "Build successful, connect to:"
     shell: "true"
