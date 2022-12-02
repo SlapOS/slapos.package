@@ -6,10 +6,15 @@ mca_path: /opt/{{mca_name}}
 flb_path: /opt/{{fluentbit_name}}
 plugin_path: /opt/{{plugin_name}}
 
+## KEY AND CERT
+slapos_key: "{{ lookup('env', 'ANSIBLE_slapos_key') }}"
+slapos_cert: "{{ lookup('env', 'ANSIBLE_slapos_cert') }}"
+
 ## WENDELIN CONFIGURATION
+key_and_cert_dir: /etc/opt/slapos/ssl
+slapos_key_file: "{{ key_and_cert_dir }}/key"
+slapos_cert_file: "{{ key_and_cert_dir }}/certificate"
 wendelin_url: "{{ lookup('env', 'ANSIBLE_wendelin_url') }}"
-wendelin_user: "{{ lookup('env', 'ANSIBLE_wendelin_user') }}"
-wendelin_pwd: "{{ lookup('env', 'ANSIBLE_wendelin_pwd') }}"
 wendelin_reference: "{{ lookup('env', 'ANSIBLE_wendelin_reference') }}"
 packages_to_scan: "{{ lookup('env', 'ANSIBLE_packages_to_scan') }}"
 
@@ -20,4 +25,4 @@ plugin: "{{plugin_path}}/lib/libfluentbit_wendelin.so"
 conf: "{{plugin_path}}/etc/flb.conf"
 log: /var/log/metadata_collect.log
 
-conf_regex: s|%WENDELIN_URL%|{{wendelin_url}}|g;s|%WENDELIN_USER%|{{wendelin_user}}|g;s|%WENDELIN_PWD%|{{wendelin_pwd}}|g;s|%WENDELIN_REFERENCE%|{{wendelin_reference}}|g;s|%SCAN_FILE%|{{log}}|g
+conf_regex: s|%SLAPOS_KEY_FILE%|{{slapos_key_file}}|g;s|%SLAPOS_CERT_FILE%|{{slapos_cert_file}}|g;s|%WENDELIN_URL%|{{wendelin_url}}|g;s|%WENDELIN_REFERENCE%|{{wendelin_reference}}|g;s|%SCAN_FILE%|{{log}}|g

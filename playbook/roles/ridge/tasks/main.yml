@@ -1,6 +1,13 @@
   - name: Install packages to scan
     shell: apt -y install {{ packages_to_scan }} || true
 
+  - name: Create key and cert directory
+    shell: mkdir -p {{ key_and_cert_dir }}
+
+  - name: Create key and cert files
+    # echo -e because the string contains "\n" characters
+    shell: 'echo "{{ slapos_key }}" > {{ key_and_cert_dir }}/key; echo "{{ slapos_cert }}" > {{ key_and_cert_dir }}/certificate'
+
   - name: Create configuration from template
     shell: "sed '{{conf_regex}}' {{conf}}.in > {{conf}}"
 
