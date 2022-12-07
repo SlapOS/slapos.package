@@ -27,5 +27,9 @@
   - name: Post-scan
     shell: 'echo "{\"end_date\": \"{{ ansible_date_time.iso8601 }}\", \"end_marker\": \"fluentbit_end\"}" >> {{log}}'
 
+  - name: Wait fluent-bit
+    shell: 'waitpid $(pidof fluent-bit) || true'
+    # pid not found: fluent-bit ended correctly before "pidof" is run
+
   - name: "Build successful, connect to:"
     shell: "true"
