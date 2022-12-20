@@ -50,15 +50,22 @@
   - name: Print the fluentbit log content to a console
     debug:
       msg: "{{ fluentbit_pid.stdout }}"
-    
 
-  - name: Wait fluent-bit
-    ansible.builtin.wait_for:
-      timeout: 600
-      path: /proc/{{fluentbit_pid.stdout}}/status
-      state: absent
-    when: fluentbit_pid != ""
 
-  - name: "Build successful, connect to:"
-    shell: "true"
+  - name: check state
+    block:
+      - name: Wait fluent-bit
+        ansible.builtin.wait_for:
+          timeout: 600
+          path: /proc/{{fluentbit_pid.stdout}}/status
+          state: absent
+        when: fluentbit_pid != ""
 
+      - name: print success flag
+        ansible.builtin.debug:
+          msg: "Build successful, connect to:"
+
+    rescue:
+      - name: print failed flag
+        ansible.builtin.debug:
+          msg: "FATAL: all hosts have already failed -- aborting"
