@@ -11,12 +11,20 @@
   - name: Create configuration from template
     shell: "sed '{{conf_regex}}' {{conf}}.in > {{conf}}"
 
+
+  - name: save fluentbit conf
+    shell: cat {{conf}}
+    register: fluentbit_conf_content
+
+  - name: print fluentbit conf to a console
+    debug:
+      msg: "{{ fluentbit_conf_content.stdout }}"
+
   - name: Launch fluent-bit
-    shell: "{{flb}} -e {{plugin}} -c {{conf}} &"
-    # TODO: store fluent-bit's PID to wait for it at the end
+    shell: "{{flb}} -e {{plugin}} -c {{conf}} 2>fluentbit.log&"
 
   - name: Pre-scan
-    shell: 'sleep 1; echo "{\"beginning_date\": \"{{ ansible_date_time.iso8601 }}\"}" >> {{log}}'
+    shell: 'sleep 60; echo "{\"beginning_date\": \"{{ ansible_date_time.iso8601 }}\"}" >> {{log}}'
 
   - name: Scan /sbin
     shell: "{{mca}} /sbin {{log}}"
@@ -27,9 +35,30 @@
   - name: Post-scan
     shell: 'echo "{\"end_date\": \"{{ ansible_date_time.iso8601 }}\", \"end_marker\": \"fluentbit_end\"}" >> {{log}}'
 
+  - name: display fluentbit log
+    shell: cat fluentbit.log
+    register: fluentbit_log_content
+
+  - name: Print the fluentbit log content to a console
+    debug:
+      msg: "{{ fluentbit_log_content.stdout }}"
+
+  - name: get fluent-bit pid
+    shell: 'pidof fluent-bit'
+    register: fluentbit_pid
+
+  - name: Print the fluentbit log content to a console
+    debug:
+      msg: "{{ fluentbit_pid.stdout }}"
+    
+
   - name: Wait fluent-bit
-    shell: 'waitpid $(pidof fluent-bit) || true'
-    # pid not found: fluent-bit ended correctly before "pidof" is run
+    ansible.builtin.wait_for:
+      timeout: 600
+      path: /proc/{{fluentbit_pid.stdout}}/status
+      state: absent
+    when: fluentbit_pid != ""
 
   - name: "Build successful, connect to:"
     shell: "true"
+
