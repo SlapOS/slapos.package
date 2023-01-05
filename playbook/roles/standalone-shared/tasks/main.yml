@@ -1,5 +1,11 @@
 ---
   - include: debian9-gcc-4.9.yml
+ 
+  - name: Install iptables
+    apt:
+      pkg:
+        - iptables
+      state: present
 
   - name: Store domain for other scripts
     copy: content="{{ frontend_custom_domain }}" dest=/tmp/playbook-frontend-custom-domain mode=0644

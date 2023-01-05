@@ -11,5 +11,3 @@
     playbook_name: wendelin
   roles:
     - standalone-shared
-    - { role: package, package_name: socat, package_state: present }
-    - { role: package, package_name: iptables, package_state: present }
