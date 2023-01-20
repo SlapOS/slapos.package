@@ -1,0 +1,4 @@
+---
+
+  - name: Configure slapos
+    script: configure-slapos.py
