@@ -17,6 +17,5 @@
       default: "notoken"
 
   roles:
-    - { role: imt-slapos, mount_directory: /virt }
     - { role: slapos, package_state: present }
     - { role: imt-slapos, post_config: True }

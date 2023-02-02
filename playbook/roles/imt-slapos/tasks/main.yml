@@ -1,31 +1,6 @@
 ---
   - file: path=/opt/upgrader state=directory mode=0755
 
-  - name: stat directory {{ mount_directory }}
-    stat: path={{ mount_directory }}
-    register: slapos_directory
-    when: mount_directory is defined
-
-  - name: create slapos folders
-    shell: mkdir -p /opt/slapos /opt/slapgrid /srv/slapgrid
-    when: mount_directory is defined and slapos_directory.stat.exists == True
-
-  - name: create slapos mount point folders
-    shell: mkdir -p {{ mount_directory }}/opt/slapos {{ mount_directory }}/opt/slapgrid {{ mount_directory }}/srv/slapgrid
-    when: mount_directory is defined and slapos_directory.stat.exists == True
-
-  - name: mount srv/slapgrid directory
-    mount: src="{{ mount_directory }}/srv/slapgrid" name=/srv/slapgrid opts=bind state=mounted fstype=none
-    when: mount_directory is defined and slapos_directory.stat.exists == True
-
-  - name: mount opt/slapgrid directory
-    mount: src="{{ mount_directory }}/opt/slapgrid" name=/opt/slapgrid opts=bind state=mounted fstype=none
-    when: mount_directory is defined and slapos_directory.stat.exists == True
-
-  - name: mount srv/slapgrid directory
-    mount: src="{{ mount_directory }}/opt/slapos" name=/opt/slapos opts=bind state=mounted fstype=none
-    when: mount_directory is defined and slapos_directory.stat.exists == True
-
   - stat: path=/opt/upgrader/playbook
     register: playbook
 
@@ -60,29 +35,13 @@
     lineinfile: dest=/etc/opt/slapos/slapos.cfg regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes insertafter="^instance_root ="
     with_items:
      - { regexp: '^ipv4_global_network\s*=', line: 'ipv4_global_network = 10.32.0.0/13' }
-     - { regexp: '^instance_storage_home\s*=', line: 'instance_storage_home = /data' }
      - { regexp: '^manager_list\s*=', line: 'manager_list = prerm' }
-    when: post_config is defined and slapos_cfg.stat.exists == True  and startup is not defined
+    when: post_config is defined and slapos_cfg.stat.exists == True and startup is not defined
 
-  - name: Check whether firewall is enabled
-    shell: grep -Fxq "[firewall]" /etc/opt/slapos/slapos.cfg
-    register: has_firewall
-    ignore_errors: yes
-    when: post_config is defined and slapos_cfg.stat.exists == True
-
-  - name: activate firewalld in slapos config
-    lineinfile: dest=/etc/opt/slapos/slapos.cfg line="[firewall]\n" insertbefore="^\[networkcache\]"
-    when: post_config is defined and has_firewall.rc != 0 and slapos_cfg.stat.exists == True
-
-  - name: Update firewall configuration
-    lineinfile: dest=/etc/opt/slapos/slapos.cfg regexp="{{ item.regexp }}" line="{{ item.line }}" insertafter="^\[firewall\]$" state=present
+  - name: allow firewall in slapos.cfg configuration
+    lineinfile: dest=/etc/opt/slapos/slapos.cfg regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes backrefs=true
     with_items:
-      - { regexp: '^dbus_executable\s*=', line: 'dbus_executable = /opt/slapos/parts/dbus/bin/dbus-daemon --nofork --nopidfile --system' } 
-      - { regexp: '^firewall_executable\s*=', line: 'firewall_executable = /opt/slapos/parts/firewalld/sbin/firewalld --nofork' }
-      - { regexp: '^firewall_cmd\s*=', line: 'firewall_cmd = /opt/slapos/parts/firewalld/bin/firewall-cmd' }
-      - { regexp: '^log_file\s*=*firewalld*', line: 'log_file = /opt/slapos/log/firewalld.log' }
-      - { regexp: '^dbus_log_file\s*=', line: 'dbus_log_file = /opt/slapos/log/dbus.log' }
-      - { regexp: '^reload_config_cmd\s*=', line: 'reload_config_cmd = slapos node restart firewall' }
+      - { regexp: '^\[.*firewall\]$', line: '[firewall]' }
     when: post_config is defined and slapos_cfg.stat.exists == True and startup is not defined
 
   - name: Insert kvm module
