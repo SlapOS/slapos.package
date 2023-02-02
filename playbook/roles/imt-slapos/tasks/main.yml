@@ -85,16 +85,24 @@
       - { regexp: '^reload_config_cmd\s*=', line: 'reload_config_cmd = slapos node restart firewall' }
     when: post_config is defined and slapos_cfg.stat.exists == True and startup is not defined
 
-  - modprobe: name=kvm state=present
+  - name: Insert kvm module
+    modprobe: name=kvm state=present
     when: post_config is defined
-  - modprobe: name=kvm_intel state=present
+  - name: Insert kvm_intel module
+    modprobe: name=kvm_intel state=present
     when: post_config is defined
-  - modprobe: name=vhost-net state=present
+  - name: Insert vhost-net module
+    modprobe: name=vhost-net state=present
     when: post_config is defined
 
-  - file: path=/dev/kvm mode=0666
+  - name: chmod 666 /dev/kvm
+    file: path=/dev/kvm mode=0666
     when: post_config is defined
-  - file: path=/dev/vhost-net mode=0666
+  - name: chmod 666 /dev/vhost-net
+    file: path=/dev/vhost-net mode=0666
+    when: post_config is defined
+  - name: chmod 666 /dev/net/tun
+    file: path=/dev/net/tun mode=0666
     when: post_config is defined
 
   - name: Run slapos format for update configs
