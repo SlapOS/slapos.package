@@ -8,5 +8,5 @@ Homepage: http://slapos.nexedi.com
 Standards-Version: 3.9.2
 Build-Depends: debhelper (>= 4.1.16), chrpath, po-debconf, wget, python3 (>= 3.7) | python, python3-dev (>= 3.7) | python-dev, libssl-dev
 Files: 
- 1c2803e4693c74042985d753c9c3ba53 73736102 slapos-node_%VERSION%+%RECIPE_VERSION%+%RELEASE%.orig.tar.gz
- 1c2803e4693c74042985d753c9c3ba53 6102 slapos-node_%VERSION%+%RECIPE_VERSION%+%RELEASE%-1.diff.tar.gz
+ 1c2803e4693c74042985d753c9c3ba53 73736102 %SLAPOS_DIRECTORY%.orig.tar.gz
+ 1c2803e4693c74042985d753c9c3ba53 6102 %SLAPOS_DIRECTORY%-1.diff.tar.gz
