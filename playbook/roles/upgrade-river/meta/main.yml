@@ -1,0 +1,4 @@
+---
+dependencies:
+  - { role: package, package_name: fdisk, package_state: latest }
+  - { role: package, package_name: pip, package_state: latest }

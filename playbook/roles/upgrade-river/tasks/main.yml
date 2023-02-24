@@ -1,0 +1,26 @@
+  - name: Install networkcache client
+    shell: pip install slapos.libnetworkcache
+
+  - name: Get target available kernel version
+    shell: "apt-cache policy linux-image-amd64 | grep Candidate | awk '{print $2}'"
+    register: target_kernel_version
+
+  - name: Convert kernel version in list format
+    shell: "echo {{target_kernel_version.stdout}} > /root/debug; python3 -c 'import sys; print(list(map(int, sys.argv[1].split(\"+\")[0].split(\"-\")[0].split(\".\"))))' {{target_kernel_version.stdout}}"
+    register: kernel_version_list_format
+
+  - name: Get EFI partition mount point
+    shell: fdisk -l | grep "EFI System" | awk '{print $1}'
+    register: efi_partition_mount_point
+
+  - name: Create image directory (if it does not exist)
+    shell: mkdir -p /boot/efi/EFI/Linux/
+
+  - name: Downlaod new initramfs image
+    shell: networkcache-download --config /etc/opt/slapos/slapos.cfg --id river "kernel-version=={{kernel_version_list_format.stdout}}" timestamp:max > /boot/efi/EFI/Linux/{{image_name}}
+
+  - name: Delete old boot option
+    shell: efibootmgr -b {{default_bootnum}} -B || true
+
+  - name: Set new boot option
+    shell: efibootmgr -b {{default_bootnum}} --create --disk {{efi_partition_mount_point.stdout}} --label "river" --loader EFI/Linux/{{image_name}}

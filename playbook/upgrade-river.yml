@@ -1,0 +1,10 @@
+# This is part of the OCEAN project.
+# The goal of this is to download the right initramfs image from shacache
+# when the kernel is upgraded.
+
+- name: a play that runs entirely on the ansible host
+  hosts: 127.0.0.1
+  connection: local
+
+  roles:
+    - upgrade-river
