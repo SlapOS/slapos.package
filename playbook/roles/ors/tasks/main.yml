@@ -105,6 +105,9 @@
   - name: Configure dhcp timeout
     lineinfile: dest=/etc/dhcp/dhclient.conf regexp="^timeout (.*)" line="timeout 15" state=present
 
+  - name: Configure journald log size
+    lineinfile: dest=/etc/systemd/journald.conf regexp="^SystemMaxUse=(.*)" line="SystemMaxUse=1G" state=present
+
   - name: Configure ssh
     lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin (.*)" line="PermitRootLogin yes" state=present
 
