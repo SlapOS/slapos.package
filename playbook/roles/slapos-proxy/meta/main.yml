@@ -1,3 +1,4 @@
 ---
 dependencies:
   - { role: repository, when: not slapos_ansible_offline}
+  - { role: package, package_name: slapos-node, package_state: present, when: ansible_distribution != "CentOS"}
