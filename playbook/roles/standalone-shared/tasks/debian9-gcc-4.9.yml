@@ -1,6 +1,6 @@
 ---
   - name: Install Debian Jessie repository for Debian 9 for gcc-4.9
-    apt_repository: repo='deb http://ftp.us.debian.org/debian/ jessie main contrib non-free' state=present update_cache=no
+    apt_repository: repo='deb http://ftp.us.debian.org/debian/ jessie main contrib non-free' state=present
     when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
 
   - name: Update repos for debian 9
@@ -8,11 +8,11 @@
     when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
 
   - name: Install gcc-4.9 on Debian 9
-    apt: name=gcc-4.9 state=present update_cache=yes cache_valid_time=3600
+    apt: name=gcc-4.9 state=present
     when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
 
   - name: Install g++-4.9 on Debian 9
-    apt: name=g++-4.9 state=present update_cache=yes cache_valid_time=3600
+    apt: name=g++-4.9 state=present
     when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
 
   - name: Default to cpp-4.9
