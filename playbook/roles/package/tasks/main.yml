@@ -1,6 +1,15 @@
-  - name: Install {{ package_name }} using apt
+  - name: Try to update apt cache
+    apt: update_cache=yes cache_valid_time=3600
+    when: ansible_os_family == "Debian" or ansible_os_family == "Linuxmint" or ansible_os_family == "Kylin"
+    ignore_errors: true
+
+  - name: Install {{ package_name }} (latest) using apt
     apt: name={{ package_name }} state={{ package_state }} update_cache=yes cache_valid_time=3600
-    when: ansible_os_family == "Debian" or ansible_os_family == "Linuxmint" or ansible_os_family == "Kylin" 
+    when: package_state == "latest" and ansible_os_family == "Debian" or ansible_os_family == "Linuxmint" or ansible_os_family == "Kylin"
+
+  - name: Install {{ package_name }} using apt
+    apt: name={{ package_name }} state={{ package_state }}
+    when: package_state != "latest" and ansible_os_family == "Debian" or ansible_os_family == "Linuxmint" or ansible_os_family == "Kylin"
 
   - name: Install {{ package_name }} using yum
     yum: name={{ package_name }} state={{ package_state }} update_cache=yes
