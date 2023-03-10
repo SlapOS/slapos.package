@@ -7,7 +7,7 @@
     register: gitignore_file
 
   - name: Install git
-    apt: name=git state=latest update_cache=no
+    apt: name=git state=latest
     when: ansible_os_family == "Debian"
 
   - name: Install git
@@ -15,7 +15,7 @@
     when: ansible_os_family == "RedHat"
 
   - name: Install etckeeper
-    apt: name=etckeeper state=latest update_cache=no
+    apt: name=etckeeper state=latest
     when: ansible_os_family == "Debian"
 
   - name: Install etckeeper
