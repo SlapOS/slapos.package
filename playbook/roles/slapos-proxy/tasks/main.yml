@@ -10,15 +10,11 @@
       state: directory
       mode: 0755
 
-  - name: Install packages using apt
-    apt: name=slapos-node state=present update_cache=yes cache_valid_time=3600
-    when: ansible_os_family == "Debian" and not slapos_ansible_offline
-
   - name: Uninstall firewalld on CentOS
     yum: name=firewalld state=absent update_cache=yes
     when: ansible_distribution == "CentOS"
 
-  - name: Install re6stnet on CentOS
+  - name: Install slapos-node on CentOS
     yum: name=slapos.node state=present update_cache=yes
     when: ansible_distribution == "CentOS" and ansible_distribution_major_version != "7" and not slapos_ansible_offline
 
@@ -29,7 +25,7 @@
       checksum: "md5:37446cc16b38fa5769f3e084294c8683"
     when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7" and not slapos_ansible_offline
 
-  - name: Install re6stnet on CentOS 7
+  - name: Install slapos-node on CentOS 7
     yum: name=/tmp/slapos.node-1.0.56-2.1.x86_64.rpm state=present update_cache=yes
     when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7" and not slapos_ansible_offline
 
