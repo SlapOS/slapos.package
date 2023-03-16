@@ -1,0 +1,4 @@
+
+What remains to be done:
+- merge https://lab.nexedi.com/nexedi/slapos.libnetworkcache/merge_requests/8 and release the associated egg
+- test this playbook
