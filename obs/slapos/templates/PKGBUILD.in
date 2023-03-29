@@ -9,15 +9,15 @@ license=('GPL')
 depends=(iptables iproute2)
 makedepends=(patch wget chrpath inetutils python3)
 install='slapos-node.install'
-source=(${pkgname}_${pkgver}.tar.gz)
+source=(sn_${pkgver}.tar.gz)
 md5sums=(%SOURCEMD5%)
 
 build() {
-	cd "${srcdir}/${pkgname}_${pkgver}"
+	cd "${srcdir}/sn_${pkgver}"
 	make
 }
 
 package() {
-	cd "${srcdir}/${pkgname}_${pkgver}"
+	cd "${srcdir}/sn_${pkgver}"
 	make DESTDIR="$pkgdir/" install
 }
