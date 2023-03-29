@@ -99,6 +99,7 @@ mkdir -p $RPM_BUILD_ROOT/etc/systemd/system/
 mkdir -p $RPM_BUILD_ROOT/opt/slapos/log
 rm -rf $RPM_BUILD_ROOT/opt/slapos/eggs/setuptools-*.egg/setuptools/tests/test_easy_install.py
 rm -rf $RPM_BUILD_ROOT/opt/slapos/eggs/netaddr-*.egg/EGG-INFO/scripts/netaddr
+export QA_RPATHS=$(( 0x0001|0x0002|0x0020 ))
 
 %files
 /opt/slapos
