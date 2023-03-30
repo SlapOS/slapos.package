@@ -8,6 +8,7 @@ ors_config = {
     'slapformat': {
         'create_tun': 'True',
         'partition_amount': '20',
+        'ipv6_prefixshift': '7',
     },
     'networkcache': {
         'download-from-binary-cache-force-url-list': '''
