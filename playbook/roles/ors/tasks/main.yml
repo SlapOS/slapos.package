@@ -19,7 +19,7 @@
   - name: Install vifib-base playbook
     shell: ansible-playbook vifib-base.yml --extra-vars '{"period_minute":"*/10", "period_hour":"*"}'
     when: vifib_cron.rc != 0
-
+  
   - name: Remove old cron
     cron: name="Launch ors playbook every 3 hours" state=absent
 
@@ -35,7 +35,20 @@
   - name: Create a directory if it does not exist
     file: path=/opt/amarisoft state=directory mode=0755
 
-  - name: Copy init-sdr script
+  - name: Give permission to slapuser to launch init-sdr script
+    copy: src=slapuser-init-sdr dest=/etc/sudoers.d owner=root mode=440
+
+  - name: Give permission to slapuser to launch init-enb script
+    copy: src=slapuser-init-enb dest=/etc/sudoers.d owner=root mode=440
+
+  - name: Give permission to slapuser to launch sdr-util script
+    copy: src=slapuser-sdr-util dest=/etc/sudoers.d owner=root mode=440
+
+  - name: Check if /opt/amarisoft exists
+    stat: path=/opt/amarisoft
+    register: opt_amarisoft
+
+  - name: Copy init SDR script
     copy: src=init-sdr dest=/opt/amarisoft owner=root mode=770
 
   - name: Copy init-enb script
@@ -83,9 +96,6 @@
 
   - name: Configure re6st
     script: configure-re6st
-
-  - name: Configure /etc/network/interfaces
-    copy: src=interfaces dest=/etc/network/interfaces owner=root mode=644
 
   - name: Configure dhcp timeout
     lineinfile: dest=/etc/dhcp/dhclient.conf regexp="^timeout (.*)" line="timeout 15" state=present
