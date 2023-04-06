@@ -26,12 +26,6 @@
     - name: Add default
       lineinfile: dest=/etc/re6stnet/re6stnet.conf line="default"
 
-    - name: Max Clients
-      lineinfile: dest=/etc/re6stnet/re6stnet.conf line="max-clients 1"
-
-    - name: Client count 
-      lineinfile: dest=/etc/re6stnet/re6stnet.conf line="client-count 0"
-
     - name: Include interface
       lineinfile: dest=/etc/re6stnet/re6stnet.conf line="interface {{ lan_iface_name }}"
       when: lan_iface_name != "noname"
