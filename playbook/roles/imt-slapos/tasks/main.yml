@@ -65,4 +65,5 @@
   - name: chmod 666 /dev/net/tun
     file: path=/dev/net/tun mode=0666
 
-
+  - name: sysctl net.ipv6.route.max_size = 262144
+    sysctl: name="net.ipv6.route.max_size" value=262144 sysctl_set=yes state=present reload=yes
