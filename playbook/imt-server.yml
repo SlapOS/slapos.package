@@ -18,4 +18,4 @@
 
   roles:
     - { role: slapos, package_state: present }
-    - { role: imt-slapos, post_config: True }
+    - { role: imt-slapos }

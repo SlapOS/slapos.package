@@ -5,4 +5,4 @@
     - settings/imt.yml
 
   roles:
-    - { role: imt-slapos, post_config: True, startup: True }
+    - { role: imt-slapos, startup: True }

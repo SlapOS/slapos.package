@@ -20,8 +20,7 @@
   - name: stat slapos.cfg file
     stat: path=/etc/opt/slapos/slapos.cfg
     register: slapos_cfg
-    when: post_config is defined
- 
+
   - name: update slapos.cfg configuration
     lineinfile: dest=/etc/opt/slapos/slapos.cfg regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes insertafter="^interface_name ="
     with_items:
@@ -29,41 +28,41 @@
       - { regexp: '^tap_gateway_interface\s*=', line: 'tap_gateway_interface = re6stnet-tcp' }
       - { regexp: '^partition_amount\s*=', line: 'partition_amount = 125' }
       - { regexp: '^tap_ipv6\s*=', line: 'tap_ipv6 = False' }
-    when: post_config is defined and slapos_cfg.stat.exists == True and startup is not defined
+    when: slapos_cfg.stat.exists == True and startup is not defined
 
   - name: update slapos.cfg configuration storage/network
     lineinfile: dest=/etc/opt/slapos/slapos.cfg regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes insertafter="^instance_root ="
     with_items:
      - { regexp: '^ipv4_global_network\s*=', line: 'ipv4_global_network = 10.32.0.0/13' }
      - { regexp: '^manager_list\s*=', line: 'manager_list = prerm' }
-    when: post_config is defined and slapos_cfg.stat.exists == True and startup is not defined
+    when: slapos_cfg.stat.exists == True and startup is not defined
 
   - name: allow firewall in slapos.cfg configuration
     lineinfile: dest=/etc/opt/slapos/slapos.cfg regexp="{{ item.regexp }}" line="{{ item.line }}" backup=yes backrefs=true
     with_items:
       - { regexp: '^\[.*firewall\]$', line: '[firewall]' }
-    when: post_config is defined and slapos_cfg.stat.exists == True and startup is not defined
+    when: slapos_cfg.stat.exists == True and startup is not defined
+
+  - name: Run slapos format for update configs
+    shell: "slapos node format -v --now"
+    when: slapos_cfg.stat.exists == True and startup is not defined
 
   - name: Insert kvm module
     modprobe: name=kvm state=present
-    when: post_config is defined
+
   - name: Insert kvm_intel module
     modprobe: name=kvm_intel state=present
-    when: post_config is defined
+
   - name: Insert vhost-net module
     modprobe: name=vhost-net state=present
-    when: post_config is defined
 
   - name: chmod 666 /dev/kvm
     file: path=/dev/kvm mode=0666
-    when: post_config is defined
+
   - name: chmod 666 /dev/vhost-net
     file: path=/dev/vhost-net mode=0666
-    when: post_config is defined
+
   - name: chmod 666 /dev/net/tun
     file: path=/dev/net/tun mode=0666
-    when: post_config is defined
 
-  - name: Run slapos format for update configs
-    shell: "slapos node format -v --now"  
-    when: post_config is defined and slapos_cfg.stat.exists == True and startup is not defined
+
