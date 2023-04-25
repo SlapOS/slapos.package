@@ -1,21 +1,43 @@
 #!/bin/bash
-if ip -6 a show dev enp0s31f6 | grep -q fe80; then
-  IFACE="enp0s31f6"
-elif ip -6 a show dev enp2s0 | grep -q fe80; then
-  IFACE="enp2s0"
-else
-  exit;
-fi
+IF_LIST=()
+RM_IF_LIST=()
 CONF="/etc/re6stnet/re6stnet.conf"
-sed -i '/^interface/d' $CONF
-# Don't run re6st with interface option at Lille Office
-if ping6 -q -c2 -w3 fe80::20d:b9ff:fe3f:9055%$IFACE; then
-  if ps -ax -o cmd | grep babeld | grep -q $IFACE; then
-    systemctl restart re6stnet;
+TMP="/tmp/re6stnet.conf.$(date +%s)"
+cd /sys/class/net;
+for IF in $(find . -type l -printf "%f\n"); do
+  # If interface is virtual
+  if ! realpath $(readlink $IF) | grep -q "^/sys/devices/virtual"; then
+    # If interface is up and has IPv6 neighbours
+    if [ "$(cat $IF/operstate)" = "up" ] && [ -n "$(ip -6 neigh list dev $IF)" ]; then
+      # Special case: interfaces connected to Lille office LAN should not have interface option enabled
+      if ! ping6 -q -c3 -w3 fe80::20d:b9ff:fe3f:9055%$IF; then
+        IF_LIST+=($IF);
+      else
+        RM_IF_LIST+=($IF);
+      fi
+    fi
   fi
-else
-  echo "interface $IFACE" >> $CONF
-  if ! ps -ax -o cmd | grep babeld | grep -q $IFACE; then
-    systemctl restart re6stnet;
+done
+cp $CONF $TMP;
+REPLACE=0
+# Check if configuration is correct
+for IF in "${IF_LIST[@]}"; do
+  if ! grep -q "^interface $IF" $TMP; then
+    REPLACE=1
   fi
+done
+for IF in "${RM_IF_LIST[@]}"; do
+  if grep -q "^interface $IF" $TMP; then
+    REPLACE=1
+  fi
+done
+# Reconfigure re6st if configuration not correct
+if (( $REPLACE )); then
+  sed -i '/^interface/d' $TMP
+  for IF in "${IF_LIST[@]}"; do
+    echo "interface $IF" >> $TMP
+  done
+  mv $TMP $CONF;
+  systemctl restart re6stnet
 fi
+rm -rf $TMP;

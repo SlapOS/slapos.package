@@ -43,6 +43,6 @@ with open('/opt/upgrader/configure-slapos.log', 'w+') as l:
         l.write("[configure-slapos] slapos.cfg not valid\n")
         # Delete slaptun devices
         for i in range(0,19):
-            subprocess.run(['ip', 'link', 'delete', 'slaptun'])
+            subprocess.run(['ip', 'link', 'delete', 'slaptun{}'.format(i)])
         subprocess.run(['rm', '-f', '/opt/slapos/slapos.xml'], check=True)
         subprocess.run(['slapos', 'node', 'format', '--now'], check=True, capture_output=True)
