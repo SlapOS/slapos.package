@@ -122,6 +122,46 @@
 
   - name: Copy keys for SR
     copy: src=/root/.amarisoft dest=/opt/amarisoft owner=root mode=644
+    ignore_errors: yes
 
   - name: Add kernel parameter
     script: configure-grub
+
+  - name: Disable DNS stub resolver
+    lineinfile: dest=/etc/systemd/resolved.conf regexp="(.*)DNSStubListener=(.*)" line="DNSStubListener=no" state=present
+    register: disable_dns_stub
+
+  - name: Create resolv symbolic link
+    file:
+      src: /run/systemd/resolve/resolv.conf
+      dest: /etc/resolv.conf
+      state: link
+      force: true
+    register: create_resolv_link
+
+  - name: Restart systemd-resolved.service if necessary
+    systemd: name=systemd-resolved.service enabled=yes state=restarted
+    when: (disable_dns_stub.changed) or (create_resolv_link.changed)
+
+  - name: Enable and start systemd-resolved.service
+    systemd: name=systemd-resolved.service enabled=yes state=started
+
+  - name: Redirect 53 to 5353
+    ansible.builtin.iptables:
+      chain: PREROUTING
+      table: nat
+      protocol: udp
+      match: udp
+      jump: DNAT
+      destination_port: 53
+      to_destination: ':5353'
+
+  - name: Redirect 5353 to 53
+    ansible.builtin.iptables:
+      chain: POSTROUTING
+      table: nat
+      protocol: udp
+      match: udp
+      jump: SNAT
+      source_port: 5353
+      to_source: ':53'
