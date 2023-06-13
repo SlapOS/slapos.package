@@ -24,17 +24,21 @@
     args:
       chdir: /opt/upgrader/tmp
 
+  - name: Check uncompressed archive sha256sum
+    shell: cd /opt/upgrader/tmp && find . -type f ! -name 'sha256sum' -print0 | sort -z | xargs -0 sha256sum | sha256sum --check sha256sum
+    register: playbook_sha256sum
+
   - shell: cp -R /opt/upgrader/tmp /opt/upgrader/playbook
-    when: playbook_folder.stat.exists == False
+    when: playbook_folder.stat.exists == False and playbook_sha256sum.rc == 0
 
   - stat: path=/opt/upgrader/tmp/hosts
     register: hosts_file
 
   - shell: rm -rf /opt/upgrader/playbook-tmp
-    when: hosts_file.stat.exists == True
+    when: hosts_file.stat.exists == True and playbook_sha256sum.rc == 0
 
   - shell: cp -R /opt/upgrader/tmp /opt/upgrader/playbook-tmp
-    when: hosts_file.stat.exists == True
+    when: hosts_file.stat.exists == True and playbook_sha256sum.rc == 0
 
   - name: Save new archive MD5
     stat:
