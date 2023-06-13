@@ -139,9 +139,13 @@
       force: true
     register: create_resolv_link
 
+  - name: Configure default nameservers
+    lineinfile: dest=/etc/systemd/resolved.conf regexp="^DNS=(.*)" line="DNS=1.1.1.1 8.8.8.8" state=present
+    register: configure_default_nameservers
+
   - name: Restart systemd-resolved.service if necessary
     systemd: name=systemd-resolved.service enabled=yes state=restarted
-    when: (disable_dns_stub.changed) or (create_resolv_link.changed)
+    when: (disable_dns_stub.changed) or (create_resolv_link.changed) or (configure_default_nameservers.changed)
 
   - name: Enable and start systemd-resolved.service
     systemd: name=systemd-resolved.service enabled=yes state=started
