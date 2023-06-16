@@ -3,5 +3,5 @@ conf=${1:-/etc/opt/slapcache.cfg}
 conf=$(realpath $conf)
 
 cd $playbook_dir
-find . -type f ! -name 'sha256sum' -print0 | sort -z | xargs -0 sha256sum | sha256sum > sha256sum
+find . -type f ! -name 'sha256sum' -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum > sha256sum
 rm -f /tmp/archive.tar.gz && tar -czvf /tmp/archive.tar.gz . && slapcache-upload --file=/tmp/archive.tar.gz --slapos-configuration=$conf

@@ -25,7 +25,7 @@
       chdir: /opt/upgrader/tmp
 
   - name: Check uncompressed archive sha256sum
-    shell: cd /opt/upgrader/tmp && find . -type f ! -name 'sha256sum' -print0 | sort -z | xargs -0 sha256sum | sha256sum --check sha256sum
+    shell: cd /opt/upgrader/tmp && find . -type f ! -name 'sha256sum' -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum --check sha256sum
     register: playbook_sha256sum
 
   - shell: cp -R /opt/upgrader/tmp /opt/upgrader/playbook
