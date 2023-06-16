@@ -2,3 +2,4 @@
 dependencies:
   - { role: slapcache }
   - { role: package, package_name: util-linux, package_state: present  }
+  - { role: package, package_name: coreutils, package_state: present  }
