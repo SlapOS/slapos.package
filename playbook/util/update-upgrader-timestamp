@@ -1,1 +1,2 @@
+cd $(dirname $(realpath $0))/..
 sed -i "s/upgrade_after:.*/upgrade_after: `date +%s`/g" settings/upgrader.yml 
