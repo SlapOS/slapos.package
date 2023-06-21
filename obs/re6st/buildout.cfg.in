@@ -46,7 +46,14 @@ environment +=
 [openssl]
 shared = false
 prefix = %(TARGET)s/parts/${:_buildout_section_name_}
-make-install-extra = DESTDIR=%(ROOT)s
+make-options +=
+  INSTALL_PREFIX=%(ROOT)s
+  DESTDIR=%(ROOT)s
+
+[curl]
+environment =
+  PATH=${perl:location}/bin:${xz-utils:location}/bin:%%(PATH)s
+  LDFLAGS=-Wl,-rpath=${zlib:location}/lib -Wl,-rpath=${:OPENSSL}/lib -Wl,-rpath=${nghttp2:location}/lib -Wl,-rpath=${zstd:location}/lib ${:LDFLAGS}
 
 [file]
 # For old GCC like 4.8.5 on SLE 12 SP5.

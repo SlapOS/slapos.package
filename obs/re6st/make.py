@@ -186,10 +186,8 @@ def tarball(task):
         t.add("re6stnet/daemon")
         for x in upstream.outputs:
             t.add(x)
-        def tar_filter(info):
-            return None if info.name.endswith('/.git') else info
         for x in BUILD_KEEP:
-            t.add(BUILD + "/" + x, filter=tar_filter)
+            t.add(BUILD + "/" + x)
 
 @task(sdist, "debian/changelog")
 def dch(task):
