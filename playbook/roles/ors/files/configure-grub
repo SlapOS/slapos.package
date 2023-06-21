@@ -1,10 +1,13 @@
 #!/bin/bash
 CONF="/etc/default/grub"
 BAK="/tmp/default.grub"
+N_CORE="$(($(lscpu | sed -n 's/^Core.*: *\([0-9]*\)/\1/gp') * $(lscpu | sed -n 's/^Socket.*: *\([0-9]*\)/\1/gp')))"
 cp $CONF $BAK;
-if ! grep -q idle=halt /proc/cmdline; then
+if ! (grep -q idle=halt /proc/cmdline && grep -q "maxcpus=$N_CORE" /proc/cmdline); then
   sed -i 's/^\(GRUB_CMDLINE_LINUX_DEFAULT.*\)idle=[a-z]* *\(.*\)/\1\2/g' $CONF;
   sed -i 's/^\(GRUB_CMDLINE_LINUX_DEFAULT.*\)"/\1 idle=halt"/g' $CONF;
+  sed -i 's/^\(GRUB_CMDLINE_LINUX_DEFAULT.*\)maxcpus=[0-9]* *\(.*\)/\1\2/g' $CONF;
+  sed -i 's/^\(GRUB_CMDLINE_LINUX_DEFAULT.*\)"/\1 maxcpus='"$N_CORE"'"/g' $CONF;
   if ! update-grub; then
     cp $BAK $CONF;
     update-grub;
