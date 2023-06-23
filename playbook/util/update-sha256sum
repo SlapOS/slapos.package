@@ -1,3 +1,4 @@
 playbook_dir="$(dirname $(realpath $0))/.."
 cd $playbook_dir
+git ls-files . --ignored --exclude-standard --others | grep . && (echo "Please remove all untracked and ignored files before computing sha256sum"; exit 1)
 find . -type f ! -name 'sha256sum' -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum > sha256sum
