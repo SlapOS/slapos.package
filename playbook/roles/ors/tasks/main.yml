@@ -56,14 +56,6 @@
     copy: src=init-enb dest=/opt/amarisoft owner=root mode=770
     when: opt_amarisoft.stat.exists
 
-  - name: Init SDR
-    script: "/opt/amarisoft/init-sdr"
-    when: opt_amarisoft.stat.exists
-
-  - name: Init eNB
-    script: "/opt/amarisoft/init-enb"
-    when: opt_amarisoft.stat.exists
-
   - name: Check if Service Exists
     stat: path=/etc/init.d/init-sdr
     register: init_sdr_service
