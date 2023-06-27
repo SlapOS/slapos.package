@@ -1,0 +1,15 @@
+#!/bin/bash
+COMMAND_LIST=("rm-tmp-lte" "init-enb" "init-sdr" "get-sdr-info")
+PARTITION_AMOUNT="$(sed -n 's/partition_amount = \(.*\)/\1/gp' /etc/opt/slapos/slapos.cfg)"
+for c in "${COMMAND_LIST[@]}"; do
+  SLAPUSER_LINES="$(cat /etc/sudoers.d/slapuser-$c 2> /dev/null | wc -l)"
+  if [ "$SLAPUSER_LINES" != "$PARTITION_AMOUNT" ]; then
+    echo "Configuring /etc/sudoers.d/slapuser-$c..."
+    for i in $(seq 0 $(($PARTITION_AMOUNT-1))); do
+      echo "slapuser$i ALL=NOPASSWD:/opt/amarisoft/$c" >> slapuser-$c
+    done
+    mv slapuser-$c /etc/sudoers.d/
+    chmod 440 /etc/sudoers.d/slapuser-$c
+  fi
+done
+exit
