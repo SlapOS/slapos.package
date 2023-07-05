@@ -20,7 +20,8 @@ git-executable =
 location = ${buildout:directory}/babeld
 
 [babeld]
-post-install = make clean
+post-install = make clean; make version.h
+environment =
 
 [python-bootstrap]
 recipe = zc.recipe.egg
