@@ -115,6 +115,9 @@
   - name: Add kernel parameter
     script: configure-grub
 
+  - name: Disable dnsmasq service
+    systemd: name=dnsmasq.service enabled=no state=stopped
+
   - name: Disable DNS stub resolver
     lineinfile: dest=/etc/systemd/resolved.conf regexp="(.*)DNSStubListener=(.*)" line="DNSStubListener=no" state=present
     register: disable_dns_stub
