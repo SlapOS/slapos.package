@@ -140,8 +140,6 @@ case "$ORS" in
   69)
     TDD="TDD";BAND="B39";VERSION="3.4";ISERIAL="B3";;
   70)
-    TDD="UNKNOWN";BAND="UNKNOWN";VERSION="UNKNOWN";ISERIAL="UNKNOWN";;
-  700)
     TDD="TDD";BAND="B39";VERSION="3.4";ISERIAL="B0";;
   71)
     TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B77";;
@@ -214,7 +212,7 @@ esac
 if [[ "$TDD" == "UNKNOWN" ]]; then
   IPRODUCT="$(lsusb -d 0403:6014 -v 2> /dev/null |sed -n 's/^  iProduct.*ORS \(.*\)$/\1/gp')"
   ISERIAL="$(lsusb -d 0403:6014 -v 2> /dev/null |sed -n 's/^  iSerial *[0-9]* \(.*\)$/\1/gp')"
-  test -z "$IPRODUCT" && IPRODUCT="TDDUNKNOWN v3.2";
+  test -z "$IPRODUCT" && IPRODUCT="TDDUNKNOWN 3.2";
   test -z "$ISERIAL" && ISERIAL="UNKNOWN";
   TDD="${IPRODUCT[@]:0:3}"
   IPRODUCT="${IPRODUCT[@]:3}"
