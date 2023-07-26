@@ -5,14 +5,10 @@
   vars:
     - re6st_annon: False
     - computer_name: noname
-    - re6st_fingerprint: nofingerprint
+    - re6st_fingerprint: "sha256:3dfbc7a2daaa34214c92e52d45edf6056aa9cb4ad3b498f255f51609c1302de3"
+    - re6st_registry_url: "https://re6st-registry.nxdcdn.com/"
 
   vars_prompt:
-    - name: "re6st_registry_url"
-      prompt: "What is the url to the Re6st registry?"
-      private: no
-      default: "https://re6st-registry.nxdcdn.com/"
-
     - name: "location"
       prompt: 'Manually enter your location (ignore if you want it detected automatically, format is "country code,continent code", e.g. "FR,EU")'
       private: no
