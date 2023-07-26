@@ -11,7 +11,7 @@
     - name: "re6st_registry_url"
       prompt: "What is the url to the Re6st registry?"
       private: no
-      default: "http://re6stnet.nexedi.com/"
+      default: "https://re6st-registry.nxdcdn.com/"
 
     - name: "location"
       prompt: 'Manually enter your location (ignore if you want it detected automatically, format is "country code,continent code", e.g. "FR,EU")'
