@@ -1,6 +1,6 @@
 ---
-re6st_registry_url: http://re6stnet.nexedi.com/
-re6st_fingerprint: sha256:73e364f2b7ab19335932dfc6514eab518b06a6b5d9b48dea5bcd61cf874becfc
+re6st_registry_url: https://re6st-registry.nxdcdn.com/
+re6st_fingerprint: sha256:3dfbc7a2daaa34214c92e52d45edf6056aa9cb4ad3b498f255f51609c1302de3
 slapos_master_url: https://slap.vifib.com/
 slapos_web_master_url: https://panel.rapid.space/
 partition_number: 10
