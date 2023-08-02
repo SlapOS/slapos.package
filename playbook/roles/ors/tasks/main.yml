@@ -11,15 +11,6 @@
     cron: name="Launch Upgrader with ansible" state=absent
     when: ors_upgrade_cron.rc == 0
 
-  - name: Check if vifib playbook is installed
-    shell: 'crontab -l | grep -A1 "#Ansible: Launch Upgrader with ansible" | grep -v ors-upgrade | grep -q "^*/10.*upgrader"'
-    ignore_errors: yes
-    register: vifib_cron
-
-  - name: Install vifib-base playbook
-    shell: ansible-playbook vifib-base.yml --extra-vars '{"period_minute":"*/10", "period_hour":"*"}'
-    when: vifib_cron.rc != 0
-  
   - name: Remove old cron
     cron: name="Launch ors playbook every 3 hours" state=absent
 
