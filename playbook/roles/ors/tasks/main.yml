@@ -130,6 +130,7 @@
 
   - name: Disable dnsmasq service
     systemd: name=dnsmasq.service enabled=no state=stopped
+    ignore_errors: yes
 
   - name: Disable DNS stub resolver
     lineinfile: dest=/etc/systemd/resolved.conf regexp="(.*)DNSStubListener=(.*)" line="DNSStubListener=no" state=present
