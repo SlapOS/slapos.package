@@ -1,2 +1,3 @@
 ---
 install_folder: "/opt/amarisoft"
+launch_upgrader: True
