@@ -38,6 +38,7 @@
 
   - name: Set Cron
     cron: name="Launch Startup with ansible" special_time=reboot job='flock /opt/upgrader/ansible.lock -c "cd /opt/upgrader/playbook && ansible-playbook vifib-startup.yml -i hosts 2>>/opt/upgrader/startup.log >> /opt/upgrader/startup.log"'
+    when: repeat_until_success | bool == False
 
   - name: Get systemd version
     shell: systemd --version | head -n 1 | cut -d " " -f 2
