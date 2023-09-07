@@ -5,9 +5,6 @@
   vars:
     - upgrader_playbook: vifib-upgrade.yml
 
-  vars_files:
-    - settings/upgrader.yml
-
   roles:
     - upgrader
 

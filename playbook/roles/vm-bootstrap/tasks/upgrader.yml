@@ -30,8 +30,8 @@
 
   - name: Copy slapos.playbook
     unarchive: src=/opt/upgrader/archive.tar.gz dest=/opt/slapos.playbook
-    when: (upgrade_after|int > lookup('file', '/opt/upgrader/last-upgrade')|int ) and (lookup('file', '/opt/upgrader/next-upgrade-signature') != lookup('file', '/opt/upgrader/current-upgrade-signature'))
+    when: (lookup('file', '/opt/upgrader/playbook-tmp/upgrade_after')|int > lookup('file', '/opt/upgrader/last-upgrade')|int ) and (lookup('file', '/opt/upgrader/next-upgrade-signature') != lookup('file', '/opt/upgrader/current-upgrade-signature'))
 
   - name: Upgrade Current Upgrade Signature
     shell: echo /opt/upgrader/next-upgrade-signature > /opt/upgrader/current-upgrade-signature && echo {{ ansible_date_time.epoch }} > /opt/upgrader/last-upgrade
-    when: (upgrade_after|int > lookup('file', '/opt/upgrader/last-upgrade')|int )
+    when: (lookup('file', '/opt/upgrader/playbook-tmp/upgrade_after')|int > lookup('file', '/opt/upgrader/last-upgrade')|int )

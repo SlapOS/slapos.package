@@ -3,6 +3,8 @@
   connection: local
 
   vars_files:
+    - settings/vifib.yml
+    - settings/slapos-master.yml
     - settings/ors.yml
 
   roles:
