@@ -1,2 +1,4 @@
 ---
 install_folder: "/opt/amarisoft"
+amarisoft_version: "2023-06-10"
+launch_upgrader: True

@@ -2,7 +2,15 @@
   hosts: 127.0.0.1
   connection: local
 
+  vars:
+    - upgrader_playbook: vifib-upgrade.yml
+    - extra_playbook: ors.yml
+    - repeat_until_success: True
+
   vars_files:
+    - settings/vifib.yml
+    - settings/upgrader.yml
+    - settings/slapos-master.yml
     - settings/ors.yml
 
   roles:
