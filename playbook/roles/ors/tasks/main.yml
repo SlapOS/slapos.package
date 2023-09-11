@@ -95,8 +95,17 @@
 
 # Network
 
-  - name: Configure /etc/network/interfaces
-    copy: src=interfaces dest=/etc/network/interfaces owner=root mode=644
+  - name: Configure /etc/systemd/network/dhcp.network
+    copy: src=systemd-dhcp-network dest=/etc/systemd/network/dhcp.network owner=root mode=644
+
+  - name: Create a directory if it does not exist
+    file: path=/etc/systemd/system/systemd-networkd-wait-online.service.d state=directory mode=0755
+
+  - name: Configure /etc/systemd/system/systemd-networkd-wait-online.service.d/override.conf
+    copy: src=systemd-wait-online-override dest=/etc/systemd/system/systemd-networkd-wait-online.service.d/override.conf owner=root mode=644
+
+  - name: Enable and start systemd-networkd
+    systemd: name=systemd-networkd.service enabled=yes state=started
 
   - name: Configure dhcp timeout
     lineinfile: dest=/etc/dhcp/dhclient.conf regexp="^timeout (.*)" line="timeout 15" state=present
