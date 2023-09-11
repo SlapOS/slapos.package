@@ -1,6 +1,6 @@
 ---
 
-# Delete ors-upgrade.yml cron which is replaced by ors.yml
+# Legacy
 
   - name: Remove obsolete cron
     cron: name="Launch Upgrader with ansible" state=absent
@@ -17,8 +17,24 @@
   - name: Remove obsolete cron
     cron: name="Launch ors playbook every 3 hours" state=absent
 
-  - name: Enable and start cron.service
-    systemd: name=cron.service enabled=yes state=started
+  - name: Check if Service Exists
+    stat: path=/etc/init.d/init-sdr
+    register: init_sdr_service
+
+  - name: Reload daemon
+    systemd: daemon_reload=yes
+    when: init_sdr_service.stat.exists
+
+  - name: Disable old init-sdr service
+    systemd: name=init-sdr enabled=no
+    when: init_sdr_service.stat.exists
+
+# Radio Hardware
+
+  - name: Copy get-sdr-info script
+    copy: src=get-sdr-info dest=/opt/amarisoft owner=root mode=770
+
+# Amarisoft software
 
   - name: Create a directory if it does not exist
     file: path=/opt/amarisoft state=directory mode=0755
@@ -31,21 +47,6 @@
 
   - name: Copy rm-tmp-lte script
     copy: src=rm-tmp-lte dest=/opt/amarisoft owner=root mode=770
-
-  - name: Copy get-sdr-info script
-    copy: src=get-sdr-info dest=/opt/amarisoft owner=root mode=770
-
-  - name: Check if Service Exists
-    stat: path=/etc/init.d/init-sdr
-    register: init_sdr_service
-
-  - name: Reload daemon
-    systemd: daemon_reload=yes
-    when: init_sdr_service.stat.exists
-
-  - name: Disable old init-sdr service
-    systemd: name=init-sdr enabled=no
-    when: init_sdr_service.stat.exists
 
   - name: Get Amarisoft path
     shell: 'find /opt/amarisoft -maxdepth 1 | grep "^/opt/amarisoft/v[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}$" | sort | tail -n1'
@@ -69,30 +70,6 @@
     shell: 'patchelf --set-rpath {{ amarisoft_path.stdout }}/enb {{ amarisoft_path.stdout }}/enb/lteenb-avx2 && setcap cap_sys_nice=+pe {{ amarisoft_path.stdout }}/enb/lteenb-avx2'
     when: lteenb_avx2_cap.rc != 0
 
-  - name: Configure re6st
-    script: configure-re6st
-
-  - name: Configure /etc/network/interfaces
-    copy: src=interfaces dest=/etc/network/interfaces owner=root mode=644
-
-  - name: Configure dhcp timeout
-    lineinfile: dest=/etc/dhcp/dhclient.conf regexp="^timeout (.*)" line="timeout 15" state=present
-
-  - name: Configure journald log size
-    lineinfile: dest=/etc/systemd/journald.conf regexp="^SystemMaxUse=(.*)" line="SystemMaxUse=1G" state=present
-
-  - name: Configure ssh
-    lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin (.*)" line="PermitRootLogin yes" state=present
-
-  - name: Configure ssh
-    lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication (.*)" line="PasswordAuthentication yes" state=present
-
-  - name: Configure slapos
-    script: configure-slapos.py
-
-  - name: Configure sudoers
-    script: configure-sudoers
-
   - name: Create .amarisoft directory for SR
     file: path=/opt/amarisoft/.amarisoft state=directory
 
@@ -100,8 +77,29 @@
     copy: src=/root/.amarisoft dest=/opt/amarisoft owner=root mode=644
     ignore_errors: yes
 
-  - name: Add kernel parameter
-    script: configure-grub
+  - name: Configure sudoers
+    script: configure-sudoers
+
+# Re6st
+
+  - name: Configure re6st
+    script: configure-re6st
+
+# Slapos
+
+  - name: Enable and start cron.service
+    systemd: name=cron.service enabled=yes state=started
+
+  - name: Configure slapos
+    script: configure-slapos.py
+
+# Network
+
+  - name: Configure /etc/network/interfaces
+    copy: src=interfaces dest=/etc/network/interfaces owner=root mode=644
+
+  - name: Configure dhcp timeout
+    lineinfile: dest=/etc/dhcp/dhclient.conf regexp="^timeout (.*)" line="timeout 15" state=present
 
   - name: Disable dnsmasq service
     systemd: name=dnsmasq.service enabled=no state=stopped
@@ -148,6 +146,24 @@
       jump: SNAT
       source_port: 5353
       to_source: ':53'
+
+# System
+
+  - name: Configure journald log size
+    lineinfile: dest=/etc/systemd/journald.conf regexp="^SystemMaxUse=(.*)" line="SystemMaxUse=1G" state=present
+
+  - name: Add kernel parameter
+    script: configure-grub
+
+# SSH
+
+  - name: Configure ssh
+    lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin (.*)" line="PermitRootLogin yes" state=present
+
+  - name: Configure ssh
+    lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication (.*)" line="PasswordAuthentication yes" state=present
+
+# Schedule and upgrade playbook
 
   - name: Install upgrader
     shell: ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }}' -i hosts 2>>/opt/upgrader/latest_daily_upgrade.log >> /opt/upgrader/latest_daily_upgrade.log
