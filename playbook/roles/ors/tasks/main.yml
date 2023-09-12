@@ -1,5 +1,8 @@
 ---
 
+  - name: Create /opt/upgrader where some logs will be stored
+    file: path=/opt/upgrader state=directory mode=0755
+
 # Legacy
 
   - name: Remove obsolete cron
