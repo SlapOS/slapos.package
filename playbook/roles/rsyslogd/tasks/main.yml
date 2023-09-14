@@ -1,4 +1,5 @@
 ---
   - name: Make rsyslogd listen on localhost
     lineinfile: line="*.* @127.0.0.1:42185" dest=/etc/rsyslog.conf
+    when: ansible_os_family != "Debian" or ansible_distribution_major_version|int < 12
     notify: [ 'Restart rsyslogd' ]
