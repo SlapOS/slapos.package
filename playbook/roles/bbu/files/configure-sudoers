@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir -p /etc/sudoers.d
 COMMAND_LIST=("rm-tmp-lte" "init-enb" "init-sdr" "get-sdr-info")
 PARTITION_AMOUNT="$(sed -n 's/partition_amount = \(.*\)/\1/gp' /etc/opt/slapos/slapos.cfg)"
 for c in "${COMMAND_LIST[@]}"; do
