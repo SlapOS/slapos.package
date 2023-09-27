@@ -105,7 +105,7 @@
       protocol: udp
       match: udp
       jump: DNAT
-      destination_port: 53
+      destination_port: '53'
       to_destination: ':5353'
 
   - name: Redirect 5353 to 53
@@ -115,7 +115,7 @@
       protocol: udp
       match: udp
       jump: SNAT
-      source_port: 5353
+      source_port: '5353'
       to_source: ':53'
 
 # System
