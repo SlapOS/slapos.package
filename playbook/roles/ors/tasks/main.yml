@@ -3,34 +3,25 @@
   - name: Create /opt/upgrader where some logs will be stored
     file: path=/opt/upgrader state=directory mode=0755
 
-# Legacy
+# SSD image backports
 
-  - name: Remove obsolete cron
-    cron: name="Launch Upgrader with ansible" state=absent
+  - stat: path=/opt/upgrader/last-backport
+    register: last_backport
 
-  - name: Remove obsolete cron
-    cron: name="Launch Startup with ansible" state=absent
+  - stat: path=/opt/upgrader/playbook-tmp/ors_backport_after
+    register: ors_backport_after
 
-  - name: Remove obsolete cron
-    cron: name="Launch ors playbook periodically" state=absent
+  - shell: echo 1 > /opt/upgrader/last-backport
+    when: last_backport.stat.exists == False
 
-  - name: Remove obsolete cron
-    cron: name="Launch ors playbook at reboot" state=absent
+  - name: Do ors backport
+    shell: ansible-playbook ors-image-backports.yml -i hosts 2>>/opt/upgrader/ors_backport.log  >> /opt/upgrader/ors_backport.log
+    when: (ors_backport_after.stat.exists == True) and (lookup('file', '/opt/upgrader/playbook-tmp/ors_backport_after')|int > lookup('file', '/opt/upgrader/last-backport')|int )
+    args:
+      chdir: /opt/upgrader/playbook-tmp/
 
-  - name: Remove obsolete cron
-    cron: name="Launch ors playbook every 3 hours" state=absent
-
-  - name: Check if Service Exists
-    stat: path=/etc/init.d/init-sdr
-    register: init_sdr_service
-
-  - name: Reload daemon
-    systemd: daemon_reload=yes
-    when: init_sdr_service.stat.exists
-
-  - name: Disable old init-sdr service
-    systemd: name=init-sdr enabled=no
-    when: init_sdr_service.stat.exists
+  - shell: echo {{ ansible_date_time.epoch }} > /opt/upgrader/last-backport
+    when: (ors_backport_after.stat.exists == True) and (lookup('file', '/opt/upgrader/playbook-tmp/ors_backport_after')|int > lookup('file', '/opt/upgrader/last-backport')|int )
 
 # Radio Hardware
 
@@ -101,59 +92,11 @@
   - name: Configure firewall
     script: configure-firewall
 
-  - name: Configure /etc/systemd/network/dhcp.network
-    copy: src=systemd-dhcp-network dest=/etc/systemd/network/dhcp.network owner=root mode=644
-
-  - name: Create a directory if it does not exist
-    file: path=/etc/systemd/system/systemd-networkd-wait-online.service.d state=directory mode=0755
-
-  - name: Configure /etc/systemd/system/systemd-networkd-wait-online.service.d/override.conf
-    copy: src=systemd-wait-online-override dest=/etc/systemd/system/systemd-networkd-wait-online.service.d/override.conf owner=root mode=644
-
-  - name: Enable and stop systemd-networkd
-    systemd: name=systemd-networkd.service enabled=yes state=stopped
-
-  - name: Remove ifupdown
-    shell: 'DEBIAN_FRONTEND="noninteractive" apt remove --purge -y ifupdown'
-
-  - name: Start systemd-networkd
-    systemd: name=systemd-networkd.service enabled=yes state=started
-
-  - name: Configure dhcp timeout
-    lineinfile: dest=/etc/dhcp/dhclient.conf regexp="^timeout (.*)" line="timeout 15" state=present
-
   - name: Configure IPv4 forwarding
     lineinfile: dest=/etc/sysctl.conf regexp="^net.ipv4.conf.all.forwarding=(.*)" line="net.ipv4.conf.all.forwarding=1" state=present
 
   - name: Configure IPv6 forwarding
     lineinfile: dest=/etc/sysctl.conf regexp="^net.ipv6.conf.all.forwarding=(.*)" line="net.ipv6.conf.all.forwarding=1" state=present
-
-  - name: Disable dnsmasq service
-    systemd: name=dnsmasq.service enabled=no state=stopped
-    ignore_errors: yes
-
-  - name: Disable DNS stub resolver
-    lineinfile: dest=/etc/systemd/resolved.conf regexp="(.*)DNSStubListener=(.*)" line="DNSStubListener=no" state=present
-    register: disable_dns_stub
-
-  - name: Create resolv symbolic link
-    file:
-      src: /run/systemd/resolve/resolv.conf
-      dest: /etc/resolv.conf
-      state: link
-      force: true
-    register: create_resolv_link
-
-  - name: Configure default nameservers
-    lineinfile: dest=/etc/systemd/resolved.conf regexp="^DNS=(.*)" line="DNS=1.1.1.1 8.8.8.8" state=present
-    register: configure_default_nameservers
-
-  - name: Restart systemd-resolved.service if necessary
-    systemd: name=systemd-resolved.service enabled=yes state=restarted
-    when: (disable_dns_stub.changed) or (create_resolv_link.changed) or (configure_default_nameservers.changed)
-
-  - name: Enable and start systemd-resolved.service
-    systemd: name=systemd-resolved.service enabled=yes state=started
 
   - name: Redirect 53 to 5353
     ansible.builtin.iptables:

@@ -62,6 +62,8 @@
   - name: Enable and stop systemd-networkd
     systemd: name=systemd-networkd.service enabled=yes state=stopped
 
+## Don't use role repository because package needs to be removed after installing systemd-networkd
+
   - name: Remove ifupdown
     shell: 'DEBIAN_FRONTEND="noninteractive" apt remove --purge -y ifupdown'
 
