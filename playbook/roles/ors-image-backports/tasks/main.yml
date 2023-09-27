@@ -27,6 +27,22 @@
     systemd: name=init-sdr enabled=no
     when: init_sdr_service.stat.exists
 
+  - name: Fix apt
+    shell: 'DEBIAN_FRONTEND=noninteractive apt install -y'
+    ignore_errors: yes
+    register: apt_install
+
+  - name: Get SSD disk path
+    shell: "debconf-show grub-efi-amd64 | grep install_devices_disks_changed | awk '{ print $NF }'"
+    ignore_errors: yes
+    register: ssd_disk
+    when: apt_install.rc != 0
+
+  - name: Fix grub install
+    shell: "echo 'grub-efi grub-efi/install_devices string {{ ssd_disk.stdout }}' | debconf-set-selections && DEBIAN_FRONTEND=noninteractive apt install -y"
+    when: ssd_disk.rc == 0 and apt_install.rc != 0
+    ignore_errors: yes
+
 # Configure systemd-networkd 
 
   - name: Configure /etc/systemd/network/dhcp.network
