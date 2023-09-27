@@ -4,7 +4,7 @@
 
   vars:
     - upgrader_playbook: vifib-upgrade.yml
-    - extra_playbook: ors.yml
+    - extra_playbook: bbu.yml
     - repeat_until_success: True
 
   vars_files:
@@ -14,4 +14,3 @@
 
   roles:
     - bbu
-    - ors-image-backports

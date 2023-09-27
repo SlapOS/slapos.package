@@ -3,35 +3,6 @@
   - name: Create /opt/upgrader where some logs will be stored
     file: path=/opt/upgrader state=directory mode=0755
 
-# Legacy
-
-  - name: Remove obsolete cron
-    cron: name="Launch Upgrader with ansible" state=absent
-
-  - name: Remove obsolete cron
-    cron: name="Launch Startup with ansible" state=absent
-
-  - name: Remove obsolete cron
-    cron: name="Launch ors playbook periodically" state=absent
-
-  - name: Remove obsolete cron
-    cron: name="Launch ors playbook at reboot" state=absent
-
-  - name: Remove obsolete cron
-    cron: name="Launch ors playbook every 3 hours" state=absent
-
-  - name: Check if Service Exists
-    stat: path=/etc/init.d/init-sdr
-    register: init_sdr_service
-
-  - name: Reload daemon
-    systemd: daemon_reload=yes
-    when: init_sdr_service.stat.exists
-
-  - name: Disable old init-sdr service
-    systemd: name=init-sdr enabled=no
-    when: init_sdr_service.stat.exists
-
 # Radio Hardware
 
   - name: Copy get-sdr-info script
@@ -101,53 +72,11 @@
   - name: Configure firewall
     script: configure-firewall
 
-  - name: Configure /etc/systemd/network/dhcp.network
-    copy: src=systemd-dhcp-network dest=/etc/systemd/network/dhcp.network owner=root mode=644
-
-  - name: Create a directory if it does not exist
-    file: path=/etc/systemd/system/systemd-networkd-wait-online.service.d state=directory mode=0755
-
-  - name: Configure /etc/systemd/system/systemd-networkd-wait-online.service.d/override.conf
-    copy: src=systemd-wait-online-override dest=/etc/systemd/system/systemd-networkd-wait-online.service.d/override.conf owner=root mode=644
-
-  - name: Enable and start systemd-networkd
-    systemd: name=systemd-networkd.service enabled=yes state=started
-
-  - name: Configure dhcp timeout
-    lineinfile: dest=/etc/dhcp/dhclient.conf regexp="^timeout (.*)" line="timeout 15" state=present
-
   - name: Configure IPv4 forwarding
     lineinfile: dest=/etc/sysctl.conf regexp="^net.ipv4.conf.all.forwarding=(.*)" line="net.ipv4.conf.all.forwarding=1" state=present
 
   - name: Configure IPv6 forwarding
     lineinfile: dest=/etc/sysctl.conf regexp="^net.ipv6.conf.all.forwarding=(.*)" line="net.ipv6.conf.all.forwarding=1" state=present
-
-  - name: Disable dnsmasq service
-    systemd: name=dnsmasq.service enabled=no state=stopped
-    ignore_errors: yes
-
-  - name: Disable DNS stub resolver
-    lineinfile: dest=/etc/systemd/resolved.conf regexp="(.*)DNSStubListener=(.*)" line="DNSStubListener=no" state=present
-    register: disable_dns_stub
-
-  - name: Create resolv symbolic link
-    file:
-      src: /run/systemd/resolve/resolv.conf
-      dest: /etc/resolv.conf
-      state: link
-      force: true
-    register: create_resolv_link
-
-  - name: Configure default nameservers
-    lineinfile: dest=/etc/systemd/resolved.conf regexp="^DNS=(.*)" line="DNS=1.1.1.1 8.8.8.8" state=present
-    register: configure_default_nameservers
-
-  - name: Restart systemd-resolved.service if necessary
-    systemd: name=systemd-resolved.service enabled=yes state=restarted
-    when: (disable_dns_stub.changed) or (create_resolv_link.changed) or (configure_default_nameservers.changed)
-
-  - name: Enable and start systemd-resolved.service
-    systemd: name=systemd-resolved.service enabled=yes state=started
 
   - name: Redirect 53 to 5353
     ansible.builtin.iptables:
