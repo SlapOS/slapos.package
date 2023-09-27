@@ -1,0 +1,3 @@
+---
+dependencies:
+  - { role: package, package_name: ifupdown, package_state: absent  }
