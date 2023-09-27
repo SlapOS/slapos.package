@@ -95,6 +95,9 @@
 
 # Network
 
+  - name: Configure firewall
+    script: configure-firewall
+
   - name: Configure /etc/systemd/network/dhcp.network
     copy: src=systemd-dhcp-network dest=/etc/systemd/network/dhcp.network owner=root mode=644
 
@@ -109,6 +112,12 @@
 
   - name: Configure dhcp timeout
     lineinfile: dest=/etc/dhcp/dhclient.conf regexp="^timeout (.*)" line="timeout 15" state=present
+
+  - name: Configure IPv4 forwarding
+    lineinfile: dest=/etc/sysctl.conf regexp="^net.ipv4.conf.all.forwarding=(.*)" line="net.ipv4.conf.all.forwarding=1" state=present
+
+  - name: Configure IPv6 forwarding
+    lineinfile: dest=/etc/sysctl.conf regexp="^net.ipv6.conf.all.forwarding=(.*)" line="net.ipv6.conf.all.forwarding=1" state=present
 
   - name: Disable dnsmasq service
     systemd: name=dnsmasq.service enabled=no state=stopped
