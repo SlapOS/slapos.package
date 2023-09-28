@@ -3,5 +3,6 @@ dependencies:
   - { role: package, package_name: anacron, package_state: present  }
   - { role: package, package_name: patchelf, package_state: present  }
   - { role: package, package_name: util-linux, package_state: present  }
-  - { role: package, package_name: grub-efi-amd64-signed, package_state: present  }
   - { role: package, package_name: iptables-persistent, package_state: present  }
+  - { role: package, package_name: iptables, package_state: present  }
+  - { role: package, package_name: curl, package_state: present  }
