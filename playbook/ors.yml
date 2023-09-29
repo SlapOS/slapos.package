@@ -6,6 +6,7 @@
     - upgrader_playbook: vifib-upgrade.yml
     - extra_playbook: ors.yml
     - repeat_until_success: True
+    - playbook_report: True
 
   vars_files:
     - settings/vifib.yml
