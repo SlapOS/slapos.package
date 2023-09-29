@@ -1,0 +1,8 @@
+{"time": "{{ ansible_date_time['date'] }} {{ ansible_date_time['time'] }}", "log_level": "INFO", "message": "{{ playbook_report_message }}", "progress": "{{ playbook_report_progress }}"
+{%- if 'registry_url' in data -%}
+, "registry_url": "{{ data['registry_url'] }}"
+{%- endif -%}
+{%- if 'amarisoft_version' in data -%}
+, "amarisoft_version": "{{ data['amarisoft_version'] }}"
+{%- endif -%}
+}
