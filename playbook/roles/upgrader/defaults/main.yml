@@ -2,3 +2,4 @@ period_minute: '0'
 period_hour: '*/3'
 extra_playbook: ''
 repeat_until_success: False
+playbook_report: False
