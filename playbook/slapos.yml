@@ -18,27 +18,20 @@
       private: no
       default: "noname"
 
-  pre_tasks:
-    - pause:
-        prompt: "Input your slapos token (ignore if you already have a configured slapos) [notoken]"
-      when: computer_name != "noname"
-      register: prompt
-    - set_fact:
-        slapostoken: "{{ prompt.user_input | default('notoken', true) }}"
+    - name: "slapostoken"
+      prompt: "Input your slapos token (ignore if you already have a configured slapos) [notoken]:"
+      private: yes
+      default: "notoken"
 
-    - pause:
-        prompt: "Which interface will provide IPv6? (ignore if you already have a configured re6st) [lo]"
-      when: slapostoken != "notoken"
-      register: prompt
-    - set_fact:
-        interface_name: "{{ prompt.user_input | default('lo', true) }}"
+    - name: "interface_name"
+      prompt: "Which interface will provide IPv6? (ignore if you already have a configured re6st) [lo]:"
+      private: no
+      default: "lo"
 
-    - pause:
-        prompt: "How many SlapOS computer partitions would you like? [10]"
-      when: slapostoken != "notoken"
-      register: prompt
-    - set_fact:
-        partition_number: "{{ prompt.user_input | default('10', true) }}"
+    - name: "partition_number"
+      prompt: "How many SlapOS computer partitions would you like? [10]:"
+      private: no
+      default: "10"
 
   roles:
     - { role: slapos, package_state: present }
