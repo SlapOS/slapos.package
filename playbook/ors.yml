@@ -13,5 +13,5 @@
     - settings/bbu.yml
 
   roles:
-    - bbu
     - ors-image-backports
+    - bbu

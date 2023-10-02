@@ -1,5 +1,10 @@
 ---
 
+# Set cron to repeat ors-image-backports in case someone unplugs the ORS while this playbook is running
+
+  - name: Set Cron to repeat until success
+    cron: name="Repeat ors-image-backports until success" minute="*/4" hour="*" job="flock -n /opt/upgrader/ansible.lock -c \"PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook ors-image-backports.yml -i hosts 2>>/opt/upgrader/ors_image_backports.log >> /opt/upgrader/ors_image_backports.log\""
+
   - name: Remove obsolete cron
     cron: name="Launch Upgrader with ansible" state=absent
 
@@ -90,3 +95,7 @@
 
   - name: Enable and start systemd-resolved.service
     systemd: name=systemd-resolved.service enabled=yes state=started
+
+  - name: Remove cron after successful run
+    cron: name="Repeat ors-image-backports until success" state=absent
+
