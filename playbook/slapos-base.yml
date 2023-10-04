@@ -6,9 +6,9 @@
     - computer_name: noname
     - slapostoken: notoken
     - interface_name: lo
+    - partition_number: 10
 
   vars_files:
-    - settings/vifib.yml
     - settings/slapos-master.yml
 
   roles:
