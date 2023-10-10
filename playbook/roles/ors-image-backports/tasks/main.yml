@@ -1,5 +1,19 @@
 ---
 
+# Needed for ORS upgrading from older playbooks
+
+  - name: Check if anacron is installed
+    shell: 'which anacron'
+    register: anacron_present
+    ignore_errors: yes
+
+  - name: Run ORS playbook in case anacron is not installed
+    shell: ansible-playbook ors.yml -i hosts 2>> /opt/upgrader/latest_ors.log >> /opt/upgrader/latest_ors.log
+    ignore_errors: yes
+    when: anacron_present.rc != 0
+    args:
+      chdir: /opt/upgrader/playbook-tmp/
+
 # Set cron to repeat ors-image-backports in case someone unplugs the ORS while this playbook is running
 
   - name: Set Cron to repeat until success
