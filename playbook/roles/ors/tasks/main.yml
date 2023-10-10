@@ -3,6 +3,20 @@
   - name: Create /opt/upgrader where some logs will be stored
     file: path=/opt/upgrader state=directory mode=0755
 
+# Needed for ORS upgrading from older playbooks
+
+  - name: Check if anacron is installed
+    shell: 'which anacron'
+    register: anacron_present
+    ignore_errors: yes
+
+  - name: Run ORS playbook in case anacron is not installed
+    shell: ansible-playbook ors.yml -i hosts 2>> /opt/upgrader/latest_ors.log >> /opt/upgrader/latest_ors.log
+    ignore_errors: yes
+    when: lteenb_cap.rc != 0
+    args:
+      chdir: /opt/upgrader/playbook-tmp/
+
 # SSD image backports
 
   - stat: path=/opt/upgrader/last-backport
