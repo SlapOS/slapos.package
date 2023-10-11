@@ -6,3 +6,5 @@ dependencies:
   - { role: package, package_name: iptables-persistent, package_state: present  }
   - { role: package, package_name: iptables, package_state: present  }
   - { role: package, package_name: curl, package_state: present  }
+  - { role: package, package_name: sudo, package_state: present  }
+  - { role: package, package_name: libsctp-dev, package_state: present  }
