@@ -7,10 +7,11 @@
     shell: 'realpath $(dirname $(grep -lR "software_release_url = .*software/monitor/software.cfg" $(find /srv/slapgrid -type f -name "buildout.cfg")))/srv/monitor/private'
     register: monitor_path
     when: playbook_report | bool
+    ignore_errors: yes
 
   - name: Create directory if it does not exist
     file: path="{{ monitor_path.stdout }}/playbook-report" state=directory mode=0755
-    when: playbook_report | bool
+    when: (monitor_path is succeeded) and (playbook_report | bool)
 
   - name: Setting playbook report message
     set_fact: playbook_report_message="Starting upgrader playbook" playbook_report_progress="0"
@@ -19,11 +20,11 @@
     template:
       src: playbook-report.j2
       dest: /tmp/playbook-report-tmp.log
-    when: playbook_report | bool
+    when: (monitor_path is succeeded) and (playbook_report | bool)
 
   - name: Append to log
     shell: 'cat /tmp/playbook-report-tmp.log >> {{ monitor_path.stdout }}/playbook-report/report.log'
-    when: playbook_report | bool
+    when: (monitor_path is succeeded) and (playbook_report | bool)
 
   - file: path=/opt/upgrader state=directory mode=0755
 
@@ -96,11 +97,11 @@
     template:
       src: playbook-report.j2
       dest: /tmp/playbook-report-tmp.log
-    when: playbook_report | bool
+    when: (monitor_path is succeeded) and (playbook_report | bool)
 
   - name: Append to log
     shell: 'cat /tmp/playbook-report-tmp.log >> {{ monitor_path.stdout }}/playbook-report/report.log'
-    when: (playbook_report | bool) and (lookup('file', '/opt/upgrader/playbook-tmp/upgrade_after')|int > lookup('file', '/opt/upgrader/last-upgrade')|int ) and (lookup('file', '/opt/upgrader/next-upgrade-signature') != lookup('file', '/opt/upgrader/current-upgrade-signature'))
+    when: (monitor_path is succeeded) and (playbook_report | bool) and (lookup('file', '/opt/upgrader/playbook-tmp/upgrade_after')|int > lookup('file', '/opt/upgrader/last-upgrade')|int ) and (lookup('file', '/opt/upgrader/next-upgrade-signature') != lookup('file', '/opt/upgrader/current-upgrade-signature'))
 
   - name: Do upgrade
     shell: ansible-playbook {{ upgrader_playbook }} --extra-vars 'repeat_until_success={{ repeat_until_success }}' -i hosts 2>>/opt/upgrader/latest_upgrade.log  >> /opt/upgrader/latest_upgrade.log
@@ -115,11 +116,11 @@
     template:
       src: playbook-report.j2
       dest: /tmp/playbook-report-tmp.log
-    when: playbook_report | bool
+    when: (monitor_path is succeeded) and (playbook_report | bool)
 
   - name: Append to log
     shell: 'cat /tmp/playbook-report-tmp.log >> {{ monitor_path.stdout }}/playbook-report/report.log'
-    when: (playbook_report | bool) and (extra_playbook | length > 0)
+    when: (monitor_path is succeeded) and (playbook_report | bool) and (extra_playbook | length > 0)
 
   - name: Do extra playbook
     shell: ansible-playbook {{ extra_playbook }} --extra-vars 'launch_upgrader=False' -i hosts 2>>/opt/upgrader/latest_extra_playbook.log  >> /opt/upgrader/latest_extra_playbook.log
@@ -149,11 +150,11 @@
     template:
       src: playbook-report.j2
       dest: /tmp/playbook-report-tmp.log
-    when: playbook_report | bool
+    when: (monitor_path is succeeded) and (playbook_report | bool)
 
   - name: Append to log
     shell: 'cat /tmp/playbook-report-tmp.log >> {{ monitor_path.stdout }}/playbook-report/report.log'
-    when: playbook_report | bool
+    when: (monitor_path is succeeded) and (playbook_report | bool)
 
   - name: Remove cron after successful playbook run
     cron: name="Repeat until success" state=absent
