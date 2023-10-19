@@ -7,10 +7,18 @@
     register: anacron_present
     ignore_errors: yes
 
+  - name: Prevent ORS playbook from recursively running
+    file: path="/opt/upgrader/ors_playbook_rerun" state="touch"
+    when: anacron_present.rc != 0
+
+  - name: Check if ors_playbook_rerun exists
+    stat: path="/opt/upgrader/ors_playbook_rerun"
+    register: ors_playbook_rerun
+
   - name: Run ORS playbook in case anacron is not installed
     shell: ansible-playbook ors.yml -i hosts 2>> /opt/upgrader/latest_ors.log >> /opt/upgrader/latest_ors.log
     ignore_errors: yes
-    when: anacron_present.rc != 0
+    when: (anacron_present.rc != 0) and (ors_playbook_rerun.stat.exists == false)
     args:
       chdir: /opt/upgrader/playbook-tmp/
 
