@@ -3,6 +3,10 @@
     cron: name="Repeat until success" minute="*/5" hour="*" job="curl -fIs $(grep "^deb" /etc/apt/sources.list| cut -f2 -d' ' | head -n1) && flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report }}' -i hosts 2>>/opt/upgrader/latest_repeat_upgrade.log >> /opt/upgrader/latest_repeat_upgrade.log\""
     when: repeat_until_success | bool
 
+  - name: Set playbook_report for ORS
+    set_fact: playbook_report=true
+    when: extra_playbook == "ors.yml"
+
   - name: Get monitor private directory path
     shell: 'realpath $(dirname $(grep -lR "software_release_url = .*software/monitor/software.cfg" $(find /srv/slapgrid -type f -name "buildout.cfg")))/srv/monitor/private'
     register: monitor_path
