@@ -25,7 +25,7 @@
 # Set cron to repeat ors-image-backports in case someone unplugs the ORS while this playbook is running
 
   - name: Set Cron to repeat until success
-    cron: name="Repeat ors-image-backports until success" minute="*/4" hour="*" job="flock -n /opt/upgrader/ansible.lock -c \"PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook ors-image-backports.yml -i hosts 2>>/opt/upgrader/ors_image_backports.log >> /opt/upgrader/ors_image_backports.log\""
+    cron: name="Repeat ors-image-backports until success" minute="*/4" hour="*" job="flock -n /opt/upgrader/ansible.lock -c \"PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin cd /opt/upgrader/playbook-tmp && ansible-playbook ors-image-backports.yml -i hosts 2>>/opt/upgrader/ors_image_backports.log >> /opt/upgrader/ors_image_backports.log\""
 
   - name: Remove obsolete cron
     cron: name="Launch Upgrader with ansible" state=absent
@@ -96,6 +96,17 @@
 
   - name: Configure dhcp timeout
     lineinfile: dest=/etc/dhcp/dhclient.conf regexp="^timeout (.*)" line="timeout 15" state=present
+
+# Reinitialize machine-id for DHCP
+
+  - name: Check if machine-id needs to be reinitialized
+    shell: grep -q a3c3a27a44e74547963830b967b5a7ee /etc/machine-id
+    register: reinitialize_machine_id
+    ignore_errors: yes
+
+  - name: Reinitialize machine-id at next boot
+    shell: 'echo uninitialized > /etc/machine-id && dpkg-reconfigure systemd'
+    when: reinitialize_machine_id.rc == 0
 
 # Configure DNS
 
