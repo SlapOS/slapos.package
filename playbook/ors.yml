@@ -13,5 +13,4 @@
     - settings/ors.yml
 
   roles:
-    - ors-image-backports
     - ors
