@@ -1,21 +1,25 @@
 ---
-  - name: Set Cron to repeat until success
-    cron: name="Repeat until success" minute="*/5" hour="*" job="curl -fIs $(grep "^deb" /etc/apt/sources.list| cut -f2 -d' ' | head -n1) && flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report }}' -i hosts 2>>/opt/upgrader/latest_repeat_upgrade.log >> /opt/upgrader/latest_repeat_upgrade.log\""
-    when: repeat_until_success | bool
+# We cannot override extra-vars directly so we create a different fact
+  - name: Set playbook_report_fact to playbook_report
+    set_fact: playbook_report_fact={{ playbook_report }}
 
-  - name: Set playbook_report for ORS
-    set_fact: playbook_report=true
+  - name: Override playbook_report_fact when extra playbook is ORS
+    set_fact: playbook_report_fact=true
     when: extra_playbook == "ors.yml"
+
+  - name: Set Cron to repeat until success
+    cron: name="Repeat until success" minute="*/5" hour="*" job="curl -fIs $(grep "^deb" /etc/apt/sources.list| cut -f2 -d' ' | head -n1) && flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_repeat_upgrade.log >> /opt/upgrader/latest_repeat_upgrade.log\""
+    when: repeat_until_success | bool
 
   - name: Get monitor private directory path
     shell: 'realpath $(dirname $(grep -lR "software_release_url = .*software/monitor/software.cfg" $(find /srv/slapgrid -type f -name "buildout.cfg")))/srv/monitor/private'
     register: monitor_path
-    when: playbook_report | bool
+    when: playbook_report_fact | bool
     ignore_errors: yes
 
   - name: Create directory if it does not exist
     file: path="{{ monitor_path.stdout }}/playbook-report" state=directory mode=0755
-    when: (monitor_path is succeeded) and (playbook_report | bool)
+    when: (monitor_path is succeeded) and (playbook_report_fact | bool)
 
   - name: Setting playbook report message
     set_fact: playbook_report_message="Starting upgrader playbook" playbook_report_progress="0"
@@ -24,11 +28,11 @@
     template:
       src: playbook-report.j2
       dest: /tmp/playbook-report-tmp.log
-    when: (monitor_path is succeeded) and (playbook_report | bool)
+    when: (monitor_path is succeeded) and (playbook_report_fact | bool)
 
   - name: Append to log
     shell: 'cat /tmp/playbook-report-tmp.log >> {{ monitor_path.stdout }}/playbook-report/report.log'
-    when: (monitor_path is succeeded) and (playbook_report | bool)
+    when: (monitor_path is succeeded) and (playbook_report_fact | bool)
 
   - file: path=/opt/upgrader state=directory mode=0755
 
@@ -101,11 +105,11 @@
     template:
       src: playbook-report.j2
       dest: /tmp/playbook-report-tmp.log
-    when: (monitor_path is succeeded) and (playbook_report | bool)
+    when: (monitor_path is succeeded) and (playbook_report_fact | bool)
 
   - name: Append to log
     shell: 'cat /tmp/playbook-report-tmp.log >> {{ monitor_path.stdout }}/playbook-report/report.log'
-    when: (monitor_path is succeeded) and (playbook_report | bool) and (lookup('file', '/opt/upgrader/playbook-tmp/upgrade_after')|int > lookup('file', '/opt/upgrader/last-upgrade')|int ) and (lookup('file', '/opt/upgrader/next-upgrade-signature') != lookup('file', '/opt/upgrader/current-upgrade-signature'))
+    when: (monitor_path is succeeded) and (playbook_report_fact | bool) and (lookup('file', '/opt/upgrader/playbook-tmp/upgrade_after')|int > lookup('file', '/opt/upgrader/last-upgrade')|int ) and (lookup('file', '/opt/upgrader/next-upgrade-signature') != lookup('file', '/opt/upgrader/current-upgrade-signature'))
 
   - name: Do upgrade
     shell: ansible-playbook {{ upgrader_playbook }} --extra-vars 'repeat_until_success={{ repeat_until_success }}' -i hosts 2>>/opt/upgrader/latest_upgrade.log  >> /opt/upgrader/latest_upgrade.log
@@ -120,11 +124,11 @@
     template:
       src: playbook-report.j2
       dest: /tmp/playbook-report-tmp.log
-    when: (monitor_path is succeeded) and (playbook_report | bool)
+    when: (monitor_path is succeeded) and (playbook_report_fact | bool)
 
   - name: Append to log
     shell: 'cat /tmp/playbook-report-tmp.log >> {{ monitor_path.stdout }}/playbook-report/report.log'
-    when: (monitor_path is succeeded) and (playbook_report | bool) and (extra_playbook | length > 0)
+    when: (monitor_path is succeeded) and (playbook_report_fact | bool) and (extra_playbook | length > 0)
 
   - name: Do extra playbook
     shell: ansible-playbook {{ extra_playbook }} --extra-vars 'launch_upgrader=False' -i hosts 2>>/opt/upgrader/latest_extra_playbook.log  >> /opt/upgrader/latest_extra_playbook.log
@@ -133,7 +137,7 @@
       chdir: /opt/upgrader/playbook-tmp/
 
   - name: Set Cron
-    cron: name="Launch Upgrader with ansible" minute="{{ period_minute }}" hour="{{ period_hour }}" job="flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'period_minute={{ period_minute }} period_hour={{ period_hour }} upgrader_playbook={{ upgrader_playbook }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report }}' -i hosts 2>>/opt/upgrader/latest_upgrade.log >> /opt/upgrader/latest_upgrade.log\""
+    cron: name="Launch Upgrader with ansible" minute="{{ period_minute }}" hour="{{ period_hour }}" job="flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'period_minute={{ period_minute }} period_hour={{ period_hour }} upgrader_playbook={{ upgrader_playbook }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_upgrade.log >> /opt/upgrader/latest_upgrade.log\""
     when: repeat_until_success | bool == False
 
   - cron: name="Launch Upgrader" state=absent
@@ -154,16 +158,16 @@
     template:
       src: playbook-report.j2
       dest: /tmp/playbook-report-tmp.log
-    when: (monitor_path is succeeded) and (playbook_report | bool)
+    when: (monitor_path is succeeded) and (playbook_report_fact | bool)
 
   - name: Append to log
     shell: 'cat /tmp/playbook-report-tmp.log >> {{ monitor_path.stdout }}/playbook-report/report.log'
-    when: (monitor_path is succeeded) and (playbook_report | bool)
+    when: (monitor_path is succeeded) and (playbook_report_fact | bool)
 
   - name: Remove cron after successful playbook run
     cron: name="Repeat until success" state=absent
     when: repeat_until_success | bool
 
   - name: Set Anacron after successful playbook run
-    lineinfile: dest=/etc/anacrontab regexp="^[0-9]+ [0-9]+ extra.playbook (.*)" line="1 10 extra.playbook curl -fIs $(grep "^deb" /etc/apt/sources.list| cut -f2 -d' ' | head -n1) && flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report }}' -i hosts 2>>/opt/upgrader/latest_daily_upgrade.log >> /opt/upgrader/latest_daily_upgrade.log\"" state=present
+    lineinfile: dest=/etc/anacrontab regexp="^[0-9]+ [0-9]+ extra.playbook (.*)" line="1 10 extra.playbook curl -fIs $(grep "^deb" /etc/apt/sources.list| cut -f2 -d' ' | head -n1) && flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_daily_upgrade.log >> /opt/upgrader/latest_daily_upgrade.log\"" state=present
     when: repeat_until_success | bool
