@@ -1,0 +1,105 @@
+---
+
+  - set_fact: cn="{{ ansible_hostname }}"
+
+  - stat: path="{{ pkdir }}/{{ cn }}.pub"
+    register: certificate
+
+  - name: End playbook if we have no public key yet
+    meta: end_play
+    when: certificate.stat.exists == False
+
+  - name: Delete download directory
+    file: path={{ install_folder }}/download state=absent
+
+  - name: Create download directory
+    file: path={{ install_folder }}/download state=directory mode=0755
+
+  - name: Get license expiration
+    shell: '/opt/amarisoft/get-license-info -e'
+    register: license_expiration
+
+  - name: Get license version
+    shell: '/opt/amarisoft/get-license-info -v'
+    register: license_version
+
+  - name: Get new amarisoft version if available
+    shell: "networkcache-download -c /etc/opt/slapos/slapos.cfg -k key-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' 'cn==\"{{ cn }}\"' --list | grep version | cut -d\\\" -f4"
+    register: new_version
+
+  - name: End playbook if no new amarisoft versions
+    meta: end_play
+    when: new_version.stdout == ""
+
+  - name: Download nonce to decrypt new amarisoft version
+    shell: "networkcache-download -c /etc/opt/slapos/slapos.cfg -k file-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' --list | grep nonce | cut -d\\\" -f4 > {{ install_folder }}/download/nonce"
+    register: nonce
+
+  - set_fact: version="{{ new_version.stdout }}"
+
+  - name: Download new amarisoft version
+    shell: "networkcache-download -c /etc/opt/slapos/slapos.cfg -k file-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' > {{ install_folder }}/download/amarisoft.tar.gz.enc"
+
+  - name: Download encrypted symmetric key for new amarisoft version
+    shell: "networkcache-download -c /etc/opt/slapos/slapos.cfg -k key-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' 'cn==\"{{ cn }}\"' > {{ install_folder }}/download/symmetric_key.bin.enc"
+
+  - name: Create directory if it does not exist
+    file: path={{ install_folder }}/{{ version }} state=directory mode=0755
+
+  - name: Create directory if it does not exist
+    file: path={{ install_folder }}/_{{ version }} state=directory mode=0755
+
+  - name: Decrypt key
+    shell: 'openssl pkeyutl -decrypt -in {{ install_folder }}/download/symmetric_key.bin.enc -inkey /opt/private-key/{{ cn }}.key -out /opt/private-key/symmetric_key-{{ version }}.key'
+
+  - name: Decrypt archive
+    script: encrypt-data.sh /opt/private-key/symmetric_key-{{ version }}.key {{ install_folder }}/download/nonce decrypt {{ install_folder }}/download/amarisoft.tar.gz.enc {{ install_folder }}/amarisoft.tar.gz
+
+  - name: Extract archive
+    unarchive:
+      src: "{{ install_folder }}/amarisoft.tar.gz"
+      dest: "{{ install_folder }}"
+
+  - name: Extract lteenb archive
+    unarchive:
+      src: "{{ install_folder }}/{{ version }}/lteenb-linux-{{ version }}.tar.gz"
+      dest: "{{ install_folder }}/_{{ version }}"
+
+  - name: Extract ltemme archive
+    unarchive:
+      src: "{{ install_folder }}/{{ version }}/ltemme-linux-{{ version }}.tar.gz"
+      dest: "{{ install_folder }}/_{{ version }}"
+
+  - name: Extract trx_sdr archive
+    unarchive:
+      src: "{{ install_folder }}/{{ version }}/trx_sdr-linux-{{ version }}.tar.gz"
+      dest: "{{ install_folder }}/_{{ version }}"
+
+  - name: Create a symbolic link for lteenb
+    file:
+      src: "lteenb-linux-{{ version }}"
+      dest: "{{ install_folder }}/_{{ version }}/enb"
+      state: link
+
+  - name: Create a symbolic link for ltemme
+    file:
+      src: "ltemme-linux-{{ version }}"
+      dest: "{{ install_folder }}/_{{ version }}/mme"
+      state: link
+
+  - name: Create a symbolic link for trx_sdr
+    file:
+      src: "trx_sdr-linux-{{ version }}"
+      dest: "{{ install_folder }}/_{{ version }}/trx_sdr"
+      state: link
+
+  - name: Copy trx_sdr libraries
+    shell: 'cp {{ install_folder }}/_{{ version }}/trx_sdr/*.so {{ install_folder }}/_{{ version }}/enb/'
+
+  - name: Move amarisoft folder
+    shell: 'mv {{ install_folder }}/_{{ version }} {{ install_folder }}/v{{ version }}'
+
+  - name: Remove extraction folder
+    file: 
+      path: "{{ install_folder }}/{{ version }}"
+      state: absent
