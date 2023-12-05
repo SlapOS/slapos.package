@@ -1,0 +1,4 @@
+---
+dependencies:
+  - { role: package, package_name: pip, package_state: present  }
+  - { role: package, package_name: openssl, package_state: present  }

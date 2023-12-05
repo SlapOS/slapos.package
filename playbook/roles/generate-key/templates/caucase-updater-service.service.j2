@@ -1,0 +1,16 @@
+[Unit]
+Description=caucase-updater in service mode for binary encryption
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Environment=PYTHONUNBUFFERED=yes
+ExecStart=/usr/local/bin/caucase-updater                \
+  --ca-url {{ caucase_url }}                            \
+  --mode service                                        \
+  --cas-ca {{ pkdir }}/RS.service.ca.crt                \
+  --crl    {{ pkdir }}/RS.service.crl                   \
+  --ca     {{ pkdir }}/RS.service.ca.crt                \
+
+[Install]
+WantedBy=default.target

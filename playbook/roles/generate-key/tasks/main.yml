@@ -1,0 +1,92 @@
+---
+
+  - set_fact: cn="{{ ansible_hostname }}"
+
+  - name: Update certificate signature list
+    script: update-signature-list.py
+
+  - name: Create directory if it does not exist
+    file: path="{{ pkdir }}" state=directory mode=0755
+
+  - name: Install caucase
+    shell: 'pip install caucase'
+
+  - name: Render caucase-updater-service.service
+    template:
+      src: caucase-updater-service.service.j2
+      dest: /etc/systemd/system/caucase-updater-service.service
+      mode: 0644
+
+  - name: Render caucase-updater-user.service
+    template:
+      src: caucase-updater-user.service.j2
+      dest: /etc/systemd/system/caucase-updater-user.service
+      mode: 0644
+
+  - name: Reload systemd daemon
+    systemd: daemon_reload=true
+
+  - name: Enable caucase-updater-service.service
+    systemd: name=caucase-updater-service.service state=started enabled=true
+
+  - name: Enable caucase-updater-user.service
+    systemd: name=caucase-updater-user.service state=started enabled=true
+    register: systemd_service
+
+  - name: Wait to make sure certificates are updated
+    shell: 'sleep 5'
+    when: systemd_service.changed
+
+  - stat: path="{{ pkdir }}/{{ cn }}.id"
+    register: key_id
+
+  - stat: path="{{ pkdir }}/{{ cn }}.crt"
+    register: certificate
+    when: key_id.stat.exists == True
+
+  - name: Try to get certificate if we have CSR ID and no certificate yet
+    shell: 'caucase --ca-url {{ caucase_url }} --ca-crt RS.service.ca.crt --user-ca-crt RS.user.ca.crt  --user-crl RS.user.crl --crl RS.service.crl --mode service --get-crt $(cat {{ cn }}.id) {{ cn }}.crt'
+    args:
+      chdir: "{{ pkdir }}"
+    when: (key_id.stat.exists == True) and (certificate.stat.exists == False)
+    ignore_errors: yes
+
+  - name: Remove csr and key if there is no ID
+    file: path="{{ pkdir }}/{{ cn }}.csr" state=absent
+    when: key_id.stat.exists == False
+
+  - name: Remove csr and key if there is no ID
+    file: path="{{ pkdir }}/{{ cn }}.key" state=absent
+    when: key_id.stat.exists == False
+
+  - name: Generate certificate request
+    shell: 'openssl req -new -sha256 -newkey rsa:4096 -nodes -keyout {{ cn }}.key -subj "/CN={{ cn }}/O=Rapid.Space/OU=Proprietary Software Encryption" -out {{ cn }}.csr'
+    args:
+      chdir: "{{ pkdir }}"
+    when: key_id.stat.exists == False
+
+  - name: Generate certificate request
+    shell: 'openssl req -new -sha256 -newkey rsa:4096 -nodes -keyout {{ cn }}.key -subj "/CN={{ cn }}/O=Rapid.Space/OU=Proprietary Software Encryption" -out {{ cn }}.csr'
+    args:
+      chdir: "{{ pkdir }}"
+    when: key_id.stat.exists == False
+
+  - name: Send certificate request
+    shell: "caucase --ca-url {{ caucase_url }} --ca-crt RS.service.ca.crt --user-ca-crt RS.user.ca.crt  --user-crl RS.user.crl --crl RS.service.crl --mode service --send-csr {{ cn }}.csr | cut -d ' ' -f 1 > {{ cn }}.id"
+    args:
+      chdir: "{{ pkdir }}"
+    when: key_id.stat.exists == False
+
+  - name: Get monitor private directory path
+    shell: 'realpath $(dirname $(grep -lR "software_release_url = .*software/monitor/software.cfg" $(find /srv/slapgrid -type f -name "buildout.cfg")))/srv/monitor/private'
+    register: monitor_path
+
+  - name: Create directory if it does not exist
+    file: path="{{ monitor_path.stdout }}/playbook-report" state=directory mode=0755
+
+  - stat: path="{{ pkdir }}/{{ cn }}.id"
+    register: key_id
+
+  - name: Copy key ID
+    copy: src="{{ pkdir }}/{{ cn }}.id" dest="{{ monitor_path.stdout }}/playbook-report/{{ cn }}.id" owner=root mode=774
+    when: key_id.stat.exists == True

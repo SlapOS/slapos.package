@@ -1,0 +1,16 @@
+[Unit]
+Description=caucase-updater in user mode for binary encryption
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Environment=PYTHONUNBUFFERED=yes
+ExecStart=/usr/local/bin/caucase-updater                \
+  --ca-url {{ caucase_url }}                            \
+  --mode user                                           \
+  --cas-ca {{ pkdir }}/RS.service.ca.crt                \
+  --crl    {{ pkdir }}/RS.user.crl                      \
+  --ca     {{ pkdir }}/RS.user.ca.crt                   \
+
+[Install]
+WantedBy=default.target
