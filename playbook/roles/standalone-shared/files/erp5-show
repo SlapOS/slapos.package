@@ -147,7 +147,9 @@ def status():
 
       try:
         r1 = urllib.request.urlopen(frontend, context=ctx)
-        if b'Zope Management Interface' in r1.read():
+        r1_content = r1.read()
+        if b'Zope Management Interface' in r1_content or \
+           (b'Zope' in r1_content and b'Auto-generated default page' in r1_content):
           connected = True
         else:
           print('URL %s ready, but does not reply with Zope' % frontend)
