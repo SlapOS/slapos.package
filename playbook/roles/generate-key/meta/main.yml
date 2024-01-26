@@ -1,0 +1,3 @@
+---
+dependencies:
+  - { role: package, package_name: openssl, package_state: present  }
