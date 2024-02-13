@@ -47,9 +47,9 @@
 
   - file: path=/opt/upgrader/ state=directory mode=0755
 
-  - shell: rm -rf /opt/upgrader/tmp
+  - set_fact: new_playbook=decompressed-playbook-{{ ansible_date_time.epoch }}
 
-  - shell: mkdir -p /opt/upgrader/tmp
+  - shell: mkdir -p /opt/upgrader/{{ new_playbook }}
 
   - name: Periodically download the latest playbook
     shell: /usr/local/bin/slapcache-download --destination=/opt/upgrader/archive.tar.gz
@@ -57,22 +57,29 @@
   - name: Uncompress
     shell: tar -xzvf /opt/upgrader/archive.tar.gz
     args:
-      chdir: /opt/upgrader/tmp
+      chdir: /opt/upgrader/{{ new_playbook }}
 
   - name: Check uncompressed archive sha256sum
-    shell: cd /opt/upgrader/tmp && find . -type f ! -name 'sha256sum' -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum --check sha256sum
+    shell: cd /opt/upgrader/{{ new_playbook }} && find . -type f ! -name 'sha256sum' -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum --check sha256sum
 
-  - shell: cp -R /opt/upgrader/tmp /opt/upgrader/playbook
+  - shell: rm -rf /opt/upgrader/tmp
+
+  - shell: ln -s /opt/upgrader/{{ new_playbook }} /opt/upgrader/tmp
+
+  - shell: cp -R /opt/upgrader/{{ new_playbook }} /opt/upgrader/playbook
     when: playbook_folder.stat.exists == False
 
   - stat: path=/opt/upgrader/tmp/hosts
     register: hosts_file
 
-  - shell: rm -rf /opt/upgrader/playbook-tmp
+# If the machine stops before syncing playbook-tmp will be corrupted
+# If playbook-tmp is written non-atomically it might get corrupted
+  - shell: sync && mv -T /opt/upgrader/tmp /opt/upgrader/playbook-tmp
     when: hosts_file.stat.exists == True
 
-  - shell: cp -R /opt/upgrader/tmp /opt/upgrader/playbook-tmp
-    when: hosts_file.stat.exists == True
+  - shell: rm -rf $(ls -d1t decompressed-playbook-*|tail -n+2)
+    args:
+      chdir: /opt/upgrader
 
   - name: Save new archive MD5
     stat:
