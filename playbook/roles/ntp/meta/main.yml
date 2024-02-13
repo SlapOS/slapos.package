@@ -1,4 +1,16 @@
 ---
 dependencies:
-  - { role: package, package_name: ntp, package_state: present, when: ansible_distribution != "Fedora" or ansible_distribution_major_version|int < 34 }
-  - { role: package, package_name: ntpsec, package_state: present, when: ansible_distribution == "Fedora" and ansible_distribution_major_version|int >= 34 }
+  - name: Install old ntp package
+    role: package
+    package_name: ntp
+    package_state: present
+    when: ( ansible_distribution == "Fedora" and ansible_distribution_major_version|int < 34 ) or
+          ( ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int < 23 ) or
+          ( ansible_distribution != "Fedora" and ansible_distribution != "Ubuntu" )
+
+  - name: Install ntpsec package
+    role: package
+    package_name: ntpsec
+    package_state: present
+    when: ( ansible_distribution == "Fedora" and ansible_distribution_major_version|int >= 34 ) or
+          ( ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 23 )
