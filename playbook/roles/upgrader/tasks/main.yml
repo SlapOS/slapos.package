@@ -8,7 +8,7 @@
     when: extra_playbook == "ors.yml"
 
   - name: Set Cron to repeat until success
-    cron: name="Repeat until success" minute="*/5" hour="*" job="curl -fIs $(grep "^deb" /etc/apt/sources.list| cut -f2 -d' ' | head -n1) && flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_repeat_upgrade.log >> /opt/upgrader/latest_repeat_upgrade.log\""
+    cron: name="Repeat until success" minute="*/5" hour="*" job="curl -fIs $(grep "^deb" /etc/apt/sources.list| cut -f2 -d' ' | head -n1) && flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp/ /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_repeat_upgrade.log >> /opt/upgrader/latest_repeat_upgrade.log\""
     when: repeat_until_success | bool
 
   - name: Get monitor private directory path
@@ -47,9 +47,13 @@
 
   - file: path=/opt/upgrader/ state=directory mode=0755
 
-  - shell: rm -rf /opt/upgrader/tmp
+  - set_fact: new_playbook=decompressed-playbook-{{ ansible_date_time.epoch }}
 
-  - shell: mkdir -p /opt/upgrader/tmp
+  - debug:
+      msg: new_playbook {{ new_playbook }}
+
+  - name: Make new playbook folder
+    shell: mkdir -p /opt/upgrader/{{ new_playbook }}
 
   - name: Periodically download the latest playbook
     shell: /usr/local/bin/slapcache-download --destination=/opt/upgrader/archive.tar.gz
@@ -57,22 +61,40 @@
   - name: Uncompress
     shell: tar -xzvf /opt/upgrader/archive.tar.gz
     args:
-      chdir: /opt/upgrader/tmp
+      chdir: /opt/upgrader/{{ new_playbook }}
+
+  - debug:
+      msg: Uncompressed playbook to {{ new_playbook }}
 
   - name: Check uncompressed archive sha256sum
-    shell: cd /opt/upgrader/tmp && find . -type f ! -name 'sha256sum' -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum --check sha256sum
+    shell: cd /opt/upgrader/{{ new_playbook }} && find . -type f ! -name 'sha256sum' -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum --check sha256sum
 
-  - shell: cp -R /opt/upgrader/tmp /opt/upgrader/playbook
+  - shell: rm -rf /opt/upgrader/tmp
+
+  - shell: ln -s /opt/upgrader/{{ new_playbook }} /opt/upgrader/tmp
+
+  - debug:
+      msg: Make link from {{ new_playbook }} to tmp
+
+  - shell: cp -R /opt/upgrader/{{ new_playbook }} /opt/upgrader/playbook
     when: playbook_folder.stat.exists == False
 
   - stat: path=/opt/upgrader/tmp/hosts
     register: hosts_file
 
-  - shell: rm -rf /opt/upgrader/playbook-tmp
+# Delete playbook-tmp if it is not yet a symbolic link
+  - shell: test -h /opt/upgrader/playbook-tmp || rm -rf /opt/upgrader/playbook-tmp
     when: hosts_file.stat.exists == True
 
-  - shell: cp -R /opt/upgrader/tmp /opt/upgrader/playbook-tmp
+# If the machine stops before syncing playbook-tmp will be corrupted
+# If playbook-tmp is written non-atomically it might get corrupted
+  - name: Move tmp to playbook-tmp
+    shell: sync && mv -T /opt/upgrader/tmp /opt/upgrader/playbook-tmp
     when: hosts_file.stat.exists == True
+
+  - shell: rm -rf $(find . -type d -name "decompressed-playbook-*"|sort|head -n-1)
+    args:
+      chdir: /opt/upgrader
 
   - name: Save new archive MD5
     stat:
@@ -136,7 +158,7 @@
       chdir: /opt/upgrader/playbook-tmp/
 
   - name: Set Cron
-    cron: name="Launch Upgrader with ansible" minute="{{ period_minute }}" hour="{{ period_hour }}" job="flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'period_minute={{ period_minute }} period_hour={{ period_hour }} upgrader_playbook={{ upgrader_playbook }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_upgrade.log >> /opt/upgrader/latest_upgrade.log\""
+    cron: name="Launch Upgrader with ansible" minute="{{ period_minute }}" hour="{{ period_hour }}" job="flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp/ /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'period_minute={{ period_minute }} period_hour={{ period_hour }} upgrader_playbook={{ upgrader_playbook }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_upgrade.log >> /opt/upgrader/latest_upgrade.log\""
     when: repeat_until_success | bool == False
 
   - cron: name="Launch Upgrader" state=absent
@@ -168,5 +190,5 @@
     when: repeat_until_success | bool
 
   - name: Set Anacron after successful playbook run
-    lineinfile: dest=/etc/anacrontab regexp="^[0-9]+ [0-9]+ extra.playbook (.*)" line="1 10 extra.playbook curl -fIs $(grep "^deb" /etc/apt/sources.list| cut -f2 -d' ' | head -n1) && flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_daily_upgrade.log >> /opt/upgrader/latest_daily_upgrade.log\"" state=present
+    lineinfile: dest=/etc/anacrontab regexp="^[0-9]+ [0-9]+ extra.playbook (.*)" line="1 10 extra.playbook curl -fIs $(grep "^deb" /etc/apt/sources.list| cut -f2 -d' ' | head -n1) && flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp/ /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_daily_upgrade.log >> /opt/upgrader/latest_daily_upgrade.log\"" state=present
     when: repeat_until_success | bool
