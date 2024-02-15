@@ -39,6 +39,12 @@
         - { name: "vm-bootstrap", size: "50", script: "scripts/vm-bootstrap.sh"}
         - { name: "vm-bootstrap", size: "25", script: "scripts/vm-bootstrap.sh"}
 
+    - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' debian12.json >> log/debian11-{{ item.name }}.log
+      args:
+        creates: output-debian12-{{ item.size }}G-{{ item.name }}
+      with_items:
+        - { name: "vm-bootstrap", size: "50", script: "scripts/vm-bootstrap.sh"}
+
 
     - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' ubuntu-18.04-server-amd64.json >> log/ubuntu-18.04-server-amd64-{{ item.name }}.log
       args:
@@ -176,6 +182,7 @@
         - { name: "vm-bootstrap", size: "200", distro: "debian11"}
         - { name: "vm-bootstrap", size: "50", distro: "debian11"}
         - { name: "vm-bootstrap", size: "25", distro: "debian11"}
+        - { name: "vm-bootstrap", size: "50", distro: "debian12"}
         - { name: "vm-bootstrap", size: "200", distro: "centos7"}
         - { name: "vm-bootstrap", size: "50", distro: "centos7"}
         - { name: "vm-bootstrap", size: "25", distro: "centos7"}
