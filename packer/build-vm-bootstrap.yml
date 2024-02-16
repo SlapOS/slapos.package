@@ -23,7 +23,7 @@
         - { name: "vm-bootstrap", size: "50", script: "scripts/vm-bootstrap.sh"}
         - { name: "vm-bootstrap", size: "25", script: "scripts/vm-bootstrap.sh"}
 
-    - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' debian12.json >> log/debian11-{{ item.name }}.log
+    - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' debian12.json >> log/debian12-{{ item.name }}.log
       args:
         creates: output-debian12-{{ item.size }}G-{{ item.name }}
       with_items:
@@ -64,6 +64,13 @@
         - { name: "vm-bootstrap", size: "200"}
         - { name: "vm-bootstrap", size: "50"}
         - { name: "vm-bootstrap", size: "25"}
+      ignore_errors: True
+
+    - shell: gzip output-debian12-{{ item.size }}G-{{ item.name }}/packer-debian12-{{ item.size }}G-{{ item.name }}
+      args:
+        creates: output-debian12-{{ item.size }}G-{{ item.name }}/packer-debian12-{{ item.size }}G-{{ item.name }}.gz
+      with_items:
+        - { name: "vm-bootstrap", size: "50"}
       ignore_errors: True
 
     - shell: gzip output-ubuntu-20.04-server-{{ item.size }}G-{{ item.name }}/packer-ubuntu-20.04-server-{{ item.size }}G-{{ item.name }}
@@ -136,6 +143,7 @@
         - { name: "vm-bootstrap", size: "200", distro: "debian11"}
         - { name: "vm-bootstrap", size: "50", distro: "debian11"}
         - { name: "vm-bootstrap", size: "25", distro: "debian11"}
+        - { name: "vm-bootstrap", size: "50", distro: "debian12"}
         - { name: "vm-bootstrap", size: "200", distro: "centos8"}
         - { name: "vm-bootstrap", size: "50", distro: "centos8"}
         - { name: "vm-bootstrap", size: "25", distro: "centos8"}
