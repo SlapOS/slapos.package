@@ -15,22 +15,6 @@
         name: slapos.libnetworkcache
         state: latest
 
-    - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' debian9.json >> log/debian9-{{ item.name }}.log
-      args:
-        creates: output-debian9-{{ item.size }}G-{{ item.name }}
-      with_items:
-        - { name: "vm-bootstrap", size: "200", script: "scripts/vm-bootstrap.sh"}
-        - { name: "vm-bootstrap", size: "50", script: "scripts/vm-bootstrap.sh"}
-        - { name: "vm-bootstrap", size: "25", script: "scripts/vm-bootstrap.sh"}
-
-    - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' debian10.json >> log/debian10-{{ item.name }}.log
-      args:
-        creates: output-debian10-{{ item.size }}G-{{ item.name }}
-      with_items:
-        - { name: "vm-bootstrap", size: "200", script: "scripts/vm-bootstrap.sh"}
-        - { name: "vm-bootstrap", size: "50", script: "scripts/vm-bootstrap.sh"}
-        - { name: "vm-bootstrap", size: "25", script: "scripts/vm-bootstrap.sh"}
-
     - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' debian11.json >> log/debian11-{{ item.name }}.log
       args:
         creates: output-debian11-{{ item.size }}G-{{ item.name }}
@@ -44,15 +28,6 @@
         creates: output-debian12-{{ item.size }}G-{{ item.name }}
       with_items:
         - { name: "vm-bootstrap", size: "50", script: "scripts/vm-bootstrap.sh"}
-
-
-    - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' ubuntu-18.04-server-amd64.json >> log/ubuntu-18.04-server-amd64-{{ item.name }}.log
-      args:
-        creates: output-ubuntu-18.04-server-{{ item.size }}G-{{ item.name }}
-      with_items:
-        - { name: "vm-bootstrap", size: "200", script: "scripts/vm-bootstrap.sh"}
-        - { name: "vm-bootstrap", size: "50", script: "scripts/vm-bootstrap.sh"}
-        - { name: "vm-bootstrap", size: "25", script: "scripts/vm-bootstrap.sh"}
 
     - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' ubuntu-20.04-server-amd64.json >> log/ubuntu-20.04-server-amd64-{{ item.name }}.log
       args:
@@ -70,18 +45,9 @@
         - { name: "vm-bootstrap", size: "50", script: "scripts/vm-bootstrap.sh"}
         - { name: "vm-bootstrap", size: "25", script: "scripts/vm-bootstrap.sh"}
 
-
     - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' centos-8.json >> log/centos8-{{ item.name }}.log
       args:
         creates: output-centos8-{{ item.size }}G-{{ item.name }}
-      with_items:
-        - { name: "vm-bootstrap", size: "200", script: "scripts/vm-bootstrap.sh"}
-        - { name: "vm-bootstrap", size: "50", script: "scripts/vm-bootstrap.sh"}
-        - { name: "vm-bootstrap", size: "25", script: "scripts/vm-bootstrap.sh"}
-
-    - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' centos-7.json >> log/centos7-{{ item.name }}.log
-      args:
-        creates: output-centos7-{{ item.size }}G-{{ item.name }}
       with_items:
         - { name: "vm-bootstrap", size: "200", script: "scripts/vm-bootstrap.sh"}
         - { name: "vm-bootstrap", size: "50", script: "scripts/vm-bootstrap.sh"}
@@ -91,36 +57,9 @@
 #### Start compress everything
 
 
-    - shell: gzip output-debian9-{{ item.size }}G-{{ item.name }}/packer-debian9-{{ item.size }}G-{{ item.name }}
-      args:
-        creates: output-debian9-{{ item.size }}G-{{ item.name }}/packer-debian9-{{ item.size }}G-{{ item.name }}.gz
-      with_items:
-        - { name: "vm-bootstrap", size: "200"}
-        - { name: "vm-bootstrap", size: "50"}
-        - { name: "vm-bootstrap", size: "25"}
-      ignore_errors: True
-
-    - shell: gzip output-debian10-{{ item.size }}G-{{ item.name }}/packer-debian10-{{ item.size }}G-{{ item.name }}
-      args:
-        creates: output-debian10-{{ item.size }}G-{{ item.name }}/packer-debian10-{{ item.size }}G-{{ item.name }}.gz
-      with_items:
-        - { name: "vm-bootstrap", size: "200"}
-        - { name: "vm-bootstrap", size: "50"}
-        - { name: "vm-bootstrap", size: "25"}
-      ignore_errors: True
-
     - shell: gzip output-debian11-{{ item.size }}G-{{ item.name }}/packer-debian11-{{ item.size }}G-{{ item.name }}
       args:
         creates: output-debian11-{{ item.size }}G-{{ item.name }}/packer-debian11-{{ item.size }}G-{{ item.name }}.gz
-      with_items:
-        - { name: "vm-bootstrap", size: "200"}
-        - { name: "vm-bootstrap", size: "50"}
-        - { name: "vm-bootstrap", size: "25"}
-      ignore_errors: True
-
-    - shell: gzip output-ubuntu-18.04-server-{{ item.size }}G-{{ item.name }}/packer-ubuntu-18.04-server-{{ item.size }}G-{{ item.name }}
-      args:
-        creates: output-ubuntu-18.04-server-{{ item.size }}G-{{ item.name }}/packer-ubuntu-18.04-server-{{ item.size }}G-{{ item.name }}.gz
       with_items:
         - { name: "vm-bootstrap", size: "200"}
         - { name: "vm-bootstrap", size: "50"}
@@ -154,14 +93,6 @@
         - { name: "vm-bootstrap", size: "25"}
       ignore_errors: True
 
-    - shell: gzip output-centos7-{{ item.size }}G-{{ item.name }}/packer-centos7-{{ item.size }}G-{{ item.name }}
-      args:
-        creates: output-centos7-{{ item.size }}G-{{ item.name }}/packer-centos7-{{ item.size }}G-{{ item.name }}.gz
-      with_items:
-        - { name: "vm-bootstrap", size: "200"}
-        - { name: "vm-bootstrap", size: "50"}
-        - { name: "vm-bootstrap", size: "25"}
-      ignore_errors: True
 
 #### Gzip is over, start to upload to shacache
 #### Build SHA512SUM.txt and MD5SUM.txt of every file.
@@ -173,25 +104,13 @@
         sha512sum $FILE >> SHA512SUM.txt
         md5sum $FILE >> MD5SUM.txt
       with_items:
-        - { name: "vm-bootstrap", size: "200", distro: "debian9"}
-        - { name: "vm-bootstrap", size: "50", distro: "debian9"}
-        - { name: "vm-bootstrap", size: "25", distro: "debian9"}
-        - { name: "vm-bootstrap", size: "200", distro: "debian10"}
-        - { name: "vm-bootstrap", size: "50", distro: "debian10"}
-        - { name: "vm-bootstrap", size: "25", distro: "debian10"}
         - { name: "vm-bootstrap", size: "200", distro: "debian11"}
         - { name: "vm-bootstrap", size: "50", distro: "debian11"}
         - { name: "vm-bootstrap", size: "25", distro: "debian11"}
         - { name: "vm-bootstrap", size: "50", distro: "debian12"}
-        - { name: "vm-bootstrap", size: "200", distro: "centos7"}
-        - { name: "vm-bootstrap", size: "50", distro: "centos7"}
-        - { name: "vm-bootstrap", size: "25", distro: "centos7"}
         - { name: "vm-bootstrap", size: "200", distro: "centos8"}
         - { name: "vm-bootstrap", size: "50", distro: "centos8"}
         - { name: "vm-bootstrap", size: "25", distro: "centos8"}
-        - { name: "vm-bootstrap", size: "200", distro: "ubuntu-18.04-server"}
-        - { name: "vm-bootstrap", size: "50", distro: "ubuntu-18.04-server"}
-        - { name: "vm-bootstrap", size: "25", distro: "ubuntu-18.04-server"}
         - { name: "vm-bootstrap", size: "200", distro: "ubuntu-20.04-server"}
         - { name: "vm-bootstrap", size: "50", distro: "ubuntu-20.04-server"}
         - { name: "vm-bootstrap", size: "25", distro: "ubuntu-20.04-server"}
@@ -214,24 +133,12 @@
         MD5SUM=$(cat MD5SUM.txt | grep packer-{{ item.distro }}-{{ item.size }}G-{{ item.name }}.gz | cut -d ' ' -f1)
         echo "packer-{{ item.distro }}-{{ item.size }}G-{{ item.name }}.gz  $BASE_URL/$SHA512SUM   $MD5SUM" >> URL.txt
       with_items:
-        - { name: "vm-bootstrap", size: "200", distro: "debian9"}
-        - { name: "vm-bootstrap", size: "50", distro: "debian9"}
-        - { name: "vm-bootstrap", size: "25", distro: "debian9"}
-        - { name: "vm-bootstrap", size: "200", distro: "debian10"}
-        - { name: "vm-bootstrap", size: "50", distro: "debian10"}
-        - { name: "vm-bootstrap", size: "25", distro: "debian10"}
         - { name: "vm-bootstrap", size: "200", distro: "debian11"}
         - { name: "vm-bootstrap", size: "50", distro: "debian11"}
         - { name: "vm-bootstrap", size: "25", distro: "debian11"}
-        - { name: "vm-bootstrap", size: "200", distro: "centos7"}
-        - { name: "vm-bootstrap", size: "50", distro: "centos7"}
-        - { name: "vm-bootstrap", size: "25", distro: "centos7"}
         - { name: "vm-bootstrap", size: "200", distro: "centos8"}
         - { name: "vm-bootstrap", size: "50", distro: "centos8"}
         - { name: "vm-bootstrap", size: "25", distro: "centos8"}
-        - { name: "vm-bootstrap", size: "200", distro: "ubuntu-18.04-server"}
-        - { name: "vm-bootstrap", size: "50", distro: "ubuntu-18.04-server"}
-        - { name: "vm-bootstrap", size: "25", distro: "ubuntu-18.04-server"}
         - { name: "vm-bootstrap", size: "200", distro: "ubuntu-20.04-server"}
         - { name: "vm-bootstrap", size: "50", distro: "ubuntu-20.04-server"}
         - { name: "vm-bootstrap", size: "25", distro: "ubuntu-20.04-server"}
