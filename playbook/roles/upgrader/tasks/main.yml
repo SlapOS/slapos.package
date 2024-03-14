@@ -8,7 +8,7 @@
     when: extra_playbook == "ors.yml"
 
   - name: Set Cron to repeat until success
-    cron: name="Repeat until success" minute="*/5" hour="*" job="curl -fIs $(grep "^deb" /etc/apt/sources.list| cut -f2 -d' ' | head -n1) && flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_repeat_upgrade.log >> /opt/upgrader/latest_repeat_upgrade.log\""
+    cron: name="Repeat until success" minute="*/5" hour="*" job="curl -fIs $(grep "^deb" /etc/apt/sources.list| cut -f2 -d' ' | head -n1) && flock -n /opt/upgrader/ansible.lock -c \"cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_repeat_upgrade.log >> /opt/upgrader/latest_repeat_upgrade.log\""
     when: repeat_until_success | bool
 
   - name: Get monitor private directory path
@@ -54,7 +54,7 @@
   - name: Periodically download the latest playbook
     shell: /usr/local/bin/slapcache-download --destination=/opt/upgrader/archive.tar.gz
 
-  - name: Uncompress
+  - name: Uncompress latest playbook to tmp
     shell: tar -xzvf /opt/upgrader/archive.tar.gz
     args:
       chdir: /opt/upgrader/tmp
@@ -62,16 +62,21 @@
   - name: Check uncompressed archive sha256sum
     shell: cd /opt/upgrader/tmp && find . -type f ! -name 'sha256sum' -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum --check sha256sum
 
+  - name: Sync disk
+    shell: sync
+
   - shell: cp -R /opt/upgrader/tmp /opt/upgrader/playbook
     when: playbook_folder.stat.exists == False
 
   - stat: path=/opt/upgrader/tmp/hosts
     register: hosts_file
 
-  - shell: rm -rf /opt/upgrader/playbook-tmp
+  - name: Move the latest playbook to playbook-tmp
+    shell: mv playbook-tmp playbook.todelete && mv tmp playbook-tmp
+      chdir: /opt/upgrader
     when: hosts_file.stat.exists == True
 
-  - shell: cp -R /opt/upgrader/tmp /opt/upgrader/playbook-tmp
+  - shell: rm -rf /opt/upgrader/playbook.todelete
     when: hosts_file.stat.exists == True
 
   - name: Save new archive MD5
@@ -136,7 +141,7 @@
       chdir: /opt/upgrader/playbook-tmp/
 
   - name: Set Cron
-    cron: name="Launch Upgrader with ansible" minute="{{ period_minute }}" hour="{{ period_hour }}" job="flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'period_minute={{ period_minute }} period_hour={{ period_hour }} upgrader_playbook={{ upgrader_playbook }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_upgrade.log >> /opt/upgrader/latest_upgrade.log\""
+    cron: name="Launch Upgrader with ansible" minute="{{ period_minute }}" hour="{{ period_hour }}" job="flock -n /opt/upgrader/ansible.lock -c \" [ -d /opt/upgrader/playbook-tmp ] && { rm -rf /opt/upgrader/playbook ; mv /opt/upgrader/playbook-tmp /opt/upgrader/playbook/ ; } && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'period_minute={{ period_minute }} period_hour={{ period_hour }} upgrader_playbook={{ upgrader_playbook }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_upgrade.log >> /opt/upgrader/latest_upgrade.log\""
     when: repeat_until_success | bool == False
 
   - cron: name="Launch Upgrader" state=absent
@@ -168,5 +173,5 @@
     when: repeat_until_success | bool
 
   - name: Set Anacron after successful playbook run
-    lineinfile: dest=/etc/anacrontab regexp="^[0-9]+ [0-9]+ extra.playbook (.*)" line="1 10 extra.playbook curl -fIs $(grep "^deb" /etc/apt/sources.list| cut -f2 -d' ' | head -n1) && flock -n /opt/upgrader/ansible.lock -c \"rm -rf /opt/upgrader/playbook && cp -R /opt/upgrader/playbook-tmp /opt/upgrader/playbook && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_daily_upgrade.log >> /opt/upgrader/latest_daily_upgrade.log\"" state=present
+    lineinfile: dest=/etc/anacrontab regexp="^[0-9]+ [0-9]+ extra.playbook (.*)" line="1 10 extra.playbook curl -fIs $(grep "^deb" /etc/apt/sources.list| cut -f2 -d' ' | head -n1) && flock -n /opt/upgrader/ansible.lock -c \"[ -d /opt/upgrader/playbook-tmp ] && { rm -rf /opt/upgrader/playbook ; mv /opt/upgrader/playbook-tmp /opt/upgrader/playbook/ ; } && cd /opt/upgrader/playbook && PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report_fact }}' -i hosts 2>>/opt/upgrader/latest_daily_upgrade.log >> /opt/upgrader/latest_daily_upgrade.log\"" state=present
     when: repeat_until_success | bool
