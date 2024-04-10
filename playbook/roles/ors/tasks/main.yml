@@ -64,6 +64,9 @@
   - name: Copy get-sdr-info script
     copy: src=get-sdr-info dest=/opt/amarisoft owner=root mode=770
 
+  - name: Copy get-license-info script
+    copy: src=get-license-info dest=/opt/amarisoft owner=root mode=770
+
 # Re6st
 
   - name: Configure re6st
