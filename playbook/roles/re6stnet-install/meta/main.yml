@@ -1,3 +1,4 @@
 ---
 dependencies:
   - { role: package, package_name: re6st-node, package_state: present  } 
+  - { role: package, package_name: cron, package_state: present  }
