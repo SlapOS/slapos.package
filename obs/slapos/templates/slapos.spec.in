@@ -57,7 +57,11 @@ BuildRequires: python-devel
 BuildRequires: python3
 BuildRequires: python3-devel
 %endif
-Requires: gcc-c++, make, patch, wget, lm_sensors
+Requires: gcc-c++
+Requires: make
+Requires: patch
+Requires: wget
+Requires: (lm_sensors or sensors)
 
 AutoReqProv: no
 
