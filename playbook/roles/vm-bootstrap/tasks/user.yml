@@ -7,7 +7,10 @@
     apt: name=sudo state=latest update_cache=yes cache_valid_time=86400
     when: ansible_os_family == "Debian"
 
-  - include: ../../yum/tasks/main.yml name=sudo cache_valid_time=86400
+  - include_tasks: ../../yum/tasks/main.yml
+    vars:
+      name: sudo
+      cache_valid_time: 86400
     when: ansible_os_family == "RedHat"
 
   - name: Ensure /etc/sudoers.d directory is present
