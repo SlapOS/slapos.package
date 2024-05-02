@@ -13,11 +13,11 @@
     register: pip3_installed
 
   - name: Install slapcache on Debian < 9
-    include: pip_installations_success.yml
+    include_tasks: pip_installations_success.yml
     when: ansible_distribution == "Debian" and ansible_distribution_major_version|int < 9
 
   - name: Install slapcache on Debian >= 9
-    include: pip_installations_succeeded.yml
+    include_tasks: pip_installations_succeeded.yml
     when: ansible_distribution == "Debian" and ansible_distribution_major_version|int >= 9
 
   - name: Install slapcache on Ubuntu
