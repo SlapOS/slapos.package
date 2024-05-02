@@ -26,33 +26,20 @@ echo " Buildroot Directory: $BUILD_ROOT_DIRECTORY "
 mkdir -p $BUILD_DIRECTORY/{eggs,extends-cache,download-cache/dist}
 cd $BUILD_DIRECTORY
 
-# 1) boostrap with old version
+# 1) boostrap with isolation
 echo "bootsrapping buildout"
 sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../slapos.buildout.cfg.in > buildout.cfg
 
-wget https://lab.nexedi.com/nexedi/slapos.buildout/raw/master/bootstrap/bootstrap.py
-python3 -S bootstrap.py \
-  --setuptools-version 41.6.0 \
-  --setuptools-to-dir eggs \
-  --buildout-version 2.13.8
-
-# 2) get newest version of zc.buildout and setuptools
-#    note that we can't directly do setuptools + zc.buildout +
-#    slapos.libnetworkcache because buildout would be relaunched in the middle
-#    without the "-S" option to python
-echo "downloading good version of setuptools and zc.buildout"
-sed -i '1s/$/ -S/' bin/buildout
-sed -i "/def _satisfied(/s/\(\bsource=\)None/\11/" eggs/zc.buildout-*/zc/buildout/easy_install.py # no wheel
-bin/buildout buildout:newest=true -v
+buildout bootstrap buildout:isolate-from-buildout-and-setuptools-path=true
 ls download-cache/dist/*.whl && { echo "There shouldn't be any wheel in download-cache" ; exit 1 ; }
 
-# 3) compile very simple buildout with networkcache
+# 2) compile very simple buildout with networkcache
 echo "Preparing networkcached zc.buildout"
 sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../networkcached.cfg.in > buildout.cfg
 sed -i '1s/$/ -S/' bin/buildout
 bin/buildout buildout:newest=true -v
 
-# 4) build locally everything with gcc to get download-cache and extends-cache ready
+# 3) build locally everything with gcc to get download-cache and extends-cache ready
 echo "Launch the big buildout to compile everything"
 sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../buildout_with_gcc.cfg.in > buildout.cfg
 
