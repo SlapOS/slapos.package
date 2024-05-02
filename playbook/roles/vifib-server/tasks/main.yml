@@ -30,8 +30,8 @@
   - name: Allow ping for all users (no need for SUID binary)
     sysctl: name="net.ipv4.ping_group_range" value="0 2147483647" sysctl_set=yes state=present reload=yes
 
-  - include: kvm.yml
-  - include: shuttle-modprobe.yml
+  - import_tasks: kvm.yml
+  - import_tasks: shuttle-modprobe.yml
 
   - name: Increase ulimit
     copy: src="slapos_limit.conf" dest="/etc/security/limits.d/slapos.conf" mode=0644 owner=root group=root

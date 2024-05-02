@@ -1,7 +1,7 @@
 
-  - include: fedora_init.yml
+  - import_tasks: fedora_init.yml
 
-  - include: debian_init.yml
+  - import_tasks: debian_init.yml
 
   - name: Force HTTP repository for old debian versions without HTTPS support
     set_fact:
