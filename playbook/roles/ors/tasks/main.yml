@@ -91,6 +91,9 @@
   - name: Copy init-enb script
     copy: src=init-enb dest=/opt/amarisoft owner=root mode=770
 
+  - name: Copy init-mme script
+    copy: src=init-mme dest=/opt/amarisoft owner=root mode=770
+
   - name: Copy rm-tmp-lte script
     copy: src=rm-tmp-lte dest=/opt/amarisoft owner=root mode=770
 
