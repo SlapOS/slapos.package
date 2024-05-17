@@ -80,6 +80,9 @@
   - name: Configure slapos
     script: configure-slapos.py
 
+  - name: Copy format-ims script
+    copy: src=format-ims dest=/opt/amarisoft owner=root mode=770
+
 # Amarisoft software
 
   - name: Create a directory if it does not exist
@@ -118,6 +121,15 @@
   - name: Set capabilities on lteenb-avx2
     shell: 'patchelf --set-rpath {{ amarisoft_path.stdout }}/enb {{ amarisoft_path.stdout }}/enb/lteenb-avx2 && setcap cap_sys_nice=+pe {{ amarisoft_path.stdout }}/enb/lteenb-avx2'
     when: lteenb_avx2_cap.rc != 0
+
+  - name: Check if lteims has capabilities
+    shell: 'getcap {{ amarisoft_path.stdout }}/mme/lteims | grep cap_sys_admin | grep -q cap_net_raw'
+    ignore_errors: yes
+    register: lteims_cap
+
+  - name: Set capabilities on lteims
+    shell: 'patchelf --set-rpath {{ amarisoft_path.stdout }}/mme {{ amarisoft_path.stdout }}/mme/lteims && setcap cap_sys_admin,cap_net_raw=+pe {{ amarisoft_path.stdout }}/mme/lteims'
+    when: lteims_cap.rc != 0
 
   - name: Create .amarisoft directory for SR
     file: path=/opt/amarisoft/.amarisoft state=directory
@@ -181,3 +193,9 @@
   - name: Install upgrader
     shell: ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report }}' -i hosts 2>>/opt/upgrader/latest_daily_upgrade.log >> /opt/upgrader/latest_daily_upgrade.log
     when: launch_upgrader | bool
+
+  - name: Add format-ims script to cron after slapos node boot
+    lineinfile: dest=/etc/cron.d/slapos-node regexp="@reboot root /opt/slapos/bin/slapos node boot(.*)" line="@reboot root /opt/slapos/bin/slapos node boot >> /opt/slapos/log/slapos-node-format.log 2>&1 ; /opt/amarisoft/format-ims >> /opt/amarisoft/format-ims.log 2>&1" state=present
+
+  - name: Add format-ims script to cron after slapos node format
+    lineinfile: dest=/etc/cron.d/slapos-node regexp="(.*)root /opt/slapos/bin/slapos node format(.*)" line="0 * * * * root /opt/slapos/bin/slapos node format >> /opt/slapos/log/slapos-node-format.log 2>&1 ; /opt/amarisoft/format-ims >> /opt/amarisoft/format-ims.log 2>&1" state=present
