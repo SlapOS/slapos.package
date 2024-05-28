@@ -2,9 +2,6 @@
 
   - set_fact: cn="{{ ansible_hostname }}"
 
-  - name: Update certificate signature list
-    script: update-signature-list.py
-
   - name: Create directory if it does not exist
     file: path="{{ pkdir }}" state=directory mode=0755
 
@@ -28,13 +25,17 @@
   - name: Get monitor private directory path
     shell: 'realpath $(dirname $(grep -lR "software_release_url = .*software/monitor/software.cfg" $(find /srv/slapgrid -type f -name "buildout.cfg")))/srv/monitor/private'
     register: monitor_path
+    when: playbook_report | bool
+    ignore_errors: yes
 
   - name: Create directory if it does not exist
     file: path="{{ monitor_path.stdout }}/playbook-report" state=directory mode=0755
+    when: (monitor_path is succeeded) and (playbook_report | bool)
 
   - stat: path="{{ pkdir }}/{{ cn }}.pub"
     register: public_key
+    when: (monitor_path is succeeded) and (playbook_report | bool)
 
   - name: Copy public key
     copy: src="{{ pkdir }}/{{ cn }}.pub" dest="{{ monitor_path.stdout }}/playbook-report/{{ cn }}.pub" owner=root mode=774
-    when: public_key.stat.exists == True
+    when: (monitor_path is succeeded) and (playbook_report | bool) and (public_key.stat.exists == True)

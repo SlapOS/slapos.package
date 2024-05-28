@@ -2,104 +2,140 @@
 
   - set_fact: cn="{{ ansible_hostname }}"
 
+  - name: Configure /opt/amarisoft/shacache.cfg
+    copy: src=shacache.cfg dest=/opt/amarisoft/shacache.cfg owner=root mode=644
+
   - stat: path="{{ pkdir }}/{{ cn }}.pub"
     register: certificate
 
-  - name: End playbook if we have no public key yet
-    meta: end_play
-    when: certificate.stat.exists == False
-
   - name: Delete download directory
     file: path={{ install_folder }}/download state=absent
+    when: certificate.stat.exists == True
 
   - name: Create download directory
     file: path={{ install_folder }}/download state=directory mode=0755
+    when: certificate.stat.exists == True
 
   - name: Get license expiration
     shell: '/opt/amarisoft/get-license-info -e'
     register: license_expiration
+    when: certificate.stat.exists == True
 
   - name: Get license version
     shell: '/opt/amarisoft/get-license-info -v'
     register: license_version
+    when: certificate.stat.exists == True
+
+  - debug:
+      msg: "[{{ ansible_date_time.date }} {{ ansible_date_time.time }}] License will expire on {{ license_expiration.stdout }}, current version is {{ license_version.stdout }}"
+    when: certificate.stat.exists == True
 
   - name: Get new amarisoft version if available
-    shell: "networkcache-download -c /etc/opt/slapos/slapos.cfg -k key-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' 'cn==\"{{ cn }}\"' --list | grep version | cut -d\\\" -f4"
+    shell: "networkcache-download -c /opt/amarisoft/shacache.cfg -k key-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' 'cn==\"{{ cn }}\"' --list | grep version | cut -d\\\" -f4"
     register: new_version
+    when: certificate.stat.exists == True
 
-  - name: End playbook if no new amarisoft versions
-    meta: end_play
-    when: new_version.stdout == ""
+  - debug:
+      msg: "[{{ ansible_date_time.date }} {{ ansible_date_time.time }}] Found new version: {{ new_version.stdout }}"
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Download nonce to decrypt new amarisoft version
-    shell: "networkcache-download -c /etc/opt/slapos/slapos.cfg -k file-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' --list | grep nonce | cut -d\\\" -f4 > {{ install_folder }}/download/nonce"
+    shell: "networkcache-download -c /opt/amarisoft/shacache.cfg -k file-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' --list | grep nonce | cut -d\\\" -f4 > {{ install_folder }}/download/nonce"
     register: nonce
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - set_fact: version="{{ new_version.stdout }}"
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Download new amarisoft version
-    shell: "networkcache-download -c /etc/opt/slapos/slapos.cfg -k file-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' > {{ install_folder }}/download/amarisoft.tar.gz.enc"
+    shell: "networkcache-download -c /opt/amarisoft/shacache.cfg -k file-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' > {{ install_folder }}/download/amarisoft.tar.gz.enc"
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Download encrypted symmetric key for new amarisoft version
-    shell: "networkcache-download -c /etc/opt/slapos/slapos.cfg -k key-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' 'cn==\"{{ cn }}\"' > {{ install_folder }}/download/symmetric_key.bin.enc"
+    shell: "networkcache-download -c /opt/amarisoft/shacache.cfg -k key-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' 'cn==\"{{ cn }}\"' > {{ install_folder }}/download/symmetric_key.bin.enc"
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Create directory if it does not exist
     file: path={{ install_folder }}/{{ version }} state=directory mode=0755
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Create directory if it does not exist
     file: path={{ install_folder }}/_{{ version }} state=directory mode=0755
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Decrypt key
     shell: 'openssl pkeyutl -decrypt -in {{ install_folder }}/download/symmetric_key.bin.enc -inkey /opt/private-key/{{ cn }}.key -out /opt/private-key/symmetric_key-{{ version }}.key'
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Decrypt archive
     script: encrypt-data.sh /opt/private-key/symmetric_key-{{ version }}.key {{ install_folder }}/download/nonce decrypt {{ install_folder }}/download/amarisoft.tar.gz.enc {{ install_folder }}/amarisoft.tar.gz
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Extract archive
     unarchive:
       src: "{{ install_folder }}/amarisoft.tar.gz"
       dest: "{{ install_folder }}"
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Extract lteenb archive
     unarchive:
       src: "{{ install_folder }}/{{ version }}/lteenb-linux-{{ version }}.tar.gz"
       dest: "{{ install_folder }}/_{{ version }}"
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Extract ltemme archive
     unarchive:
       src: "{{ install_folder }}/{{ version }}/ltemme-linux-{{ version }}.tar.gz"
       dest: "{{ install_folder }}/_{{ version }}"
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Extract trx_sdr archive
     unarchive:
       src: "{{ install_folder }}/{{ version }}/trx_sdr-linux-{{ version }}.tar.gz"
       dest: "{{ install_folder }}/_{{ version }}"
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Create a symbolic link for lteenb
     file:
       src: "lteenb-linux-{{ version }}"
       dest: "{{ install_folder }}/_{{ version }}/enb"
       state: link
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Create a symbolic link for ltemme
     file:
       src: "ltemme-linux-{{ version }}"
       dest: "{{ install_folder }}/_{{ version }}/mme"
       state: link
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Create a symbolic link for trx_sdr
     file:
       src: "trx_sdr-linux-{{ version }}"
       dest: "{{ install_folder }}/_{{ version }}/trx_sdr"
       state: link
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Copy trx_sdr libraries
-    shell: 'cp {{ install_folder }}/_{{ version }}/trx_sdr/*.so {{ install_folder }}/_{{ version }}/enb/'
+    shell: 'cp {{ install_folder }}/_{{ version }}/trx_sdr/*.so* {{ install_folder }}/_{{ version }}/enb/'
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
+
+  - name: Copy libraries to mme
+    shell: 'cp {{ install_folder }}/_{{ version }}/libs/*.so* {{ install_folder }}/_{{ version }}/mme/'
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
+    ignore_errors: True
+
+  - name: Copy libraries to mme
+    shell: 'cp {{ install_folder }}/_{{ version }}/libs/linux/*.so* {{ install_folder }}/_{{ version }}/mme/'
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
+    ignore_errors: True
 
   - name: Move amarisoft folder
     shell: 'mv {{ install_folder }}/_{{ version }} {{ install_folder }}/v{{ version }}'
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Remove extraction folder
     file: 
       path: "{{ install_folder }}/{{ version }}"
       state: absent
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
