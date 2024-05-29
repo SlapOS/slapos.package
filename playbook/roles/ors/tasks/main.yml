@@ -195,7 +195,7 @@
     when: launch_upgrader | bool
 
   - name: Add format-ims script to cron after slapos node boot
-    lineinfile: dest=/etc/cron.d/slapos-node regexp="@reboot root /opt/slapos/bin/slapos node boot(.*)" line="@reboot root /opt/slapos/bin/slapos node boot >> /opt/slapos/log/slapos-node-format.log 2>&1 ; /opt/amarisoft/format-ims >> /opt/amarisoft/format-ims.log 2>&1" state=present
+    lineinfile: dest=/etc/cron.d/slapos-node regexp="@reboot root /opt/slapos/bin/slapos node boot(.*)" line="@reboot root /opt/slapos/bin/slapos node boot >> /opt/slapos/log/slapos-node-format.log 2>&1 ; /opt/amarisoft/format-ims /opt/amarisoft/format-ims.log" state=present
 
   - name: Add format-ims script to cron after slapos node format
-    lineinfile: dest=/etc/cron.d/slapos-node regexp="(.*)root /opt/slapos/bin/slapos node format(.*)" line="0 * * * * root /opt/slapos/bin/slapos node format >> /opt/slapos/log/slapos-node-format.log 2>&1 ; /opt/amarisoft/format-ims >> /opt/amarisoft/format-ims.log 2>&1" state=present
+    lineinfile: dest=/etc/cron.d/slapos-node regexp="(.*)root /opt/slapos/bin/slapos node format(.*)" line="0 * * * * root /opt/slapos/bin/slapos node format >> /opt/slapos/log/slapos-node-format.log 2>&1 ; /opt/amarisoft/format-ims /opt/amarisoft/format-ims.log" state=present
