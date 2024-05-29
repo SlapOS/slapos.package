@@ -43,6 +43,7 @@ sys.path[0:0] = p
 
 os.environ['PATH'] = os.path.expandvars('/opt/slapos/parts/bison/bin:/opt/slapos/parts/bzip2/bin:/opt/slapos/parts/gettext/bin:/opt/slapos/parts/glib/bin:/opt/slapos/parts/libxml2/bin:/opt/slapos/parts/libxslt/bin:/opt/slapos/parts/m4/bin:/opt/slapos/parts/ncurses/bin:/opt/slapos/parts/openssl/bin:/opt/slapos/parts/pkgconfig/bin:/opt/slapos/parts/python3/bin:/opt/slapos/parts/readline/bin:/opt/slapos/parts/sqlite3/bin:/opt/slapos/parts/swig/bin:/opt/slapos/bin:/opt/slapos/parts/patch/bin:/opt/slapos/parts/socat/bin:$PATH')
 
+import logging
 import netifaces
 import netaddr
 from socket import AF_INET, AF_INET6
@@ -51,7 +52,6 @@ from math import log2, ceil
 import sys
 import subprocess
 import json
-
 
 # LinkDB represents snapshot of state of all network interfaces.
 class LinkDB:
@@ -66,6 +66,14 @@ class LinkDB:
         raise KeyError('interface %r not found' % ifname)
 
 def main():
+
+    open(sys.argv[1], 'w+')
+    run('sed', '-i', '50001,$ d', sys.argv[1])
+
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(filename=sys.argv[1], level=logging.DEBUG)
+    logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
+                        level=logging.DEBUG)
 
     for link in ip('link', 'list'):
         tun = link['ifname']
@@ -88,7 +96,7 @@ def formatTun(tun):
     except RuntimeError as e:
         return False
 
-    print('%s: configure %s' % (tun, net))
+    logging.info('%s: configure %s' % (tun, net))
 
     # do the split
     # with leaving first range for the original tun
@@ -98,14 +106,14 @@ def formatTun(tun):
         subnet4 = netaddr.IPNetwork("%s/%d" % (
                   net4split[i].ip + 1, net4split[i].prefixlen))
         if i == 0:
-            print('preserve         %s' % subnet)
+            logging.info('preserve         %s' % subnet)
             continue    # leave this range for original tun
 
         subtun = '%s-%d' % (tun, i)
         subtun_set.add(subtun)
-        print('-> %s   %s %s' % (subtun, subnet, subnet4))
+        logging.info('-> %s   %s %s' % (subtun, subnet, subnet4))
         def note(msg):
-            print(' # %s: %s' % (subtun, msg))
+            logging.info(' # %s: %s' % (subtun, msg))
 
         # create subtun
         try:
@@ -231,7 +239,7 @@ def formatTun(tun):
     # remove other existing children
     for ifname in netifaces.interfaces():
         if ifname.startswith('%s-' % tun) and (ifname not in subtun_set) and 'ims' not in ifname:
-            print('-> del %s' % ifname)
+            logging.info('-> del %s' % ifname)
             run('ip', 'link', 'del', ifname)
     return True
 
@@ -292,7 +300,7 @@ def ifnet4(ifname):
 
 # run executes `*argv` as action.
 def run(*argv):
-    print(' # %s' % ' '.join(argv))
+    logging.info(' # %s' % ' '.join(argv))
     subprocess.check_call(argv)
 
 # ip returns decoded output of `ip -details *argv`
