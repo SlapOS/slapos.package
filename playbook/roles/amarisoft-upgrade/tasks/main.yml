@@ -121,12 +121,12 @@
     when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Copy libraries to mme
-    shell: 'cp {{ install_folder }}/_{{ version }}/libs/*.so* {{ install_folder }}/_{{ version }}/mme/'
+    shell: 'cp {{ install_folder }}/{{ version }}/libs/*.so* {{ install_folder }}/_{{ version }}/mme/'
     when: (certificate.stat.exists == True) and (new_version.stdout != "")
     ignore_errors: True
 
   - name: Copy libraries to mme
-    shell: 'cp {{ install_folder }}/_{{ version }}/libs/linux/*.so* {{ install_folder }}/_{{ version }}/mme/'
+    shell: 'cp {{ install_folder }}/{{ version }}/libs/linux/*.so* {{ install_folder }}/_{{ version }}/mme/'
     when: (certificate.stat.exists == True) and (new_version.stdout != "")
     ignore_errors: True
 
