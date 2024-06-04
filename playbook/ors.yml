@@ -13,4 +13,6 @@
     - settings/ors.yml
 
   roles:
+    - generate-key
+    - amarisoft-upgrade
     - ors
