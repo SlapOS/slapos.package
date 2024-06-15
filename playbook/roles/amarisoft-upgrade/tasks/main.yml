@@ -17,12 +17,12 @@
     when: certificate.stat.exists == True
 
   - name: Get license expiration
-    shell: '/opt/amarisoft/get-license-info -e'
+    shell: '/opt/amarisoft/get-license-info -e || echo 0000-00-00'
     register: license_expiration
     when: certificate.stat.exists == True
 
   - name: Get license version
-    shell: '/opt/amarisoft/get-license-info -v'
+    shell: '/opt/amarisoft/get-license-info -v || echo 0000-00-00'
     register: license_version
     when: certificate.stat.exists == True
 
