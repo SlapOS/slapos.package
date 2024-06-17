@@ -1,0 +1,5 @@
+[Match]
+Name=lo
+
+[Link]
+MTUBytes=1500
