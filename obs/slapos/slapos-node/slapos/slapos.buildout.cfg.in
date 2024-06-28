@@ -19,6 +19,11 @@ eggs =
   zc.buildout
 
 [versions]
-setuptools = 44.1.1
-zc.buildout = 2.7.1+slapos020
-zc.recipe.egg = 2.0.3+slapos003
+# The last version of setuptools compatible with Python 3.7
+setuptools = 67.8.0
+# Use SlapOS patched zc.buildout
+zc.buildout = 3.0.1+slapos002
+pip = 23.2.1
+# Use SlapOS patched zc.recipe.egg (zc.recipe.egg 2.x is for Buildout 2)
+zc.recipe.egg = 2.0.8.dev0+slapos002
+wheel = 0.41.2

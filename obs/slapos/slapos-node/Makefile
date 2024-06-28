@@ -2,7 +2,7 @@
 # -*- makefile -*-
 
 build: 
-	make -C slapos build SLAPOS_BOOTSTRAP_SYSTEM_PYTHON=$(shell which python2.7 2> /dev/null || echo python3)
+	make -C slapos build SLAPOS_BOOTSTRAP_SYSTEM_PYTHON=$(shell which python3 2> /dev/null || echo python2.7)
 
 all: build
 

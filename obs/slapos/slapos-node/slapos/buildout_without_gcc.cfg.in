@@ -2,6 +2,7 @@
 rootdir = %TARGET_DIRECTORY%
 destdir = %BUILD_ROOT_DIRECTORY% 
 builddir = %BUILD_DIRECTORY%
+extra-paths =
 extends =
   %BUILD_ROOT_DIRECTORY%/../slapos_repository/component/slapos/obs.cfg
 download-cache = download-cache

@@ -23,7 +23,7 @@ build-stamp:
 
 	@echo "Bootstrapping buildout"
 	cd $(BUILD_DIRECTORY) && \
-		$(SLAPOS_BOOTSTRAP_SYSTEM_PYTHON) ./bootstrap
+		$(SLAPOS_BOOTSTRAP_SYSTEM_PYTHON) ./bootstrap-dir/bin/buildout buildout:install-from-cache=true bootstrap
 
 	@echo 'Preparing source tarball (recipe version: $(RECIPE_VERSION))'
 	cd $(BUILD_DIRECTORY) && \
