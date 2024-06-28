@@ -61,6 +61,11 @@ chmod -R u+w .
 rm -fv .installed.cfg environment.*
 rm -rfv ./{downloads,parts,eggs,develop-eggs,bin,rebootstrap}
 
+# We need to remove those files to prevent errors in the zc.recipe.egg:custom
+# because it is a hardlink and we can't do hardlinks twice
+# XXX should be removed when the recipe is fixed
+rm -fv ./download-cache/dist/patch.*
+
 # Removing empty directories
 find . -type d -empty -prune -exec rmdir '{}' ';'
 
