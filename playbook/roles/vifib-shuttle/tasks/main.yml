@@ -14,4 +14,4 @@
   - name: echo 1 > /sys/kernel/mm/ksm/run
     shell: echo 1 > /sys/kernel/mm/ksm/run
 
-  - include: user.yml
+  - import_tasks: user.yml
