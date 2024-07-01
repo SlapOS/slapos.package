@@ -50,13 +50,14 @@ BuildRequires: patch
 BuildRequires: wget
 BuildRequires: chrpath
 BuildRequires: openssl-devel
-%if 0%{?centos_version} <= 700 || 0%{?rhel_version} <= 700 || 0%{?suse_version} < 1300 || 0%{?sle_version} < 130000
-BuildRequires: python
-BuildRequires: python-devel
-%else
 BuildRequires: python3
 BuildRequires: python3-devel
-%endif
+# dependencies for compilation of python3
+BuildRequires: libffi-devel
+BuildRequires: (lzma-devel or liblzma-devel or xz-devel)
+BuildRequires: zlib-devel
+BuildRequires: (libbz2-devel or bzip2-devel)
+
 Requires: gcc-c++
 Requires: make
 Requires: patch
