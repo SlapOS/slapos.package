@@ -6,7 +6,8 @@ dependencies:
     package_state: present
     when: ( ansible_distribution == "Fedora" and ansible_distribution_major_version|int < 34 ) or
           ( ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int < 23 ) or
-          ( ansible_distribution != "Fedora" and ansible_distribution != "Ubuntu" )
+          ( ansible_distribution == "SLES" and ansible_distribution_major_version|int < 15 ) or
+          ( ansible_distribution != "Fedora" and ansible_distribution != "Ubuntu" and ansible_distribution != "SLES")
 
   - name: Install ntpsec package
     role: package
@@ -14,3 +15,9 @@ dependencies:
     package_state: present
     when: ( ansible_distribution == "Fedora" and ansible_distribution_major_version|int >= 34 ) or
           ( ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 23 )
+
+  - name: Install chrony package
+    role: package
+    package_name: chrony
+    package_state: present
+    when: ansible_distribution == "SLES" and ansible_distribution_major_version|int >= 15
