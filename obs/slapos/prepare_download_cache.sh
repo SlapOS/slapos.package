@@ -74,8 +74,9 @@ find . -type d -empty -prune -exec rmdir '{}' ';'
 find . -regextype posix-extended -type f \
 	-iregex '.*/*\.(py[co]|[l]?a|exe|bat)$$' -exec rm -fv '{}' ';'
 
-#TODO remove git files
-
+# remove git files only for now
+# in the future, we could remove all slapos_repository dir if we use correctly extends_cache
+rm -rf $BUILD_ROOT_DIRECTORY/../slapos_repository/.git
 
 ##################################
 # prepare compilation inside OBS #
