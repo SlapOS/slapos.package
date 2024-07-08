@@ -9,12 +9,7 @@ for IF in $(find . -type l -printf "%f\n"); do
   if ! realpath $(readlink $IF) | grep -q "^/sys/devices/virtual"; then
     # If interface is up and has IPv6 neighbours
     if [ "$(cat $IF/operstate)" = "up" ] && [ -n "$(ip -6 neigh list dev $IF)" ]; then
-      # Special case: interfaces connected to Lille office LAN should not have interface option enabled
-      if ! ping6 -q -c3 -w3 fe80::20d:b9ff:fe3f:9055%$IF; then
-        IF_LIST+=($IF);
-      else
-        RM_IF_LIST+=($IF);
-      fi
+      RM_IF_LIST+=($IF);
     fi
   fi
 done
