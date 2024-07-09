@@ -1,0 +1,27 @@
+---
+
+  - name: Configure sudoers
+    script: configure-sudoers
+
+  - name: Copy init-ue script
+    copy: src=init-ue dest=/opt/amarisoft owner=root mode=770
+
+  - name: Configure slapos
+    lineinfile: dest=/etc/opt/slapos/slapos.cfg regexp="^create_tun(.*)" line="create_tun = False" state=present
+
+  - name: Disable anacron
+    lineinfile: dest=/etc/anacrontab regexp="^1 10 extra.playbook(.*)" line="" state=absent
+
+  - name: Get ethernet interface name
+    script: get-eth-interface
+    register: eth_interface
+
+  - name: Install ifupdown configuration
+    template:
+      src: interfaces.j2
+      dest: /etc/network/interfaces
+
+  - name: Install re6st configuration
+    template:
+      src: re6stnet.conf.j2
+      dest: /etc/re6stnet/re6stnet.conf
