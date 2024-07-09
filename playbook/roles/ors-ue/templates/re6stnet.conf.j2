@@ -1,0 +1,22 @@
+registry https://re6st-registry.nxdcdn.com/
+ca ca.crt
+cert cert.crt
+key cert.key
+verbose 3
+# enable OpenVPN logging:
+ovpnlog
+# uncomment the following 2 lines to increase OpenVPN verbosity:
+O--verb
+O3
+O--socket-flags
+O"TCP_NODELAY"
+interface ue1-pdn0
+main-interface {{ eth_interface.stdout }}
+
+B-C
+B"interface ue1-pdn0 type tunnel"
+
+max-clients 0
+client-count 0
+
+daemon "exec dnsmasq -k8 - -i {{ eth_interface.stdout }} -F ${re6stnet_subnet%/*},ra-only,$((${re6stnet_subnet#*/}>64 ? ${re6stnet_subnet#*/} : 64)),1d --port 0 -F 10.2.0.2,10.2.0.50,1d -O option:netmask,255.255.255.0 -O option:router,10.2.0.1 -O option:dns-server,1.1.1.1 -O option:ntp-server,216.239.35.0"
