@@ -1,0 +1,9 @@
+auto lo
+iface lo inet loopback
+
+auto {{ eth_interface.stdout }}
+iface {{ eth_interface.stdout }} inet static
+        address 10.2.0.1
+        netmask 255.255.255.0
+
+source /etc/network/interfaces.d/*

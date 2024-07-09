@@ -1,0 +1,4 @@
+---
+dependencies:
+  - { role: package, package_name: dnsmasq, package_state: present  }
+  - { role: package, package_name: ifupdown, package_state: present  }
