@@ -1,0 +1,9 @@
+auto lo
+iface lo inet loopback
+
+allow-hotplug {{ eth_interface.stdout }}:0
+iface {{ eth_interface.stdout }}:0 inet static
+        address 10.2.0.1
+        netmask 255.255.255.0
+
+source /etc/network/interfaces.d/*

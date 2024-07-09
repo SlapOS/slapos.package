@@ -1,0 +1,12 @@
+#!/bin/bash
+cd /sys/class/net;
+for IF in $(find . -type l -printf "%f\n"); do
+  # If interface is virtual
+  if ! realpath $(readlink $IF) | grep -q "^/sys/devices/virtual"; then
+    # If interface is up
+    if [ "$(cat $IF/operstate)" = "up" ] ; then
+      echo -n $IF
+      exit
+    fi
+  fi
+done
