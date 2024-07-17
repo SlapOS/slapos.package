@@ -25,3 +25,9 @@
     template:
       src: re6stnet.conf.j2
       dest: /etc/re6stnet/re6stnet.conf
+
+  - name: Copy /opt/start-udhcpc
+    copy: src=start-udhcpc dest=/opt/start-udhcpc owner=root mode=770
+
+  - name: Make sure UDHCPC is running every minute
+    cron: name="Start UDHCPC" minute="*/1" hour="*" job="/opt/start-udhcpc"

@@ -1,0 +1,9 @@
+#!/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+cd /sys/class/net;
+for IF in $(find . -type l -printf "%f\n"); do
+  # If interface is not virtual
+  if ! realpath $(readlink $IF) | grep -q "^/sys/devices/virtual"; then
+    flock -n /opt/udhcpc-$IF.lock -c "udhcpc -i $IF > /opt/udhcpc-$IF.log 2>&1 /opt/udhcpc-$IF.log &"
+  fi
+done
