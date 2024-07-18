@@ -11,17 +11,18 @@
   vars_prompt:
     - name: "re6sttoken"
       prompt: "\n\n
-You are running the Grandenet Installer\n\n
-Please insert your token from Grandenet to configure your computer.\n
-If you don't have a token, please access http://www.grandenet.cn/en \n
-and request one. \n\n
-Move informations at http://www.grandenet.cn/en/documentation/user
+You are using the re6st automatic installer for FREE network.
 \n\n
 
 Your token
 "
       private: no 
       default: "notoken"
+
+    - name: "location"
+      prompt: 'Manually enter your location (ignore if you want it detected automatically, format is "country code,continent code", e.g. "FR,EU")'
+      private: no
+      default: ""
 
     - name: "enable_router_advertisement"
       prompt: "Enable Router Advertisement"
