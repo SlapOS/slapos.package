@@ -26,6 +26,9 @@
       src: re6stnet.conf.j2
       dest: /etc/re6stnet/re6stnet.conf
 
+  - name: Copy udhcpc script
+    copy: src=udhcpc.script dest=/opt/udhcpc.script owner=root mode=770
+
   - name: Copy /opt/start-udhcpc
     copy: src=start-udhcpc dest=/opt/start-udhcpc owner=root mode=770
 
