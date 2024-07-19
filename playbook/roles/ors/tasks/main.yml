@@ -194,8 +194,12 @@
     shell: ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report }}' -i hosts 2>>/opt/upgrader/latest_daily_upgrade.log >> /opt/upgrader/latest_daily_upgrade.log
     when: launch_upgrader | bool
 
-  - name: Add format-ims script to cron after slapos node boot
-    lineinfile: dest=/etc/cron.d/slapos-node regexp="@reboot root /opt/slapos/bin/slapos node boot(.*)" line="@reboot root /opt/slapos/bin/slapos node boot >> /opt/slapos/log/slapos-node-format.log 2>&1 ; /opt/amarisoft/format-ims /opt/amarisoft/format-ims.log" state=present
+  - name: Remove format-ims script to cron after slapos node boot
+    lineinfile: dest=/etc/cron.d/slapos-node regexp="@reboot root /opt/slapos/bin/slapos node boot(.*)" line="@reboot root /opt/slapos/bin/slapos node boot >> /opt/slapos/log/slapos-node-format.log 2>&1" state=present
 
-  - name: Add format-ims script to cron after slapos node format
-    lineinfile: dest=/etc/cron.d/slapos-node regexp="(.*)root /opt/slapos/bin/slapos node format(.*)" line="0 * * * * root /opt/slapos/bin/slapos node format >> /opt/slapos/log/slapos-node-format.log 2>&1 ; /opt/amarisoft/format-ims /opt/amarisoft/format-ims.log" state=present
+  - name: Remove format-ims script to cron after slapos node format
+    lineinfile: dest=/etc/cron.d/slapos-node regexp="(.*)root /opt/slapos/bin/slapos node format(.*)" line="0 * * * * root /opt/slapos/bin/slapos node format >> /opt/slapos/log/slapos-node-format.log 2>&1" state=present
+
+  - name: Add format-ims script to cron every minute
+    lineinfile: dest=/etc/cron.d/slapos-node regexp="(.*)root /opt/amarisoft/format-ims(.*)" line="* * * * * root /opt/amarisoft/format-ims /opt/amarisoft/format-ims.log" state=present
+
