@@ -26,7 +26,7 @@
   - name: Setting playbook report message
     set_fact:
       playbook_report_message: "Starting ors playbook"
-      playbook_report_progress: "30" 
+      playbook_report_progress: "30"
       data: { 'registry_url': "{{ registry_url.stdout }}", 'amarisoft_version': "{{ amarisoft_version.stdout }}"}
 
   - name: Render log template
@@ -199,3 +199,7 @@
 
   - name: Add format-ims script to cron after slapos node format
     lineinfile: dest=/etc/cron.d/slapos-node regexp="(.*)root /opt/slapos/bin/slapos node format(.*)" line="0 * * * * root /opt/slapos/bin/slapos node format >> /opt/slapos/log/slapos-node-format.log 2>&1 ; /opt/amarisoft/format-ims /opt/amarisoft/format-ims.log" state=present
+
+  - name: Add format-ims script to cron every minute
+    lineinfile: dest=/etc/cron.d/slapos-node regexp="(.*)root /opt/amarisoft/format-ims(.*)" line="* * * * * root /opt/amarisoft/format-ims /opt/amarisoft/format-ims.log" state=present
+
