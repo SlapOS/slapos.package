@@ -7,7 +7,7 @@ export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 $AMARISOFT_PATH/trx_sdr/sdr_util version && exit;
 lsof /dev/sdr0 && exit;
 lsmod | grep -q sdr && rmmod sdr;
-if echo $AMARISOFT_PATH | grep -q 2023; then
+if echo $AMARISOFT_PATH | grep -q '2023\|2024'; then
   cd $OLD_AMARISOFT_PATH/trx_sdr/kernel;
   make clean && make && bash init.sh;
   rmmod sdr;
