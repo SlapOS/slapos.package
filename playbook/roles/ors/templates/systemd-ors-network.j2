@@ -1,0 +1,12 @@
+[Match]
+Name=en*
+
+[Network]
+DHCP=yes
+
+[Match]
+name={{ eth_interface.stdout }}
+
+[Network]
+Address={{ re6st_second_range.stdout }}1/64
+
