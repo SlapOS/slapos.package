@@ -171,6 +171,12 @@
   - name: Remove old /etc/systemd/network/dhcp.network
     file: path=/etc/systemd/network/dhcp.network state=absent
 
+  - name: Don't accept router advertisement on all interface
+    sysctl: name="net.ipv6.conf.all.accept_ra" value=0 sysctl_set=yes state=present reload=yes
+
+  - name: Don't accept router advertisement by default
+    sysctl: name="net.ipv6.conf.default.accept_ra" value=0 sysctl_set=yes state=present reload=yes
+
   - name: Configure firewall
     script: configure-firewall
 
