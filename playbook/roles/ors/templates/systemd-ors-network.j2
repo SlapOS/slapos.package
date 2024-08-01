@@ -3,10 +3,12 @@ Name=en*
 
 [Network]
 DHCP=yes
+IPv6AcceptRA=0
 
 [Match]
 name={{ eth_interface.stdout }}
 
 [Network]
 Address={{ re6st_second_range.stdout }}1/64
+IPv6AcceptRA=0
 
