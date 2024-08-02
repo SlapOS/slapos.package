@@ -24,6 +24,13 @@ with open('/opt/upgrader/configure-slapos.log', 'w+') as l:
     config = configparser.ConfigParser()
     config.read(CONF_PATH)
 
+    # Don't create tun in UE mode
+    if "lte-ue" in subprocess.run(['slapos', 'node'], check=False, capture_output=True, text=True).stdout:
+        print("In UE mode: no TUN interfaces")
+        ors_config['slapformat']['create_tun'] = 'False'
+    else:
+        print("In Base Station mode: with TUN interfaces")
+
     def is_slapformat_valid():
         for k in ors_config['slapformat']:
             if ors_config['slapformat'][k] != \

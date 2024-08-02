@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# get the second /64 range of re6st /48 range 
+addr=$(ip a show dev lo | grep '::1/48' | sed 's/inet6 //' | sed 's#/48.*##' | sed 's#::1#:1::#' )
+echo -n $addr

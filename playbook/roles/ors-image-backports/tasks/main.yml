@@ -71,10 +71,6 @@
     ignore_errors: yes
 
 # Configure systemd-networkd 
-
-  - name: Configure /etc/systemd/network/dhcp.network
-    copy: src=systemd-dhcp-network dest=/etc/systemd/network/dhcp.network owner=root mode=644
-
 ## eNB and MME addresses are on lo interface, using high MTU will result in bad throughput 
 ## for TCP when using IPv6 and phones with low MTU
   - name: Configure /etc/systemd/network/lo.network
