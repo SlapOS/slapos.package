@@ -12,6 +12,8 @@ ors_config = {
     },
     'networkcache': {
         'download-from-binary-cache-force-url-list': '''
+https://lab.nexedi.com/nexedi/slapos/-/raw/1.
+https://lab.node.vifib.com/nexedi/slapos/-/raw/1.0.
 https://lab.nexedi.com/nexedi/slapos/raw/1.
 https://lab.node.vifib.com/nexedi/slapos/raw/1.0.''',
     },
