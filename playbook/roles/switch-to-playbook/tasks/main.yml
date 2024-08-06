@@ -1,2 +1,2 @@
 ---
-  - include: remove-slapos-package.yml
+  - import_tasks: remove-slapos-package.yml
