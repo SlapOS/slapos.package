@@ -29,9 +29,6 @@
  - name: Add Xiaowu Zhang SSH Key
    authorized_key: user=root key="{{ lookup('file', 'xiaowu_zhang_key') }}"
 
- - name: Add KW SSH Key
-   authorized_key: user=root key="{{ lookup('file', 'klaus_key') }}"
-
  - name: Add KS SSH Key
    authorized_key: user=root key="{{ lookup('file', 'kazuhiko_key') }}"
 
@@ -43,6 +40,9 @@
 
  - name: Add LX SSH Key
    authorized_key: user=root key="{{ lookup('file', 'lu_key') }}"
+
+ - name: Remove old Klaus Woelfel SSH Key
+   authorized_key: user=root key="{{ lookup('file', 'remove_key_13') }}" state=absent
 
  - name: Remove old Romain Courteaud SSH Key
    authorized_key: user=root key="{{ lookup('file', 'remove_key_12') }}" state=absent
