@@ -21,26 +21,36 @@
     register: license_expiration
     when: certificate.stat.exists == True
 
-  - name: Get license version
-    shell: '/opt/amarisoft/get-license-info -v || echo 0000-00-00'
-    register: license_version
+  - name: Get current version
+    shell: '/opt/amarisoft/get-license-info -v || echo 0000-00-00.0 | cut -d. -f1'
+    register: current_version
+    when: certificate.stat.exists == True
+
+  - name: Get current version timestamp
+    shell: '/opt/amarisoft/get-license-info -v | grep "\." || echo 0000-00-00.0 | cut -d. -f2'
+    register: current_timestamp
     when: certificate.stat.exists == True
 
   - debug:
-      msg: "[{{ ansible_date_time.date }} {{ ansible_date_time.time }}] License will expire on {{ license_expiration.stdout }}, current version is {{ license_version.stdout }}"
+      msg: "[{{ ansible_date_time.date }} {{ ansible_date_time.time }}] License will expire on {{ license_expiration.stdout }}, current version is {{ current_version.stdout }}-{{ current_timestamp.stdout }}"
     when: certificate.stat.exists == True
 
   - name: Get new amarisoft version if available
-    shell: "networkcache-download -c /opt/amarisoft/shacache.cfg -k key-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' 'cn==\"{{ cn }}\"' --list | grep version | cut -d\\\" -f4"
+    shell: "networkcache-download -c /opt/amarisoft/shacache.cfg -k key-private:amarisoft 'cn==\"{{ cn }}\"' 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ current_version.stdout }}\"' 'timestamp>>\"{{ current_timestamp.stdout }}\"' --list | grep version | cut -d\\\" -f4"
     register: new_version
     when: certificate.stat.exists == True
+
+  - name: Get new amarisoft timestamp
+    shell: "networkcache-download -c /opt/amarisoft/shacache.cfg -k key-private:amarisoft 'cn==\"{{ cn }}\"' 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ current_version.stdout }}\"' 'timestamp>>\"{{ current_timestamp.stdout }}\"' --list | grep timestamp | cut -d\\\" -f4"
+    register: new_timestamp
+    when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - debug:
       msg: "[{{ ansible_date_time.date }} {{ ansible_date_time.time }}] Found new version: {{ new_version.stdout }}"
     when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Download nonce to decrypt new amarisoft version
-    shell: "networkcache-download -c /opt/amarisoft/shacache.cfg -k file-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' --list | grep nonce | cut -d\\\" -f4 > {{ install_folder }}/download/nonce"
+    shell: "networkcache-download -c /opt/amarisoft/shacache.cfg -k file-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ current_version.stdout }}\"' 'timestamp>>\"{{ current_timestamp.stdout }}\"' --list | grep nonce | cut -d\\\" -f4 > {{ install_folder }}/download/nonce"
     register: nonce
     when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
@@ -48,11 +58,11 @@
     when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Download new amarisoft version
-    shell: "networkcache-download -c /opt/amarisoft/shacache.cfg -k file-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' > {{ install_folder }}/download/amarisoft.tar.gz.enc"
+    shell: "networkcache-download -c /opt/amarisoft/shacache.cfg -k file-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ current_version.stdout }}\"' 'timestamp>>\"{{ current_timestamp.stdout }}\"' > {{ install_folder }}/download/amarisoft.tar.gz.enc"
     when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Download encrypted symmetric key for new amarisoft version
-    shell: "networkcache-download -c /opt/amarisoft/shacache.cfg -k key-private:amarisoft 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ license_version.stdout }}\"' 'cn==\"{{ cn }}\"' > {{ install_folder }}/download/symmetric_key.bin.enc"
+    shell: "networkcache-download -c /opt/amarisoft/shacache.cfg -k key-private:amarisoft 'cn==\"{{ cn }}\"' 'version<=\"{{ license_expiration.stdout }}\"' 'version>>\"{{ current_version.stdout }}\"' 'timestamp>>\"{{ current_timestamp.stdout }}\"' > {{ install_folder }}/download/symmetric_key.bin.enc"
     when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Create directory if it does not exist
@@ -131,7 +141,7 @@
     ignore_errors: True
 
   - name: Move amarisoft folder
-    shell: 'mv {{ install_folder }}/_{{ version }} {{ install_folder }}/v{{ version }}'
+    shell: 'mv {{ install_folder }}/_{{ version }} {{ install_folder }}/v{{ version }}.{{ new_timestamp.stdout }}'
     when: (certificate.stat.exists == True) and (new_version.stdout != "")
 
   - name: Remove extraction folder
