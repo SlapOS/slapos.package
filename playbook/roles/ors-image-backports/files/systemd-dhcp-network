@@ -3,3 +3,7 @@ Name=en*
 
 [Network]
 DHCP=yes
+DNSSEC=no
+
+[DHCP]
+UseDNS=false
