@@ -152,6 +152,15 @@
   - name: Configure IPv6 forwarding
     lineinfile: dest=/etc/sysctl.conf regexp="^net.ipv6.conf.all.forwarding=(.*)" line="net.ipv6.conf.all.forwarding=1" state=present
 
+  - name: Improve network stack behaviour (for core network)
+    lineinfile: dest=/etc/sysctl.conf regexp="^net.ipv4.tcp_congestion_control=(.*)" line="net.ipv4.tcp_congestion_control=bbr" state=present
+
+  - name: Improve network stack behaviour (for core network)
+    lineinfile: dest=/etc/sysctl.conf regexp="^net.core.rmem_max=(.*)" line="net.core.rmem_max=50000000" state=present
+
+  - name: Improve network stack behaviour (for core network)
+    lineinfile: dest=/etc/sysctl.conf regexp="^net.core.wmem_max=(.*)" line="net.core.wmem_max=5000000" state=present
+
   - name: Redirect 53 to 5353
     ansible.builtin.iptables:
       chain: PREROUTING
