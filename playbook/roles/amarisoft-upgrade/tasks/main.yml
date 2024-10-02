@@ -145,6 +145,16 @@
     when: (certificate.stat.exists == True) and (new_version_found == True)
     ignore_errors: True
 
+  - name: Copy libraries to enb
+    shell: 'cp {{ install_folder }}/{{ version }}/libs/*.so* {{ install_folder }}/_{{ version }}/enb/'
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+    ignore_errors: True
+
+  - name: Copy libraries to enb
+    shell: 'cp {{ install_folder }}/{{ version }}/libs/linux/*.so* {{ install_folder }}/_{{ version }}/enb/'
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+    ignore_errors: True
+
   - name: Move amarisoft folder
     shell: 'mv {{ install_folder }}/_{{ version }} {{ install_folder }}/v{{ version }}.{{ new_timestamp.stdout }}'
     when: (certificate.stat.exists == True) and (new_version_found == True)
