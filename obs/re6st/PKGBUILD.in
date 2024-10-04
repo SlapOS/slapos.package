@@ -6,7 +6,7 @@ pkgrel=1
 arch=('x86_64' 'i686')
 license=('GPL')
 depends=(iptables iproute2)
-makedepends=(python2)
+makedepends=(python3)
 install='re6stnet.install'
 source=(${pkgname}_${pkgver}.tar.gz)
 

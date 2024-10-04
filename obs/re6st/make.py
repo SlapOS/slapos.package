@@ -40,19 +40,18 @@
 # If this way of packaging is reused for other software, postinst scripts
 # should be implemented.
 
-import os, rfc822, shutil, ssl, time, urllib
+import os, email, shutil, ssl, time, urllib.request, urllib.parse, urllib.error
 from glob import glob
-from cStringIO import StringIO
+from io import BytesIO
 from subprocess import check_call
 from make import *
 from debian.changelog import Changelog
 from debian.deb822 import Deb822
 
-BOOTSTRAP_URL = "https://bootstrap.pypa.io/bootstrap-buildout.py"
 PACKAGE = "re6st-node"
 
 BIN = "re6st-conf re6st-registry re6stnet".split()
-BUILD_KEEP = "babeld", "buildout.cfg", "download-cache", "extends-cache"
+BUILD_KEEP = "babeld", "buildout.cfg", "download-cache", "extends-cache", "bootstrap-dir"
 NOPART = "chrpath bison flex gnu-config lunzip m4 patch perl popt site_perl xz-utils".split()
 TARGET = "opt/re6st"
 
@@ -77,36 +76,32 @@ def cfg(task):
     cfg = open(task.input).read() % dict(
         SLAPOS=os.path.abspath("slapos"),
         ROOT="${buildout:directory}/" + os.path.relpath(ROOT, BUILD),
-        TARGET="/"+TARGET)
+        TARGET="/"+TARGET,
+        RE6STNET_VERSION="0.%s" % check_output(("git", "rev-list", "--count", "HEAD"),
+                     cwd="re6stnet", text=True).strip())
     mkdir(BUILD)
     open(task.output, "w").write(cfg)
 
-def no_wheel():
-    args = ["sed", "-i", r"/def _satisfied(/s/\(\bsource=\)None/\11/"]
-    args += glob("eggs/zc.buildout-*/zc/buildout/easy_install.py")
-    check_call(args)
+@task([], "original_directory")
+def original_directory(task):
+    original_dir = os.path.abspath(ROOT)
+    open(task.output, "w").write(original_dir)
 
-@task((cfg, slapos), (BUILD + "/bin/buildout", BUILD + "/bin/python"))
+@task((cfg, slapos), BUILD + "/bin/buildout")
 def bootstrap(task):
     try:
-        os.utime(task.outputs[1], None)
-    except OSError:
-        bootstrap = urllib.urlopen(BOOTSTRAP_URL).read()
+        os.utime(task.outputs[0], None)
+    except FileNotFoundError:
         mkdir(BUILD + "/download-cache")
-        with cwd(BUILD):
-            rmtree("extends-cache")
-            os.mkdir("extends-cache")
-            check_output((sys.executable, "-S", "-",
-                # XXX: By starting with an older version,
-                #      we'll have the wanted version in cache.
-                "--setuptools-version", "40.8.0",
-                "--buildout-version", "2.13.8"), input=bootstrap)
-            no_wheel()
-            check_call(("bin/buildout", "buildout:extensions=",
-                "buildout:newest=true", "buildout:parts=python-bootstrap"))
-            check_call(("bin/python.tmp", "bin/buildout", "bootstrap"))
-            assert not glob("download-cache/dist/*.whl")
-            os.rename("bin/python.tmp", "bin/python")
+        mkdir(BUILD + "/bootstrap-dir")
+        rmtree(BUILD + "/extends-cache")
+        os.mkdir(BUILD + "/extends-cache")
+        # will be use to bootstrap inside OBS
+        shutil.copy2(BUILD + "/buildout.cfg", BUILD + "/bootstrap-dir")
+        check_call(('buildout', 'buildout:download-cache=../download-cache',
+            'buildout:extends-cache=../extends-cache', 'buildout:parts=networkcached', 'bootstrap'),
+            cwd=BUILD + "/bootstrap-dir")
+        check_call(('bootstrap-dir/bin/buildout', 'bootstrap'), cwd=BUILD)
 
 def sdist_version(egg):
     global MTIME, VERSION
@@ -115,7 +110,7 @@ def sdist_version(egg):
         egg.rsplit("-", 1)[1].split(".tar.")[0],
         os.getenv("SLAPOS_EPOCH", "1"),
         check_output(("git", "rev-parse", "--short", "HEAD"),
-                     cwd="slapos").strip())
+                     cwd="slapos", text=True).strip())
     tarball.provides = "%s/%s_%s.tar.gz" % (DIST, PACKAGE, VERSION),
     deb.provides = deb.provides[0], "%s/%s_%s.dsc" % (DIST, PACKAGE, VERSION)
     mkdir(DIST)
@@ -134,8 +129,9 @@ def sdist(task):
     #      is really useful for the main tarball.
     d = BUILD + "/download-cache/dist"
     g = d + "/re6stnet-*"
-    map(os.remove, glob(g))
-    check_call((os.path.abspath(task.inputs[1]), "setup.py", "sdist",
+    for sdist in glob(g):
+        os.remove(sdist)
+    check_call(("python3", "setup.py", "sdist",
                 "-d", os.path.abspath(d)), cwd="re6stnet")
     task.outputs[1] = sdist_version(*glob(g))
     # Touch target because the current directory is used as temporary
@@ -152,7 +148,7 @@ def tarfile_addfileobj(tarobj, name, dataobj, statobj):
     tarinfo = tarobj.gettarinfo(arcname=name, fileobj=statobj)
     dataobj.seek(0, 2)
     tarinfo.size = dataobj.tell()
-    dataobj.reset()
+    dataobj.seek(0)
     tarobj.addfile(tarinfo, dataobj)
 
 @task(re6stnet)
@@ -160,8 +156,8 @@ def upstream(task):
     check_call(("make", "-C", "re6stnet"))
     task.outputs = glob("re6stnet/docs/*.[1-9]")
 
-@task((upstream, buildout, __file__,
-       "Makefile.in", "cleanup", "install-eggs", "bootstrap"))
+@task((upstream, buildout, original_directory, __file__,
+       "Makefile.in", "cleanup", "install-eggs", "build_python3_if_needed.sh", "original_directory"))
 def tarball(task):
     prefix = "%s-%s/" % (PACKAGE, VERSION)
     def xform(path):
@@ -169,19 +165,19 @@ def tarball(task):
             if path.startswith(p):
                 return prefix + path[len(p):]
     with make_tar_gz(task.output, MTIME, xform) as t:
-        s = StringIO()
+        s = BytesIO()
         for k in "BIN", "NOPART", "BUILD_KEEP", "TARGET":
             v = globals()[k]
-            s.write("%s = %s\n" % (k, v if type(v) is str else " ".join(v)))
-        with open(task.inputs[-4]) as x:
+            s.write(("%s = %s\n" % (k, v if type(v) is str else " ".join(v))).encode())
+        with open("Makefile.in", 'rb') as x:
             s.write(x.read())
             tarfile_addfileobj(t, "Makefile", s, x)
         s.truncate(0)
-        s.write("override PYTHON = /%s/parts/python2.7/bin/python\n" % TARGET)
-        with open("re6stnet/Makefile") as x:
+        s.write(("override PYTHON = /%s/parts/python3.11/bin/python3\n" % TARGET).encode())
+        with open("re6stnet/Makefile", 'rb') as x:
             s.write(x.read())
             tarfile_addfileobj(t, "upstream.mk", s, x)
-        for x in task.inputs[-3:]:
+        for x in task.inputs[-4:]:
             t.add(x)
         t.add("re6stnet/daemon")
         for x in upstream.outputs:
@@ -191,11 +187,12 @@ def tarball(task):
 
 @task(sdist, "debian/changelog")
 def dch(task):
-    with cwd("re6stnet") as p:
-        p += "/" + task.output
-        check_output(("make", "-f", "-", p,
-                      "PACKAGE=" + PACKAGE, "VERSION=" + VERSION),
-            input=open("debian/common.mk").read().replace(task.output, p))
+    changelog = os.getcwd() + "/" + task.output
+    with open("re6stnet/debian/common.mk") as mk:
+        check_output(("make", "-f", "-", changelog,
+                     "PACKAGE=" + PACKAGE, "VERSION=" + VERSION),
+                input=mk.read().replace(task.output, changelog).encode(),
+                cwd="re6stnet")
 
 @task((dch, tree("debian")), DIST + "/debian.tar.gz")
 def deb(task):
@@ -206,15 +203,15 @@ def deb(task):
     d["Version"] = VERSION
     d["Architecture"] = b["Architecture"] = "any"
     d["Build-Depends"] = s["Build-Depends"] = (
-        "python (>= 2.7) | python2 | python3-distutils, debhelper (>= 9.20120909),"
-        " debhelper (>= 10) | dh-systemd,"
-        " iproute2 | iproute"
+        "python3, python3-dev, libssl-dev, libffi-dev,"
+        " liblzma-dev, libz-dev, libbz2-dev, debhelper (>= 9.20120909),"
+        " debhelper (>= 10) | dh-systemd, iproute2 | iproute"
     )
     b["Depends"] = "${shlibs:Depends}, iproute2 | iproute"
     b["Conflicts"] = b["Provides"] = b["Replaces"] = "re6stnet"
-    patched_control = StringIO("%s\n%s" % (s, b))
+    patched_control = BytesIO(("%s\n%s" % (s, b)).encode())
     open(task.outputs[1], "w").write(str(d))
-    date = rfc822.parsedate_tz(Changelog(open(dch.output)).date)
+    date = email.utils.parsedate_tz(Changelog(open(dch.output)).date)
     mtime = time.mktime(date[:9]) - date[9]
     # Unfortunately, OBS does not support symlinks.
     with make_tar_gz(task.outputs[0], mtime, dereference=True) as t:
@@ -230,7 +227,7 @@ def deb(task):
             upstream.difference_update((x, "debian/rules", "debian/source"))
             # check we are aware of any upstream file we override
             assert upstream.isdisjoint(added), upstream.intersection(added)
-            map(t.add, sorted(upstream))
+            list(map(t.add, sorted(upstream)))
 
 @task((sdist, __file__), DIST + "/re6stnet.spec")
 def rpm(task):
@@ -242,7 +239,7 @@ s/^(Name:\s*).*/\1%s/
 s/^(Version:\s*).*/\1%s/
 s/^(Release:\s*).*/\11/
 /^BuildArch:/cAutoReqProv: no\
-BuildRequires: gcc-c++, make, python, iproute\
+BuildRequires: gcc-c++, make, python3, iproute\
 #!BuildIgnore: rpmlint-Factory\
 Source: %%{name}_%%{version}.tar.gz
 /^Requires:/{
