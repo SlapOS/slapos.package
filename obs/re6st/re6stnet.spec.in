@@ -1,0 +1,62 @@
+%global __brp_mangle_shebangs %{nil}
+%global __brp_python_bytecompile %{nil}
+%define units re6stnet.service re6st-registry.service
+
+Summary:    resilient, scalable, IPv6 network application
+Name:       %PACKAGE%
+Version:    %VERSION%
+Release:    1
+License:    GPLv2+
+Group:      Applications/Internet
+AutoReqProv: no
+BuildRequires: gcc-c++, make, python3, iproute
+#!BuildIgnore: rpmlint-Factory
+Source0: %{name}_%{version}.tar.gz
+Source1: %{name}.rpmlintrc
+Requires:   iproute
+BuildRequires: python3-devel
+# dependencies for compilation of python3
+BuildRequires: libffi-devel
+BuildRequires: (lzma-devel or liblzma-devel or xz-devel)
+BuildRequires: zlib-devel
+BuildRequires: (libbz2-devel or bzip2-devel)
+Conflicts:  re6stnet
+
+%description
+%prep
+%setup -q
+
+%build
+make
+
+%install
+set $RPM_BUILD_ROOT
+make install PREFIX=%_prefix MANDIR=%_mandir DESTDIR=$1 %{?_unitdir:UNITDIR=%{_unitdir}}
+# Exclude man pages because they will be compressed.
+find $1 -mindepth 1 -path \*%_mandir -prune -o \
+  -name re6st\* -prune -printf /%%P\\n > INSTALLED
+export QA_RPATHS=$(( 0x0001|0x0002|0x0020 ))
+
+%clean
+rm -rf "$RPM_BUILD_ROOT" INSTALLED
+
+%files -f INSTALLED
+%_mandir/*/*
+
+%post
+if [ $1 -eq 1 ]; then
+    /bin/systemctl preset %{units} || :
+fi >/dev/null 2>&1
+
+%preun
+if [ $1 -eq 0 ]; then
+    /bin/systemctl --no-reload disable %{units} || :
+    /bin/systemctl stop %{units} || :
+fi >/dev/null 2>&1
+find %TARGET% -type d -name __pycache__ -print0 |xargs -r0 rm -r
+
+%postun
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ]; then
+    /bin/systemctl try-restart %{units} >/dev/null 2>&1 || :
+fi
