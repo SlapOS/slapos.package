@@ -34,5 +34,10 @@ find -regextype posix-extended -type f \
 find -regextype posix-extended -type f \
   -iregex '.*/*\.(py[co]|[l]?a|exe|bat)$' -delete
 
+# Removing shebang from Python files not in bin/
+for f in `grep --exclude-dir='bin' --include='*.py' -rIl '^#!' 2> /dev/null`; do
+	chmod -x $f && sed -i '1d' $f
+done
+
 # Removing empty directories
 find -type d -empty -delete

@@ -10,10 +10,12 @@ download-cache = download-cache
 develop =
 extensions = slapos.rebootstrap
 newest = false
+relative-paths = true
 
-allow-picked-versions = true
+find-links += https://softinst171429.host.vifib.net/public/
+allow-hosts += softinst171429.host.vifib.net
 
-parts += chrpath python-bootstrap
+parts = re6st-ovpn chrpath
 
 [babeld-repository]
 git-executable =
@@ -23,12 +25,27 @@ location = ${buildout:directory}/babeld
 post-install = make clean; make version.h
 environment =
 
-[python-bootstrap]
-recipe = zc.recipe.egg
-interpreter = python.tmp
-eggs = slapos.libnetworkcache
-# https://lab.nexedi.com/nexedi/slapos.buildout/merge_requests/11
-scripts = dummy
+# Adjust interpreter of OpenVPN hooks.
+[re6st-ovpn]
+=> re6stnet
+recipe = slapos.recipe.build
+update =
+  import os, shutil, sys
+  shebang = f'#!{sys.executable} -S\n'
+  ws = self.buildout['re6stnet'].recipe.working_set()[1]
+  for root, dirs, files in os.walk(ws.by_key['re6stnet'].location):
+    for x in files:
+      if x.startswith('ovpn-'):
+        x = os.path.join(root, x)
+        with open(x) as src:
+          if src.readline() != shebang:
+            y = x + '.new'
+            with open(y, 'w') as dst:
+              src.readline()
+              dst.write(shebang)
+              shutil.copyfileobj(src, dst)
+            shutil.copymode(x, y)
+            os.rename(y, x)
 
 # Uguu, upstream buildout.cfg must be patched as it works the other way
 # around from a packager point of view at least, thus at the end static
@@ -38,13 +55,21 @@ scripts = dummy
 # ./configure --prefix=BUILD_DIRECTORY && make install
 # Instead of:
 # ./configure --prefix=INSTALL_DIRECTORY && make install DESTDIR=BUILD_DIRECTORY
-[python2.7]
+[python3-common]
 configure-options +=
   --prefix=%(TARGET)s/parts/${:_buildout_section_name_}
 environment +=
   DESTDIR=%(ROOT)s
+post-install =
+  set `echo -n ${:url} |md5sum`
+  ln -frs ${buildout:download-cache}/$1 ${buildout:directory}/python3.tar.xz
 
-[openssl]
+[python]
+# Do not rely on existing installation of what we are building.
+update +=
+  os.environ['SSL_CERT_DIR'] = self.buildout['openssl']['certs']
+
+[openssl-common]
 shared = false
 prefix = %(TARGET)s/parts/${:_buildout_section_name_}
 make-options +=
@@ -60,3 +85,7 @@ environment =
 # For old GCC like 4.8.5 on SLE 12 SP5.
 environment +=
   CFLAGS=-std=c99 -g -O2
+
+[versions]
+zc.buildout = 3.0.1+slapos005.mr36v4
+re6stnet = %(RE6STNET_VERSION)s:whl
