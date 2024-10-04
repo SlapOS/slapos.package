@@ -28,7 +28,7 @@ mkdir -p $BUILD_DIRECTORY/{eggs,extends-cache,download-cache/dist,bootstrap-dir}
 cd $BUILD_DIRECTORY/bootstrap-dir
 
 # 1) you need a recent enough version of Nexedi buildout, you can do e.g.:
-# pip install http://www.nexedi.org/static/packages/source/slapos.buildout/zc.buildout-3.0.1%2Bslapos002.tar.gz
+# pip install http://www.nexedi.org/static/packages/source/slapos.buildout/zc.buildout-3.0.1%2Bslapos004.tar.gz
 
 # 2) compile very simple buildout with networkcache
 echo "Preparing networkcached zc.buildout"
