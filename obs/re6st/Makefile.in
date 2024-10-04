@@ -1,5 +1,6 @@
-# Note that this file and related scripts (bootstrap, install-eggs) don't
-# contain anything specific to re6stnet. They could be reused as is for SlapOS.
+# Note that this file and related scripts (build_python3_if_needed.sh,
+# install-eggs) don't contain anything specific to re6stnet. They could be
+# reused as is for SlapOS.
 
 # We don't strip ELF files because all dists automatically do it.
 # For those that produce debug packages, these packages are anyway quite small
@@ -8,7 +9,7 @@
 BUILD = $(TARGET)
 
 PATH := $(CURDIR)/$(BUILD)/parts/chrpath/bin:$(CURDIR)/$(BUILD)/parts/file/bin:$(CURDIR)/$(BUILD)/parts/perl/bin:$(PATH)
-PYTHON = $(or $(shell command -v python2 || command -v python || command -v python3),$(error no Python found))
+SLAPOS_BOOTSTRAP_PYTHON = $(shell ./build_python3_if_needed.sh)
 
 all: $(BUILD)/.installed.cfg
 ifneq ($(wildcard upstream.mk),)
@@ -22,7 +23,8 @@ install: _install
 endif
 
 $(BUILD)/bin/buildout:
-	cd $(BUILD) && $(PYTHON) -S $(CURDIR)/bootstrap
+	@echo "Bootstrapping buildout"
+	cd $(BUILD) && $(SLAPOS_BOOTSTRAP_PYTHON) bootstrap-dir/bin/buildout buildout:install-from-cache=true bootstrap
 
 $(BUILD)/.installed.cfg: $(BUILD)/bin/buildout $(BUILD)/buildout.cfg
 	cd $(BUILD) && bin/buildout babeld-repository:recipe=
@@ -39,10 +41,14 @@ $(PROGS): $(BUILD)/.installed.cfg
 
 $(DESTDIR)/$(TARGET): $(BUILD)/.installed.cfg
 	rm -rf $@ && mkdir -p $@/parts
-	cd $(BUILD) && $(PYTHON) $(CURDIR)/install-eggs $@ $(BIN)
+	cd $(BUILD) && $(SLAPOS_BOOTSTRAP_PYTHON) $(CURDIR)/install-eggs $@ $(BIN)
 	for x in $(filter-out $(NOPART),$(shell cd $(BUILD)/parts && echo *)); \
 	do cp --preserve=links -r $(BUILD)/parts/$$x $@/parts; done
 	cd $@ && $(CURDIR)/cleanup && chmod -R u+w .
+
+# Fix shebang "env python" or "env python3" to use only our python3 # needed for CentOS
+	for x in $(shell grep -R -l -e '^#!/usr/bin/env python' $@ ); \
+		do sed -i 's%^#!/usr/bin/env python.*%#!/$(TARGET)/parts/python3/bin/python3%' $$x; done
 
 # Fix paths in files, first ELF, then non-binary
 	@set -ex $(CURDIR)/$(BUILD) /$(TARGET); set $$* "s:\\Q$$1\\E:$$2:g"; \
