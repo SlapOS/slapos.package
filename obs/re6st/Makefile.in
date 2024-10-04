@@ -8,7 +8,8 @@
 BUILD = $(TARGET)
 
 PATH := $(CURDIR)/$(BUILD)/parts/chrpath/bin:$(CURDIR)/$(BUILD)/parts/file/bin:$(CURDIR)/$(BUILD)/parts/perl/bin:$(PATH)
-PYTHON = $(or $(shell command -v python2 || command -v python || command -v python3),$(error no Python found))
+SLAPOS_BOOTSTRAP_PYTHON = $(shell ./build_python3_if_needed.sh)
+ORIGINAL_DIRECTORY := $(shell cat ./original_directory)
 
 all: $(BUILD)/.installed.cfg
 ifneq ($(wildcard upstream.mk),)
@@ -22,7 +23,12 @@ install: _install
 endif
 
 $(BUILD)/bin/buildout:
-	cd $(BUILD) && $(PYTHON) -S $(CURDIR)/bootstrap
+	@echo "Fixing buildout path to $(CURDIR) rather than $(ORIGINAL_DIRECTORY) for buildout"
+	grep -rIl '$(ORIGINAL_DIRECTORY)' $(CURDIR) 2> /dev/null | \
+	      xargs sed -i 's#$(ORIGINAL_DIRECTORY)#$(CURDIR)#g' || \
+	      echo "No path to fix."
+	@echo "Bootstrapping buildout"
+	cd $(BUILD) && $(SLAPOS_BOOTSTRAP_PYTHON) bootstrap-dir/bin/buildout buildout:install-from-cache=true bootstrap
 
 $(BUILD)/.installed.cfg: $(BUILD)/bin/buildout $(BUILD)/buildout.cfg
 	cd $(BUILD) && bin/buildout babeld-repository:recipe=
@@ -39,7 +45,7 @@ $(PROGS): $(BUILD)/.installed.cfg
 
 $(DESTDIR)/$(TARGET): $(BUILD)/.installed.cfg
 	rm -rf $@ && mkdir -p $@/parts
-	cd $(BUILD) && $(PYTHON) $(CURDIR)/install-eggs $@ $(BIN)
+	cd $(BUILD) && $(SLAPOS_BOOTSTRAP_PYTHON) $(CURDIR)/install-eggs $@ $(BIN)
 	for x in $(filter-out $(NOPART),$(shell cd $(BUILD)/parts && echo *)); \
 	do cp --preserve=links -r $(BUILD)/parts/$$x $@/parts; done
 	cd $@ && $(CURDIR)/cleanup && chmod -R u+w .
