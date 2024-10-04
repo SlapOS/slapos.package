@@ -1,5 +1,6 @@
-# Note that this file and related scripts (bootstrap, install-eggs) don't
-# contain anything specific to re6stnet. They could be reused as is for SlapOS.
+# Note that this file and related scripts (build_python3_if_needed,
+# install-eggs) don't contain anything specific to re6stnet. They could be
+# reused as is for SlapOS.
 
 # We don't strip ELF files because all dists automatically do it.
 # For those that produce debug packages, these packages are anyway quite small
@@ -8,7 +9,6 @@
 BUILD = $(TARGET)
 
 PATH := $(CURDIR)/$(BUILD)/parts/chrpath/bin:$(CURDIR)/$(BUILD)/parts/file/bin:$(CURDIR)/$(BUILD)/parts/perl/bin:$(PATH)
-PYTHON = $(or $(shell command -v python2 || command -v python || command -v python3),$(error no Python found))
 
 all: $(BUILD)/.installed.cfg
 ifneq ($(wildcard upstream.mk),)
@@ -21,11 +21,9 @@ else
 install: _install
 endif
 
-$(BUILD)/bin/buildout:
-	cd $(BUILD) && $(PYTHON) -S $(CURDIR)/bootstrap
-
-$(BUILD)/.installed.cfg: $(BUILD)/bin/buildout $(BUILD)/buildout.cfg
-	cd $(BUILD) && bin/buildout babeld-repository:recipe=
+$(BUILD)/.installed.cfg: $(BUILD)/buildout.cfg
+	cd $(BUILD) && $(shell ./build_python3_if_needed) bin/buildout \
+	buildout:relative-paths=false babeld-repository:recipe=
 	touch $@
 
 PROGS = $(patsubst %,$(DESTDIR)/usr/bin/%,$(BIN))
@@ -39,7 +37,8 @@ $(PROGS): $(BUILD)/.installed.cfg
 
 $(DESTDIR)/$(TARGET): $(BUILD)/.installed.cfg
 	rm -rf $@ && mkdir -p $@/parts
-	cd $(BUILD) && $(PYTHON) $(CURDIR)/install-eggs $@ $(BIN)
+	cd $(BUILD) && parts/python3/bin/python3 \
+	$(CURDIR)/install-eggs $@ $(BIN)
 	for x in $(filter-out $(NOPART),$(shell cd $(BUILD)/parts && echo *)); \
 	do cp --preserve=links -r $(BUILD)/parts/$$x $@/parts; done
 	cd $@ && $(CURDIR)/cleanup && chmod -R u+w .
@@ -63,6 +62,12 @@ $(DESTDIR)/$(TARGET): $(BUILD)/.installed.cfg
 		rm $$d; ln -s /$(TARGET)$$s $$d; \
 	done
 
+uniq = $(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$1)))
+_dir = $(patsubst %/,%,$(call uniq,$(filter-out ./, $(dir $1))))
+_anc = $(if $1,$1 $(call _anc,$(call _dir,$1)))
+
 clean:
-	find $(BUILD) -mindepth 1 -maxdepth 1 \
-		$(patsubst %,! -name %,$(BUILD_KEEP)) |xargs rm -rf
+	cd $(BUILD) && find -mindepth 1 \( \
+		$(patsubst %, -path ./% -o,$(CLEAN_KEEP)) \
+		$(patsubst %, ! -path ./%,$(call _anc,$(call _dir,$(CLEAN_KEEP)))) \
+		-print0 \) -prune |xargs -r0 rm -r
