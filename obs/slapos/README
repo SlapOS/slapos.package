@@ -19,7 +19,7 @@ Requirements
 ------------
 - A computer
 - Internet connection
-- gcc, g++, make, patch, wget, python3, chrpath, osc, devscripts
+- gcc, g++, make, patch, python3, chrpath, osc, devscripts
 - An account on OBS
 
 Documentation

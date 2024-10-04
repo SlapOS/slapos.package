@@ -47,7 +47,6 @@ Packager: Thomas Gambier <thomas.gambier@nexedi.com>
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: patch
-BuildRequires: wget
 BuildRequires: chrpath
 BuildRequires: openssl-devel
 BuildRequires: python3
@@ -61,7 +60,6 @@ BuildRequires: (libbz2-devel or bzip2-devel)
 Requires: gcc-c++
 Requires: make
 Requires: patch
-Requires: wget
 Requires: (lm_sensors or sensors)
 
 AutoReqProv: no
