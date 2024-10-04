@@ -7,13 +7,14 @@ extends =
 extends-cache = extends-cache
 download-cache = download-cache
 
+extra-paths =
 develop =
 extensions = slapos.rebootstrap
 newest = false
 
-allow-picked-versions = true
+allow-picked-versions = false
 
-parts += chrpath python-bootstrap
+parts += chrpath
 
 [babeld-repository]
 git-executable =
@@ -23,12 +24,11 @@ location = ${buildout:directory}/babeld
 post-install = make clean; make version.h
 environment =
 
-[python-bootstrap]
+[networkcached]
 recipe = zc.recipe.egg
-interpreter = python.tmp
-eggs = slapos.libnetworkcache
-# https://lab.nexedi.com/nexedi/slapos.buildout/merge_requests/11
-scripts = dummy
+eggs =
+  slapos.libnetworkcache
+  zc.buildout
 
 # Uguu, upstream buildout.cfg must be patched as it works the other way
 # around from a packager point of view at least, thus at the end static
@@ -38,13 +38,17 @@ scripts = dummy
 # ./configure --prefix=BUILD_DIRECTORY && make install
 # Instead of:
 # ./configure --prefix=INSTALL_DIRECTORY && make install DESTDIR=BUILD_DIRECTORY
-[python2.7]
+[python3-common]
 configure-options +=
   --prefix=%(TARGET)s/parts/${:_buildout_section_name_}
 environment +=
   DESTDIR=%(ROOT)s
+post-install =
+  set `echo -n ${:url} |md5sum`
+  ln -frs ${buildout:download-cache}/$1 ${buildout:directory}/python3.tar.xz
 
-[openssl]
+
+[openssl-common]
 shared = false
 prefix = %(TARGET)s/parts/${:_buildout_section_name_}
 make-options +=
@@ -60,3 +64,6 @@ environment =
 # For old GCC like 4.8.5 on SLE 12 SP5.
 environment +=
   CFLAGS=-std=c99 -g -O2
+
+[versions]
+re6stnet = %(RE6STNET_VERSION)s

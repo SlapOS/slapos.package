@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2016 Julien Muchembled <jm@nexedi.com>
 #
@@ -135,15 +135,15 @@ class task(_task):
         return task_gen
 
     def __init__(self, run, depends, provides=(),
-                 __str_or_task = (basestring, _task)):
+                 __str_or_task = (str, _task)):
         self.run = run
         self.depends = []
         f = []
         for x in (depends,) if isinstance(depends, __str_or_task) else depends:
-            (f if isinstance(x, basestring) else self.depends).append(x)
+            (f if isinstance(x, str) else self.depends).append(x)
         f and self.depends.append(files(*f))
         self.provides = ((provides,)
-            if isinstance(provides, basestring) or callable(provides)
+            if isinstance(provides, str) or callable(provides)
             else provides)
         self.why = self,
 
@@ -177,10 +177,10 @@ class task(_task):
                 if deps:
                     self.why = [dep for dep, itime in deps if _otime < itime]
         if self.why:
-            print "# Processing %s: %s -> %s" % (self,
+            print("# Processing %s: %s -> %s" % (self,
                 ", ".join(map(str, self.depends)),
                 ", ".join("<%s>" % x.__name__ if callable(x) else x
-                          for x in self.provides or "?"))
+                          for x in self.provides or "?")))
             if not dry_run:
                 try:
                     self.run(self)
@@ -222,8 +222,8 @@ def main():
     tasks = {"__file__": f.name}
     exec(compile(f.read(), f.name, "exec"), tasks)
     if args.list:
-        print " ".join(sorted(k for k, v in tasks.iteritems()
-                                if isinstance(v, _task)))
+        print(" ".join(sorted(k for k, v in tasks.items()
+                                if isinstance(v, _task))))
         return
     for t in args.task:
         if not isinstance(tasks.get(t), _task):
@@ -271,18 +271,13 @@ def cwd(path):
         os.chdir(p)
 
 def mkdir(path):
-    try:
-        os.makedirs(path)
-    except OSError as e:
-        if e.errno != errno.EEXIST or not os.path.isdir(path):
-            raise
+    os.makedirs(path, exist_ok=True)
 
 def remove(path):
     try:
         os.remove(path)
-    except OSError as e:
-        if e.errno != errno.ENOENT:
-            raise
+    except FileNotFoundError:
+        pass
 
 def rmtree(path):
     if os.path.exists(path):
@@ -292,12 +287,10 @@ def rmtree(path):
 def make_tar_gz(path, mtime, xform=(lambda x: x), **kw):
     # Make reproducible tarball. Otherwise, it's really annoying that we can't
     # rely on 'osc status' to know whether there are real changes or not.
-    # BBB: Results differ between Python 2.6 and 2.7 because of tarfile.
     __init__ = gzip.GzipFile.__init__
     listdir = os.listdir
     try:
-        if sys.version_info >= (2, 7):
-            gzip.GzipFile.__init__ = lambda *args: __init__(mtime=mtime, *args)
+        gzip.GzipFile.__init__ = lambda *args: __init__(mtime=mtime, *args)
         os.listdir = lambda path: sorted(listdir(path))
         t = tarfile.open(path, "w:gz", **kw)
         _gettarinfo = t.gettarinfo
@@ -314,10 +307,6 @@ def make_tar_gz(path, mtime, xform=(lambda x: x), **kw):
         gzip.GzipFile.__init__ = __init__
         os.listdir = listdir
         t.close()
-    if sys.version_info < (2, 7):
-        with open(path, "r+") as t:
-            t.seek(4)
-            gzip.write32u(t, long(mtime))
 
 if __name__ == "__main__":
     sys.exit(main())
