@@ -189,6 +189,11 @@
   - name: Add kernel parameter
     script: configure-grub
 
+# eNB performance
+
+  - name: Disable ondemand service (changes CPU governor)
+    systemd: name=ondemand.service enabled=no state=stopped
+
 # SSH
 
   - name: Configure ssh
