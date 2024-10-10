@@ -6,7 +6,7 @@ Version: %VERSION%+%RECIPE_VERSION%+%RELEASE%-1
 Maintainer: Thomas Gambier <thomas.gambier@nexedi.com>
 Homepage: http://slapos.nexedi.com
 Standards-Version: 3.9.2
-Build-Depends: debhelper (>= 4.1.16), chrpath, po-debconf, wget, python3, python3-dev, libssl-dev, libffi-dev, liblzma-dev, libz-dev, libbz2-dev
+Build-Depends: debhelper (>= 4.1.16), chrpath, po-debconf, python3, python3-dev, libssl-dev, libffi-dev, liblzma-dev, libz-dev, libbz2-dev
 Files: 
  1c2803e4693c74042985d753c9c3ba53 73736102 %SLAPOS_DIRECTORY%.orig.tar.gz
  1c2803e4693c74042985d753c9c3ba53 6102 %SLAPOS_DIRECTORY%-1.diff.tar.gz
