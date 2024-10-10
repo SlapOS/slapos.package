@@ -10,7 +10,7 @@
     stat: path=/etc/re6stnet/re6stnet.conf
     register: re6stnet_conf
 
-  - include: sysctl.yml
+  - import_tasks: sysctl.yml
 
   - name: Update Facts
     set_fact:
@@ -58,7 +58,7 @@
     copy: src=/etc/systemd/re6stnet.service dest=/etc/systemd/system/re6stnet.service
     when: ansible_distribution == 'CentOS' and ansible_distribution_version >= '7' and re6stnet.stat.exists == True and re6stnode.stat.exists == False
 
-  - include: daemon.yml
+  - import_tasks: daemon.yml
     
   - name: Create centos 6 init.d missing file
     copy: src=centos_6_init_d dest=/etc/init.d/re6stnet mode=755
@@ -70,5 +70,5 @@
   - name: Include re6stnet-ip6tables-check at reboot on cron
     cron: name="ip6tables at reboot" special_time=reboot job="sleep 20 && /usr/bin/re6stnet-ip6tables-check"
 
-  - include: tcp_nodelay.yml
+  - import_tasks: tcp_nodelay.yml
 
