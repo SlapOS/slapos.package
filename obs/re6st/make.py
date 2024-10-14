@@ -239,7 +239,8 @@ s/^(Release:\s*).*/\11/
 /^BuildArch:/cAutoReqProv: no\
 BuildRequires: gcc-c++, make, python3, iproute\
 #!BuildIgnore: rpmlint-Factory\
-Source: %%{name}_%%{version}.tar.gz
+Source0: %%{name}_%%{version}.tar.gz\
+Source1: %%{name}.rpmlintrc
 /^Requires:/{
     /iproute/!d
 }
@@ -257,7 +258,7 @@ def arch(task):
     pkgbuild = open(task.inputs[-1]).read().replace("%VERSION%", VERSION)
     open(task.output, "w").write(pkgbuild)
 
-@task((tarball, deb, rpm, arch, "re6stnet.install"))
+@task((tarball, deb, rpm, arch, "re6stnet.install", "re6st-node.rpmlintrc"))
 def build(task):
     pass
 
