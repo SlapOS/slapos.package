@@ -193,6 +193,7 @@
 
   - name: Disable ondemand service (changes CPU governor)
     systemd: name=ondemand.service enabled=no state=stopped
+    ignore_errors: yes
 
 # SSH
 
