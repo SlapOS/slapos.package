@@ -16,7 +16,7 @@
 
   roles:
     - { role: vm-bootstrap, startup_playbook_id: imt-vm-bootstrap.yml }
-    - ntp
+    - role: ntp
     - role: logrotate
       logrotate_scripts: "{{ logrotate_args }}"
 

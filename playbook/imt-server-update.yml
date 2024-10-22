@@ -3,6 +3,6 @@
   connection: local
 
   roles:
-    - ntp
+    - role: ntp
     - { role: package, package_name: re6st-node, package_state: latest }
     - { role: package, package_name: slapos-node, package_state: latest }
