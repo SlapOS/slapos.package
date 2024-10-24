@@ -39,26 +39,6 @@
     shell: 'cat /tmp/playbook-report-tmp.log >> {{ monitor_path.stdout }}/playbook-report/report.log'
     when: (monitor_path is succeeded) and (playbook_report | bool) and (extra_playbook | length > 0)
 
-# SSD image backports
-
-  - stat: path=/opt/upgrader/last-backport
-    register: last_backport
-
-  - stat: path=/opt/upgrader/playbook-tmp/ors_backport_after
-    register: ors_backport_after
-
-  - shell: echo 1 > /opt/upgrader/last-backport
-    when: last_backport.stat.exists == False
-
-  - name: Do ors backport
-    shell: ansible-playbook ors-image-backports.yml -i hosts 2>>/opt/upgrader/ors_backport.log  >> /opt/upgrader/ors_backport.log
-    when: (ors_backport_after.stat.exists == True) and (lookup('file', '/opt/upgrader/playbook-tmp/ors_backport_after')|int > lookup('file', '/opt/upgrader/last-backport')|int )
-    args:
-      chdir: /opt/upgrader/playbook-tmp/
-
-  - shell: echo {{ ansible_date_time.epoch }} > /opt/upgrader/last-backport
-    when: (ors_backport_after.stat.exists == True) and (lookup('file', '/opt/upgrader/playbook-tmp/ors_backport_after')|int > lookup('file', '/opt/upgrader/last-backport')|int )
-
 # Radio Hardware
 
   - name: Copy get-sdr-info script
@@ -202,12 +182,6 @@
 
   - name: Configure ssh
     lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication (.*)" line="PasswordAuthentication yes" state=present
-
-# Schedule and upgrade playbook
-
-  - name: Install upgrader
-    shell: ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report }}' -i hosts 2>>/opt/upgrader/latest_daily_upgrade.log >> /opt/upgrader/latest_daily_upgrade.log
-    when: launch_upgrader | bool
 
   - name: Add format-ims script to cron after slapos node boot
     lineinfile: dest=/etc/cron.d/slapos-node regexp="@reboot root /opt/slapos/bin/slapos node boot(.*)" line="@reboot root /opt/slapos/bin/slapos node boot >> /opt/slapos/log/slapos-node-format.log 2>&1 ; /opt/amarisoft/format-ims /opt/amarisoft/format-ims.log" state=present
