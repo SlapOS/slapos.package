@@ -122,12 +122,12 @@
     rpm_key: state=present key=roles/repository/files/VIFIBNexedi_CentOS_7.key
     when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
 
-  - name: Install OpenSuse Leap 15 RPM Key
-    rpm_key: state=present key={{ base_open_build_url }}/openSUSE_Leap_15.1/repodata/repomd.xml.key
+  - name: Install SLE 15 RPM Key
+    rpm_key: state=present key={{ base_open_build_url }}/SLE_15_SP6/repodata/repomd.xml.key
     when: ansible_distribution == "Suse" and ansible_distribution_major_version == "15"
 
-  - name: Install OpenSuse Leap 15 repository
-    get_url: url={{ base_open_build_url }}/openSUSE_Leap_15.1/home:VIFIBnexedi.repo dest=/etc/zypp/repos.d/home_VIFIBnexedi.repo mode=0440
+  - name: Install SLE 15 repository
+    zypper_repository: repo={{ base_open_build_url }}/SLE_15_SP6/home:VIFIBnexedi.repo
     when: ansible_os_family == "Suse" and ansible_distribution_major_version == "15"
 
   - name: Install Fedora 37 repository
