@@ -1,26 +1,23 @@
 #!/bin/bash
 mkdir -p /etc/sudoers.d
-COMMAND_LIST=("rm-tmp-lte" "init-enb" "init-mme" "init-sdr" "get-sdr-info")
 PARTITION_AMOUNT="$(sed -n 's/partition_amount = \(.*\)/\1/gp' /etc/opt/slapos/slapos.cfg)"
-for c in "${COMMAND_LIST[@]}"; do
-  SLAPUSER_LINES="$(cat /etc/sudoers.d/slapuser-$c 2> /dev/null | wc -l)"
-  if [ "$SLAPUSER_LINES" != "$PARTITION_AMOUNT" ]; then
-    echo "Configuring /etc/sudoers.d/slapuser-$c..."
-    for i in $(seq 0 $(($PARTITION_AMOUNT-1))); do
-      echo "slapuser$i ALL=NOPASSWD:/opt/amarisoft/$c" >> slapuser-$c
-    done
-    mv slapuser-$c /etc/sudoers.d/
-    chmod 440 /etc/sudoers.d/slapuser-$c
-  fi
-done
-c="sdr-util"
-SLAPUSER_LINES="$(cat /etc/sudoers.d/slapuser-$c 2> /dev/null | wc -l)"
-AMARISOFT_PATH="/opt/amarisoft/$(ls -1 /opt/amarisoft | grep "^v[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}.*[0-9]*$" | sort | tail -n1)"
-if [ "$SLAPUSER_LINES" != "$PARTITION_AMOUNT" ]; then
-  echo "Configuring /etc/sudoers.d/slapuser-$c..."
+
+add_line() {
+  echo "Configuring /etc/sudoers.d/slapuser-$1..."/
   for i in $(seq 0 $(($PARTITION_AMOUNT-1))); do
-    echo "slapuser$i ALL=NOPASSWD:$AMARISOFT_PATH/trx_sdr/sdr_util -c 0 version" >> slapuser-$c
+    echo "slapuser$i ALL=NOPASSWD:$2" >> slapuser-20241205-$1
   done
-  mv slapuser-$c /etc/sudoers.d/
-  chmod 440 /etc/sudoers.d/slapuser-$c
-fi
+  mv slapuser-20241205-$1 /etc/sudoers.d/
+  chmod 440 /etc/sudoers.d/slapuser-20241205-$1
+}
+add_commands() {
+  for c in "${@:2}"; do
+    add_line $c $1/$c
+  done
+}
+
+add_commands $1 rm-tmp-lte init-enb init-mme init-sdr
+add_commands $3 get-sdr-info
+
+c="sdr-util"
+add_line $c "$1/$2/trx_sdr/sdr_util -c 0 version"

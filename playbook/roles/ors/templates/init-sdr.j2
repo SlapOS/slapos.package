@@ -1,0 +1,18 @@
+#!/bin/bash
+
+DIR=$(dirname $(realpath $0))
+AMARISOFT_PATH=$1
+if [ -z "$AMARISOFT_PATH" ] ; then
+  AMARISOFT_PATH={{ amarisoft_dir }}/v$($DIR/get-amarisoft-info -v)
+fi
+OLD_AMARISOFT_PATH={{ amarisoft_dir }}/v$($DIR/get-amarisoft-info -o)
+
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+lsmod | grep -q sdr && rmmod sdr;
+if echo $AMARISOFT_PATH | grep -v -q 2021; then
+  cd $OLD_AMARISOFT_PATH/trx_sdr/kernel;
+  make clean && make && bash init.sh;
+  rmmod sdr;
+fi
+cd $AMARISOFT_PATH/trx_sdr/kernel;
+make clean && make && bash init.sh;

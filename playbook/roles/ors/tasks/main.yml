@@ -13,10 +13,253 @@
     file: path="{{ monitor_path.stdout }}/playbook-report" state=directory mode=0755
     when: (monitor_path is succeeded) and (playbook_report | bool)
 
-  - name: Check Amarisoft version
-    shell: 'find /opt/amarisoft -maxdepth 1 | grep "^/opt/amarisoft/v[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}.*[0-9]*$" | cut -d/ -f4 | sort | tail -n1'
+# Amarisoft scripts
+
+  - name: Create {{ amarisoft_dir }} directory
+    file: path="{{ amarisoft_dir }}" state=directory mode=0755
+
+  - name: Render get-amarisoft-info script
+    template:
+      src: get-amarisoft-info.j2
+      dest: "{{ amarisoft_dir }}/get-amarisoft-info"
+      mode: '0555'
+
+  - name: Render get-license-info script for backwards compatibility
+    template:
+      src: get-amarisoft-info.j2
+      dest: "{{ amarisoft_dir }}/get-license-info"
+      mode: '0555'
+
+  - name: Render init-sdr script
+    template:
+      src: init-sdr.j2
+      dest: "{{ amarisoft_dir }}/init-sdr"
+      mode: '0550'
+
+  - name: Copy init-enb script
+    copy: src=init-enb dest={{ amarisoft_dir }} owner=root mode=550
+
+  - name: Copy init-mme script
+    copy: src=init-mme dest={{ amarisoft_dir }} owner=root mode=550
+
+  - name: Copy rm-tmp-lte script
+    copy: src=rm-tmp-lte dest={{ amarisoft_dir }} owner=root mode=550
+
+# Generate key
+
+  - set_fact: cn="{{ ansible_hostname }}"
+
+  - name: Create {{ pk_dir }} directory
+    file: path="{{ pk_dir }}" state=directory mode=0755
+
+  - stat: path="{{ pk_dir }}/{{ cn }}.key"
+    register: private_key
+
+  - name: Generate private key
+    shell: 'openssl genrsa -out {{ pk_dir }}/{{ cn }}.key 4096'
+    when: private_key.stat.exists == False
+
+  - stat: path="{{ pk_dir }}/{{ cn }}.key"
+    register: private_key
+
+  - stat: path="{{ pk_dir }}/{{ cn }}.pub"
+    register: public_key
+
+  - name: Generate public key
+    shell: 'openssl rsa -in {{ pk_dir }}/{{ cn }}.key -outform PEM -pubout -out {{ pk_dir }}/{{ cn }}.pub'
+    when: private_key.stat.exists == True and public_key.stat.exists == False
+
+  - stat: path="{{ pk_dir }}/{{ cn }}.pub"
+    register: public_key
+    when: (monitor_path is succeeded) and (playbook_report | bool)
+
+  - name: Copy public key
+    copy: src="{{ pk_dir }}/{{ cn }}.pub" dest="{{ monitor_path.stdout }}/playbook-report/{{ cn }}.pub" owner=root mode=774
+    when: (monitor_path is succeeded) and (playbook_report | bool) and (public_key.stat.exists == True)
+
+# Amarisoft upgrade
+
+  - name: Configure {{ amarisoft_dir }}/shacache.cfg
+    copy: src=shacache.cfg dest={{ amarisoft_dir }}/shacache.cfg owner=root mode=644
+
+  - stat: path="{{ pk_dir }}/{{ cn }}.pub"
+    register: certificate
+
+  - name: Delete download directory
+    file: path={{ amarisoft_dir }}/download state=absent
+    when: certificate.stat.exists == True
+
+  - name: Create download directory
+    file: path={{ amarisoft_dir }}/download state=directory mode=0755
+    when: certificate.stat.exists == True
+
+  - name: Get license expiration
+    shell: '{{ amarisoft_dir }}/get-amarisoft-info -e || echo 0000-00-00'
+    register: license_expiration
+    when: certificate.stat.exists == True
+
+  - name: Get current version
+    shell: '{{ amarisoft_dir }}/get-amarisoft-info -v || echo 0000-00-00.0 | cut -d. -f1'
+    register: current_version
+    when: certificate.stat.exists == True
+
+  - name: Get current version timestamp
+    shell: '{{ amarisoft_dir }}/get-amarisoft-info -v | grep "\." || echo 0000-00-00.0 | cut -d. -f2'
+    register: current_timestamp
+    when: certificate.stat.exists == True
+
+  - debug:
+      msg: "[{{ ansible_date_time.date }} {{ ansible_date_time.time }}] License will expire on {{ license_expiration.stdout }}, current version is {{ current_version.stdout }}.{{ current_timestamp.stdout }}"
+    when: certificate.stat.exists == True
+
+  - name: Get new amarisoft version if available
+    shell: "networkcache-download -c {{ amarisoft_dir }}/shacache.cfg -k key-private:amarisoft 'cn==\"{{ cn }}\"' 'version<=\"{{ license_expiration.stdout }}\"' 'timestamp>=\"0\"' 'version>>\"0\"' 'timestamp>>\"0\"' --list | grep version | cut -d\\\" -f4"
+    register: new_version
+    when: certificate.stat.exists == True
+
+  - name: Get new amarisoft timestamp if available
+    shell: "networkcache-download -c {{ amarisoft_dir }}/shacache.cfg -k key-private:amarisoft 'cn==\"{{ cn }}\"' 'version<=\"{{ license_expiration.stdout }}\"' 'timestamp>=\"0\"' 'version>>\"0\"' 'timestamp>>\"0\"' --list | grep timestamp | cut -d\\\" -f4"
+    register: new_timestamp
+    when: certificate.stat.exists == True
+
+  - set_fact: new_version_found=False
+
+  - set_fact: new_version_found=True
+    when: new_version.stdout > current_version.stdout or (new_version.stdout == current_version.stdout and new_timestamp.stdout > current_timestamp.stdout)
+
+  - debug:
+      msg: "[{{ ansible_date_time.date }} {{ ansible_date_time.time }}] Found version {{ new_version.stdout }}.{{ new_timestamp.stdout }}"
+    when: certificate.stat.exists == True
+
+  - name: Download nonce to decrypt new amarisoft version
+    shell: "networkcache-download -c {{ amarisoft_dir }}/shacache.cfg -k file-private:amarisoft 'version==\"{{ new_version.stdout }}\"' 'timestamp==\"{{ new_timestamp.stdout }}\"' --list | grep nonce | cut -d\\\" -f4 > {{ amarisoft_dir }}/download/nonce"
+    register: nonce
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - set_fact: version="{{ new_version.stdout }}"
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Download new amarisoft version
+    shell: "networkcache-download -c {{ amarisoft_dir }}/shacache.cfg -k file-private:amarisoft 'version==\"{{ new_version.stdout }}\"' 'timestamp==\"{{ new_timestamp.stdout }}\"' > {{ amarisoft_dir }}/download/amarisoft.tar.gz.enc"
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Download encrypted symmetric key for new amarisoft version
+    shell: "networkcache-download -c {{ amarisoft_dir }}/shacache.cfg -k key-private:amarisoft 'cn==\"{{ cn }}\"' 'version==\"{{ new_version.stdout }}\"' 'timestamp==\"{{ new_timestamp.stdout }}\"' > {{ amarisoft_dir }}/download/symmetric_key.bin.enc"
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Create directory if it does not exist
+    file: path={{ amarisoft_dir }}/{{ version }} state=directory mode=0755
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Create directory if it does not exist
+    file: path={{ amarisoft_dir }}/_{{ version }} state=directory mode=0755
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Decrypt key
+    shell: 'openssl pkeyutl -decrypt -in {{ amarisoft_dir }}/download/symmetric_key.bin.enc -inkey /opt/private-key/{{ cn }}.key -out /opt/private-key/symmetric_key-{{ version }}.key'
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Decrypt archive
+    script: encrypt-data.sh /opt/private-key/symmetric_key-{{ version }}.key {{ amarisoft_dir }}/download/nonce decrypt {{ amarisoft_dir }}/download/amarisoft.tar.gz.enc {{ amarisoft_dir }}/amarisoft.tar.gz
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Extract archive
+    unarchive:
+      src: "{{ amarisoft_dir }}/amarisoft.tar.gz"
+      dest: "{{ amarisoft_dir }}"
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Extract lteenb archive
+    unarchive:
+      src: "{{ amarisoft_dir }}/{{ version }}/lteenb-linux-{{ version }}.tar.gz"
+      dest: "{{ amarisoft_dir }}/_{{ version }}"
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Extract ltemme archive
+    unarchive:
+      src: "{{ amarisoft_dir }}/{{ version }}/ltemme-linux-{{ version }}.tar.gz"
+      dest: "{{ amarisoft_dir }}/_{{ version }}"
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Extract trx_sdr archive
+    unarchive:
+      src: "{{ amarisoft_dir }}/{{ version }}/trx_sdr-linux-{{ version }}.tar.gz"
+      dest: "{{ amarisoft_dir }}/_{{ version }}"
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Create a symbolic link for lteenb
+    file:
+      src: "lteenb-linux-{{ version }}"
+      dest: "{{ amarisoft_dir }}/_{{ version }}/enb"
+      state: link
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Create a symbolic link for ltemme
+    file:
+      src: "ltemme-linux-{{ version }}"
+      dest: "{{ amarisoft_dir }}/_{{ version }}/mme"
+      state: link
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Create a symbolic link for trx_sdr
+    file:
+      src: "trx_sdr-linux-{{ version }}"
+      dest: "{{ amarisoft_dir }}/_{{ version }}/trx_sdr"
+      state: link
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Copy trx_sdr libraries
+    shell: 'cp {{ amarisoft_dir }}/_{{ version }}/trx_sdr/*.so* {{ amarisoft_dir }}/_{{ version }}/enb/'
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Copy libraries to mme
+    shell: 'cp {{ amarisoft_dir }}/{{ version }}/libs/*.so* {{ amarisoft_dir }}/_{{ version }}/mme/'
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+    ignore_errors: True
+
+  - name: Copy libraries to mme
+    shell: 'cp {{ amarisoft_dir }}/{{ version }}/libs/linux/*.so* {{ amarisoft_dir }}/_{{ version }}/mme/'
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+    ignore_errors: True
+
+  - name: Copy libraries to enb
+    shell: 'cp {{ amarisoft_dir }}/{{ version }}/libs/*.so* {{ amarisoft_dir }}/_{{ version }}/enb/'
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+    ignore_errors: True
+
+  - name: Copy libraries to enb
+    shell: 'cp {{ amarisoft_dir }}/{{ version }}/libs/linux/*.so* {{ amarisoft_dir }}/_{{ version }}/enb/'
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+    ignore_errors: True
+
+  - name: Move amarisoft folder
+    shell: 'mv {{ amarisoft_dir }}/_{{ version }} {{ amarisoft_dir }}/v{{ version }}.{{ new_timestamp.stdout }}'
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Remove extraction folder
+    file: 
+      path: "{{ amarisoft_dir }}/{{ version }}"
+      state: absent
+    when: (certificate.stat.exists == True) and (new_version_found == True)
+
+  - name: Get Amarisoft version
+    shell: '{{ amarisoft_dir }}/get-amarisoft-info -v'
     register: amarisoft_version
+
+  - set_fact:
+      amarisoft_path: "{{ amarisoft_dir }}/v{{ amarisoft_version.stdout }}"
+
+# Log to playbook report
+
+  - name: Get monitor private directory path
+    shell: 'realpath $(dirname $(grep -lR "software_release_url = .*software/monitor/software.cfg" $(find /srv/slapgrid -type f -name "buildout.cfg")))/srv/monitor/private'
+    register: monitor_path
+    when: playbook_report | bool
     ignore_errors: yes
+
+  - name: Create {{ monitor_path.stdout }}/playbook-report directory
+    file: path="{{ monitor_path.stdout }}/playbook-report" state=directory mode=0755
+    when: (monitor_path is succeeded) and (playbook_report | bool)
 
   - name: Check registry URL
     shell: "grep registry /etc/re6stnet/re6stnet.conf | awk '{ print $2; }'"
@@ -38,6 +281,7 @@
   - name: Append to log
     shell: 'cat /tmp/playbook-report-tmp.log >> {{ monitor_path.stdout }}/playbook-report/report.log'
     when: (monitor_path is succeeded) and (playbook_report | bool) and (extra_playbook | length > 0)
+
 
 # SSD image backports
 
@@ -61,11 +305,11 @@
 
 # Radio Hardware
 
-  - name: Copy get-sdr-info script
-    copy: src=get-sdr-info dest=/opt/amarisoft owner=root mode=770
+  - name: Create {{ sdr_dir }} directory
+    file: path={{ sdr_dir }} state=directory mode=0755
 
-  - name: Copy get-license-info script
-    copy: src=get-license-info dest=/opt/amarisoft owner=root mode=770
+  - name: Copy get-sdr-info script
+    copy: src=get-sdr-info dest={{ sdr_dir }} owner=root mode=550
 
 # Re6st
 
@@ -80,66 +324,54 @@
   - name: Configure slapos
     script: configure-slapos.py
 
+  - name: Create {{ simpleran_dir }} directory
+    file: path={{ simpleran_dir }} state=directory mode=0755
+
   - name: Copy format-ims script
-    copy: src=format-ims dest=/opt/amarisoft owner=root mode=770
+    copy: src=format-ims dest={{ simpleran_dir }} owner=root mode=550
 
 # Amarisoft software
 
-  - name: Create a directory if it does not exist
-    file: path=/opt/amarisoft state=directory mode=0755
-
-  - name: Copy init-sdr script
-    copy: src=init-sdr dest=/opt/amarisoft owner=root mode=770
-
-  - name: Copy init-enb script
-    copy: src=init-enb dest=/opt/amarisoft owner=root mode=770
-
-  - name: Copy init-mme script
-    copy: src=init-mme dest=/opt/amarisoft owner=root mode=770
-
-  - name: Copy rm-tmp-lte script
-    copy: src=rm-tmp-lte dest=/opt/amarisoft owner=root mode=770
-
-  - name: Get Amarisoft path
-    shell: 'find /opt/amarisoft -maxdepth 1 | grep "^/opt/amarisoft/v[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}.*[0-9]*$" | sort | tail -n1'
-    register: amarisoft_path
-
   - name: Check if lteenb has capabilities
-    shell: 'getcap {{ amarisoft_path.stdout }}/enb/lteenb | grep -q cap_sys_nice'
+    shell: 'getcap {{ amarisoft_path }}/enb/lteenb | grep -q cap_sys_nice'
     ignore_errors: yes
     register: lteenb_cap
 
   - name: Set capabilities on lteenb
-    shell: 'patchelf --set-rpath {{ amarisoft_path.stdout }}/enb {{ amarisoft_path.stdout }}/enb/lteenb && setcap cap_sys_nice=+pe {{ amarisoft_path.stdout }}/enb/lteenb'
+    shell: 'patchelf --set-rpath {{ amarisoft_path }}/enb {{ amarisoft_path }}/enb/lteenb && setcap cap_sys_nice=+pe {{ amarisoft_path }}/enb/lteenb'
     when: lteenb_cap.rc != 0
 
   - name: Check if lteenb-avx2 has capabilities
-    shell: 'getcap {{ amarisoft_path.stdout }}/enb/lteenb-avx2 | grep -q cap_sys_nice'
+    shell: 'getcap {{ amarisoft_path }}/enb/lteenb-avx2 | grep -q cap_sys_nice'
     ignore_errors: yes
     register: lteenb_avx2_cap
 
   - name: Set capabilities on lteenb-avx2
-    shell: 'patchelf --set-rpath {{ amarisoft_path.stdout }}/enb {{ amarisoft_path.stdout }}/enb/lteenb-avx2 && setcap cap_sys_nice=+pe {{ amarisoft_path.stdout }}/enb/lteenb-avx2'
+    shell: 'patchelf --set-rpath {{ amarisoft_path }}/enb {{ amarisoft_path }}/enb/lteenb-avx2 && setcap cap_sys_nice=+pe {{ amarisoft_path }}/enb/lteenb-avx2'
     when: lteenb_avx2_cap.rc != 0
 
   - name: Check if lteims has capabilities
-    shell: 'getcap {{ amarisoft_path.stdout }}/mme/lteims | grep cap_sys_admin | grep -q cap_net_raw'
+    shell: 'getcap {{ amarisoft_path }}/mme/lteims | grep cap_sys_admin | grep -q cap_net_raw'
     ignore_errors: yes
     register: lteims_cap
 
   - name: Set capabilities on lteims
-    shell: 'patchelf --set-rpath {{ amarisoft_path.stdout }}/mme {{ amarisoft_path.stdout }}/mme/lteims && setcap cap_sys_admin,cap_net_raw=+pe {{ amarisoft_path.stdout }}/mme/lteims'
+    shell: 'patchelf --set-rpath {{ amarisoft_path }}/mme {{ amarisoft_path }}/mme/lteims && setcap cap_sys_admin,cap_net_raw=+pe {{ amarisoft_path }}/mme/lteims'
     when: lteims_cap.rc != 0
 
   - name: Create .amarisoft directory for SR
-    file: path=/opt/amarisoft/.amarisoft state=directory
+    file: path={{ amarisoft_dir }}/.amarisoft state=directory
+
+  - name: Create /root/.amarisoft directory
+    file: path="/root/.amarisoft" state=directory mode=0755
+    ignore_errors: yes
 
   - name: Copy keys for SR
-    copy: src=/root/.amarisoft dest=/opt/amarisoft owner=root mode=644
+    copy: src=/root/.amarisoft dest={{ amarisoft_dir }} owner=root mode=644
     ignore_errors: yes
 
   - name: Configure sudoers
-    script: configure-sudoers
+    script: configure-sudoers {{ amarisoft_dir }} {{ amarisoft_version.stdout }} {{ sdr_dir }}
 
 # Network
 
@@ -210,11 +442,11 @@
     when: launch_upgrader | bool
 
   - name: Add format-ims script to cron after slapos node boot
-    lineinfile: dest=/etc/cron.d/slapos-node regexp="@reboot root /opt/slapos/bin/slapos node boot(.*)" line="@reboot root /opt/slapos/bin/slapos node boot >> /opt/slapos/log/slapos-node-format.log 2>&1 ; /opt/amarisoft/format-ims /opt/amarisoft/format-ims.log" state=present
+    lineinfile: dest=/etc/cron.d/slapos-node regexp="@reboot root /opt/slapos/bin/slapos node boot(.*)" line="@reboot root /opt/slapos/bin/slapos node boot >> /opt/slapos/log/slapos-node-format.log 2>&1 ; {{ simpleran_dir }}/format-ims {{ simpleran_dir }}/format-ims.log" state=present
 
   - name: Add format-ims script to cron after slapos node format
-    lineinfile: dest=/etc/cron.d/slapos-node regexp="(.*)root /opt/slapos/bin/slapos node format(.*)" line="0 * * * * root /opt/slapos/bin/slapos node format >> /opt/slapos/log/slapos-node-format.log 2>&1 ; /opt/amarisoft/format-ims /opt/amarisoft/format-ims.log" state=present
+    lineinfile: dest=/etc/cron.d/slapos-node regexp="(.*)root /opt/slapos/bin/slapos node format(.*)" line="0 * * * * root /opt/slapos/bin/slapos node format >> /opt/slapos/log/slapos-node-format.log 2>&1 ; {{ simpleran_dir }}/format-ims {{ simpleran_dir }}/format-ims.log" state=present
 
   - name: Add format-ims script to cron every minute
-    lineinfile: dest=/etc/cron.d/slapos-node regexp="(.*)root /opt/amarisoft/format-ims(.*)" line="* * * * * root /opt/amarisoft/format-ims /opt/amarisoft/format-ims.log" state=present
+    lineinfile: dest=/etc/cron.d/slapos-node regexp="(.*)root (\S*)/format-ims(.*)" line="* * * * * root {{ simpleran_dir }}/format-ims {{ simpleran_dir }}/format-ims.log" state=present
 
