@@ -1,0 +1,4 @@
+setBadness('binary-or-shlib-defines-rpath', 0)
+setBadness('wrong-script-interpreter', 0)
+setBadness('summary-not-capitalized', 0)
+setBadness('devel-file-in-non-devel-package', 0)
