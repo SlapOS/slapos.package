@@ -157,7 +157,7 @@
   - shell: echo {{ ansible_date_time.epoch }} > /opt/upgrader/last-upgrade
     when: (lookup('file', '/opt/upgrader/playbook-tmp/upgrade_after')|int > lookup('file', '/opt/upgrader/last-upgrade')|int )
 
-  - include: remove-legacy.yml
+  - import_tasks: remove-legacy.yml
 
   - name: Setting playbook report message
     set_fact: playbook_report_message="Successfully ran playbook" playbook_report_progress="100"
