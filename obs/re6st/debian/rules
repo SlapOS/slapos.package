@@ -8,6 +8,7 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=-format
 include debian/common.mk
 
 override_dh_auto_install:
+	make DESTDIR=$(TMP) PREFIX=/usr install
 
 override_dh_link:
 
