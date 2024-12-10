@@ -5,10 +5,10 @@ set -e
 
 case "$1" in
     purge)
-        ucf --purge /etc/opt/slapos/slapos.cfg
+        command -v ucf >/dev/null && ucf --purge /etc/opt/slapos/slapos.cfg
 
-        rm -rf /var/opt/slapos/ /srv/slapgrid/ /opt/slapgrid/ \
-            /etc/opt/slapos/ /opt/slapos/
+        rm -rf /var/opt/slapos/ /etc/opt/slapos/ /opt/slapos/
+        echo "Note: purging slapos-node removed the configuration files and the logs. If you want to also remove the data, run 'rm -rf /opt/slapgrid /srv/slapgrid'."
      ;;
 
      remove)
