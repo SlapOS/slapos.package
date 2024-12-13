@@ -99,12 +99,12 @@
     when: certificate.stat.exists == True
 
   - name: Get current version
-    shell: '{{ amarisoft_dir }}/get-amarisoft-info -v || echo 0000-00-00.0 | cut -d. -f1'
+    shell: '{{ amarisoft_dir }}/get-amarisoft-info -v | cut -d. -f1 || echo 0000-00-00'
     register: current_version
     when: certificate.stat.exists == True
 
   - name: Get current version timestamp
-    shell: '{{ amarisoft_dir }}/get-amarisoft-info -v | grep "\." || echo 0000-00-00.0 | cut -d. -f2'
+    shell: '{{ amarisoft_dir }}/get-amarisoft-info -v | grep "\." | cut -d. -f2 || echo 0'
     register: current_timestamp
     when: certificate.stat.exists == True
 
