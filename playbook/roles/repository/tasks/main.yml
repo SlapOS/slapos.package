@@ -130,6 +130,6 @@
     zypper_repository: repo={{ base_open_build_url }}/SLE_15_SP6/home:VIFIBnexedi.repo
     when: ansible_os_family == "Suse" and ansible_distribution_major_version == "15"
 
-  - name: Install Fedora 37 repository
-    yum_repository: name='home_VIFIBnexedi' description='SlapOS-Node (Fedora_37)' baseurl='https://download.opensuse.org/repositories/home:/VIFIBnexedi/Fedora_37/' gpgkey='https://download.opensuse.org/repositories/home:/VIFIBnexedi/Fedora_37/repodata/repomd.xml.key' gpgcheck=yes enabled=yes
+  - name: Install Fedora 40 repository
+    yum_repository: name='home_VIFIBnexedi' description='SlapOS-Node (Fedora_40)' baseurl='https://download.opensuse.org/repositories/home:/VIFIBnexedi/Fedora_40/' gpgkey='https://download.opensuse.org/repositories/home:/VIFIBnexedi/Fedora_40/repodata/repomd.xml.key' gpgcheck=yes enabled=yes
     when: ansible_distribution == "Fedora"
