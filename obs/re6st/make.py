@@ -226,7 +226,7 @@ def _template(task):
     )
     open(task.output, 'w').write(output)
 
-rpm, arch = (task((bootstrap, name + '.in'), DIST + '/' + name)(_template)
+rpm, arch = (task((tarball, name + '.in'), DIST + '/' + name)(_template)
              for name in ("re6stnet.spec", "PKGBUILD"))
 
 @task((tarball, deb, rpm, arch, "re6stnet.install", "re6st-node.rpmlintrc"))
