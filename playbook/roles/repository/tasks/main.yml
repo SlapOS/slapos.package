@@ -104,13 +104,13 @@
     apt_repository: repo='deb {{ base_open_build_url }}/xUbuntu_22.04/ ./' state=present
     when: (ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04") or (ansible_distribution == "Linux Mint" and ansible_distribution_major_version == "21")
 
-  - name: Install Ubuntu 23.04 repository key
-    apt_key: url={{ base_open_build_url }}/xUbuntu_23.04/Release.key state=present
-    when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "23.04"
+  - name: Install Ubuntu 24.04 repository key
+    apt_key: url={{ base_open_build_url }}/xUbuntu_24.04/Release.key state=present
+    when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "24.04"
 
-  - name: Install Ubuntu 23.04 repository
-    apt_repository: repo='deb {{ base_open_build_url }}/xUbuntu_23.04/ ./' state=present
-    when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "23.04"
+  - name: Install Ubuntu 24.04 repository
+    apt_repository: repo='deb {{ base_open_build_url }}/xUbuntu_24.04/ ./' state=present
+    when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "24.04"
 
   - name: Install CentOS 7 Repository
     get_url: url={{ base_open_build_url }}/CentOS_7/home:VIFIBnexedi.repo dest=/etc/yum.repos.d/slapos.repo mode=0440
