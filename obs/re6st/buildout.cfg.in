@@ -38,7 +38,6 @@ update =
           if src.readline() != shebang:
             y = x + '.new'
             with open(y, 'w') as dst:
-              src.readline()
               dst.write(shebang)
               shutil.copyfileobj(src, dst)
             shutil.copymode(x, y)
