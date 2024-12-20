@@ -104,12 +104,15 @@
     apt_repository: repo='deb {{ base_open_build_url }}/xUbuntu_22.04/ ./' state=present
     when: (ansible_distribution == "Ubuntu" and ansible_distribution_version == "22.04") or (ansible_distribution == "Linux Mint" and ansible_distribution_major_version == "21")
 
-  - name: Install Ubuntu 24.04 repository key
-    apt_key: url={{ base_open_build_url }}/xUbuntu_24.04/Release.key state=present
-    when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "24.04"
-
   - name: Install Ubuntu 24.04 repository
-    apt_repository: repo='deb {{ base_open_build_url }}/xUbuntu_24.04/ ./' state=present
+    ansible.builtin.deb822_repository:
+      name: download_opensuse_org_repositories_home_VIFIBnexedi_xUbuntu_24.04
+      types: [deb]
+      uris: "{{ base_open_build_url }}/xUbuntu_24.04"
+      suites: ./
+      signed_by: "{{ base_open_build_url }}/xUbuntu_24.04/Release.key"
+      state: present
+      enabled: true
     when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "24.04"
 
   - name: Install CentOS 7 Repository
