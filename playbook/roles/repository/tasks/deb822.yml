@@ -1,0 +1,10 @@
+  - name: Install Ubuntu 24.04 repository
+    ansible.builtin.deb822_repository:
+      name: download_opensuse_org_repositories_home_VIFIBnexedi_xUbuntu_24.04
+      types: [deb]
+      uris: "{{ base_open_build_url }}/xUbuntu_24.04"
+      suites: ./
+      signed_by: "{{ base_open_build_url }}/xUbuntu_24.04/Release.key"
+      state: present
+      enabled: true
+    when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "24.04"
