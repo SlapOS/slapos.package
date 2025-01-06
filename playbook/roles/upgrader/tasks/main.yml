@@ -71,7 +71,9 @@
   - shell: cp -R /opt/upgrader/tmp /opt/upgrader/playbook
     when: playbook_folder.stat.exists == False
 
-  - stat: path=/opt/upgrader/tmp/hosts
+  - stat:
+      path=/opt/upgrader/tmp/hosts
+      get_checksum=false
     register: hosts_file
 
   - name: Move the latest playbook to playbook-tmp
@@ -86,12 +88,12 @@
   - name: Save new archive MD5
     stat:
       path=/opt/upgrader/archive.tar.gz
-      get_md5=yes
+      checksum_algorithm=md5
     register:
       archive
 
   - name: Update playbook md5
-    shell: echo {{ archive.stat.md5 }} > /opt/upgrader/next-upgrade-signature
+    shell: echo {{ archive.stat.checksum }} > /opt/upgrader/next-upgrade-signature
 
   - name: Stat Current Upgrade Signature
     file: path=/opt/upgrader/current-upgrade-signature state=touch mode="0666"
