@@ -1,7 +1,5 @@
-# Playbook to prepare rPLC coupler
-
 - import_playbook: wendelin-olimex-base.yml
 
-- name: a play that runs entirely on the ansible host
+- name: a playbook to prepare rPLC coupler
   hosts: 127.0.0.1
   connection: local
