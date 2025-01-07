@@ -1,0 +1,5 @@
+- import_playbook: wendelin-olimex-base.yml
+
+- name: a playbook to prepare rPLC coupler
+  hosts: 127.0.0.1
+  connection: local
