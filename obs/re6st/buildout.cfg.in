@@ -83,5 +83,5 @@ environment +=
   CFLAGS=-std=c99 -g -O2
 
 [versions]
-zc.buildout = 3.0.1+slapos008
+zc.buildout = 3.0.1+slapos009
 re6stnet = %(RE6STNET_VERSION)s:whl

@@ -48,7 +48,7 @@ from make import *
 from debian.changelog import Changelog
 from debian.deb822 import Deb822
 
-BOOTSTRAP = "http://www.nexedi.org/static/packages/source/slapos.buildout/zc.buildout-3.0.1%2Bslapos005.tar.gz"
+BOOTSTRAP = "http://www.nexedi.org/static/packages/source/slapos.buildout/zc.buildout-3.0.1%2Bslapos009.tar.gz"
 PACKAGE = "re6st-node"
 
 BIN = "re6st-conf re6st-registry re6stnet".split()
