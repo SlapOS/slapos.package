@@ -8,7 +8,8 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=-format
 include debian/common.mk
 
 override_dh_auto_install:
-	make DESTDIR=$(TMP) PREFIX=/usr install
+# BBB: override UNITDIR for Debian 12 and older
+	make DESTDIR=$(TMP) UNITDIR=/lib/systemd/system PREFIX=/usr install
 
 override_dh_link:
 
