@@ -16,7 +16,7 @@
   with_items: '{{ scaling_governor_stat.results }}'
   when: item.stat.exists
 
-- name: Set CPU Scaling Governor
+- name: Set CPU Scaling Governor to {{ value }}
   shell: 'echo {{ value }} > {{ item.item.item }}/cpufreq/scaling_governor'
   with_items: '{{ cpu_offline.results }}'
   when: ('rc' in item) and (item.rc != 0)

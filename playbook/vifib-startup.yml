@@ -6,4 +6,5 @@
     - settings/vifib.yml
 
   roles:
-    - vifib-server
+    - { role: vifib-server}
+    - { role: cpu-scaling-governor, value: performance }
