@@ -116,11 +116,11 @@ def bootstrap(task):
                         'buildout:extra-paths=',
                         'bootstrap'))
             # just fix shebang
-            check_call((sys.executable, 'bin/buildout', 'bootstrap'))
+            check_call((sys.executable, '-S', 'bin/buildout', 'bootstrap'))
 
 @task(bootstrap, BUILD + "/.installed.cfg")
 def buildout(task):
-    check_call(("bin/buildout",), cwd=BUILD)
+    check_call((sys.executable, '-S', 'bin/buildout',), cwd=BUILD)
     # Touch target in case that buildout had nothing to do.
     os.utime(task.output, None)
 
