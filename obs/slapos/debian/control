@@ -18,11 +18,15 @@ Depends: ${misc:Depends},
          ucf,
          uml-utilities,
 # slapgrid-sr needed by most recipes
+         awk,
 	 libc6-dev | libc-dev,
          gcc | c-compiler,
          g++ | c++-compiler,
          make,
          patch,
+# slapos node format
+         iproute2,
+         procps,
 # slapos node collect
          lm-sensors,
 # devperm manager plugin wants to use lsblk

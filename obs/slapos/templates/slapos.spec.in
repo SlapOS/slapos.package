@@ -57,9 +57,12 @@ BuildRequires: (lzma-devel or liblzma-devel or xz-devel)
 BuildRequires: zlib-devel
 BuildRequires: (libbz2-devel or bzip2-devel)
 
+Requires: awk
 Requires: gcc-c++
+Requires: iproute2
 Requires: make
 Requires: patch
+Requires: procps
 Requires: (lm_sensors or sensors)
 
 AutoReqProv: no
