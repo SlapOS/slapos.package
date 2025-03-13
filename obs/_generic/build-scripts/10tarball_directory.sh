@@ -29,47 +29,17 @@ copy_and_solve_templates "$COMPILATION_FILES_SOFTWARE_DIR" "$TARBALL_DIR"
 
 # BUILDOUT: BOOTSTRAPING AND RUN
 
-### Download the bootstrap script
-mkdir -p "$RUN_BUILDOUT_DIR"
-cd "$RUN_BUILDOUT_DIR"
-wget https://lab.nexedi.com/nexedi/slapos.buildout/raw/master/bootstrap/bootstrap.py
-
-### Run buildout
-# Note: it creates a lot of things in $RUN_BUILDOUT_DIR/eggs/ and uses software_release/ at some point
-
-# 00) Bootstrap buildout with an old version.
-#    no --buildout-version option, so it uses an upstream version of buildout
-#    creates $RUN_BUILDOUT_DIR/bin/buildout
-echo "[buildout]" > buildout.cfg # dummy .cfg file only for boostraping
-echo "Bootsrapping buildout..."
-python3 -S bootstrap.py \
-	--setuptools-version "$OLD_SETUPTOOLS_VERSION" \
-	--setuptools-to-dir eggs \
-	--buildout-version 2.13.8
-
-# 10) Get newest version of zc.buildout and setuptools.
-#    note that we can't directly do setuptools + zc.buildout +
-#    slapos.libnetworkcache because buildout would be relaunched in the middle
-#    without the "-S" option to python
-echo "Downloading the desired version of setuptools and zc.buildout..."
-cp "$TARBALL_DIR"/10cache-zc-buildout.cfg buildout.cfg
-sed -i '1s/$/ -S/' bin/buildout
-sed -i "/def _satisfied(/s/\(\bsource=\)None/\11/" eggs/zc.buildout-*/zc/buildout/easy_install.py # no wheel
-bin/buildout buildout:newest=true -v
-ls download-cache/dist/*.whl && { echo "There shouldn't be any wheel in download-cache" ; exit 1 ; }
-
-# 20) Compile a very simple buildout with networkcache.
-echo "Preparing networkcached zc.buildout..."
+echo "Preparing bootstrap zc.buildout..."
+mkdir -p "$RUN_BUILDOUT_DIR/bootstrap-dir"
+cd "$RUN_BUILDOUT_DIR/bootstrap-dir"
 cp "$TARBALL_DIR"/20cache-and-use-libnetworkcache.cfg buildout.cfg
-sed -i '1s/$/ -S/' bin/buildout
-bin/buildout buildout:newest=true -v
+buildout buildout:download-cache=../download-cache bootstrap
 
-# 30) Run $RUN_BUILDOUT_DIR/bin/buildout.
-#    note that it modifies itself via rebootstrapping when compiling python
-#    build locally everything with gcc to get download-cache and extends-cache ready
-echo "Finally running buildout for the local compilation..."
+echo "Run buildout for the local compilation..."
+cd "$RUN_BUILDOUT_DIR"
 cp "$TARBALL_DIR"/30local_buildout.cfg buildout.cfg
-bin/buildout buildout:newest=true -v
+bootstrap-dir/bin/buildout bootstrap
+bin/buildout buildout:newest=true -v | tee buildout-full.log
 
 ### Fix the go/ directory.
 

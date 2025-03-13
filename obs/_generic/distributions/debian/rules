@@ -1,5 +1,9 @@
 #!/usr/bin/make -f
 #export DH_VERBOSE = 1
+PACKAGE = $(shell dh_listpackages)
 
 %:
 	dh $@
+
+override_dh_shlibdeps:
+	dh_shlibdeps -- -x$(PACKAGE) --ignore-missing-info
