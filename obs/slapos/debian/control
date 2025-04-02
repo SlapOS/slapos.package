@@ -15,8 +15,6 @@ Package: slapos-node
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
-         ucf,
-         uml-utilities,
 # slapgrid-sr needed by most recipes
          awk,
 	 libc6-dev | libc-dev,
