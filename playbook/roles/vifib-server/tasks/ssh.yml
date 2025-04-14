@@ -1,0 +1,9 @@
+---
+
+  - name: SSH: Allow root
+    lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin (.*)" line="PermitRootLogin yes" state=present
+    notify: [ 'Reload sshd' ]
+
+  - name: SSH: Disallow password authentication
+    lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication (.*)" line="PasswordAuthentication yes" state=present
+    notify: [ 'Reload sshd' ]
