@@ -1,0 +1,11 @@
+#!/bin/bash
+
+domain=$1
+CODE=$(curl -s -n -k -L -o /dev/null -w "%{http_code}" "https://$domain/.well-known/manage_main")
+
+if [ "$CODE" == "200" ]; then
+  echo "Code=$CODE, .well-know exists already!"
+  exit 0
+else
+  curl -k -L -n -X POST -d "id=.well-known&submit=Add" http://$domain/portal_skins/custom/manage_addProduct/OFSP/manage_addFolder
+fi
