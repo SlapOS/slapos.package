@@ -3,7 +3,6 @@
   connection: local
 
   vars:
-    - re6st_annon: False
     - re6st_fingerprint: nofingerprint
 
   vars_prompt:

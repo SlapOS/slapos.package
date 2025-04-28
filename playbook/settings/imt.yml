@@ -5,4 +5,3 @@ slapos_master_url: https://slap.slapos.teralab-datascience.fr/
 slapos_web_master_url: https://master.slapos.teralab-datascience.fr/
 interface_name: lo
 partition_number: 10
-re6st_annon: False

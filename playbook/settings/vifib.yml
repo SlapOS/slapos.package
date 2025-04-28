@@ -4,5 +4,4 @@ re6st_fingerprint: sha256:3dfbc7a2daaa34214c92e52d45edf6056aa9cb4ad3b498f255f516
 slapos_master_url: https://slap.vifib.com/
 slapos_web_master_url: https://panel.rapid.space/
 partition_number: 10
-re6st_annon: True
 re6sttoken: noname
