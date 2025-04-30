@@ -1,0 +1,15 @@
+---
+dependencies:
+  - role: package
+    package_name: socat
+    package_state: present
+  - role: package
+    package_name: sqlite3
+    package_state: present
+  - role: package
+    package_name: curl
+    package_state: present
+  - role: package
+    package_name: git
+    package_state: present
+
