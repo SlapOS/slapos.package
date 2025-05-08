@@ -1,0 +1,36 @@
+---
+  - name: SSH PermitRootLogin check
+    command:
+      argv:
+        - egrep
+        - ^PermitRootLogin prohibit-password$
+        - /etc/ssh/sshd_config
+    ignore_errors: true
+    register: permitrootloginready
+
+  - name: SSH PasswordAuthentication check
+    command:
+      argv:
+        - egrep
+        - ^PasswordAuthentication no$
+        - /etc/ssh/sshd_config
+    ignore_errors: true
+    register: passwordauthenticatoinready
+
+  - name: SSH PermitRootLogin cleanup
+    lineinfile: dest=/etc/ssh/sshd_config regexp="PermitRootLogin" state=absent
+    when: permitrootloginready.rc != 0
+
+  - name: SSH PermitRootLogin setup
+    lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin prohibit-password$" line="PermitRootLogin prohibit-password" state=present
+    when: permitrootloginready.rc != 0
+    notify: [ 'Reload sshd' ]
+
+  - name: SSH PasswordAuthentication cleanup
+    lineinfile: dest=/etc/ssh/sshd_config regexp="PasswordAuthentication" state=absent
+    when: passwordauthenticatoinready.rc != 0
+
+  - name: SSH PasswordAuthentication setup
+    lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication no$" line="PasswordAuthentication no" state=present
+    when: passwordauthenticatoinready.rc != 0
+    notify: [ 'Reload sshd' ]
