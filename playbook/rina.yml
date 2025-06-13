@@ -6,7 +6,7 @@
     - settings/vifib.yml
 
   vars:
-    - re6sttoken: noname
+    - re6sttoken: notoken
 
   vars_prompt:
     - name: "computer_name"
