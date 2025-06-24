@@ -9,5 +9,5 @@ download-cache = download-cache
 
 [gcc]
 # force usage of gcc from slapos to have it in the cache
-max_version = 0
+force-build = true
 
