@@ -40,10 +40,12 @@ buildout buildout:download-cache=../download-cache bootstrap
 echo "Launch the bootstrap of final buildout"
 cd $BUILD_DIRECTORY
 sed  "s/\%RECIPE_VERSION\%/$RECIPE_VERSION/g;s|\%PATCHES_DIRECTORY\%|$PATCHES_DIRECTORY|g;s|\%TARGET_DIRECTORY\%|$TARGET_DIRECTORY|g;s|\%BUILD_ROOT_DIRECTORY\%|$BUILD_ROOT_DIRECTORY|g;s|\%BUILD_DIRECTORY\%|$BUILD_DIRECTORY|g" $BUILD_ROOT_DIRECTORY/../buildout_with_gcc.cfg.in > buildout.cfg
+sed -i '1s/$/ -S/' bootstrap-dir/bin/buildout
 bootstrap-dir/bin/buildout bootstrap
 
 # 4) build locally everything with gcc to get download-cache and extends-cache ready
 echo "Launch the big buildout to compile everything"
+sed -i '1s/$/ -S/' bin/buildout
 bin/buildout buildout:newest=true -v | tee buildout-full.log
 
 
