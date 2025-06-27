@@ -14,6 +14,7 @@
       pip:
         name: slapos.libnetworkcache
         state: latest
+        extra_args: --break-system-packages
 
     - shell: PATH=$PATH:/opt/packer/ packer build -var 'disk_size={{ item.size }}' -var 'name={{ item.name }}' -var 'custom_script={{ item.script }}' debian11.json >> log/debian11-{{ item.name }}.log
       args:
@@ -148,26 +149,27 @@
     - name: Upload a list of images to shacache, there is no verification for now
       shell: |
         FILE=output-{{ item.distro }}-{{ item.size }}G-{{ item.name }}/packer-{{ item.distro }}-{{ item.size }}G-{{ item.name }}.gz
-        networkcache-upload --prefix-key packerimage- --url $FILE --file $FILE --config /etc/opt/shacache/shacache.cfg
+        echo '{"title": "packerimage-{{ item.distro}}-{{ item.size }}G-{{ item.name }}.gz", "distribution": "{{ item.distribution }}", "version": "{{ item.version }}", "disk-size": {{ item.size }}, "compressed": true}' > metadata.json
+        networkcache-upload --key packer-images --file $FILE --config /etc/opt/shacache/shacache.cfg -m metadata.json
         SHA512SUM=$(cat SHA512SUM.txt | grep packer-{{ item.distro }}-{{ item.size }}G-{{ item.name }}.gz | cut -d ' ' -f1)
         BASE_URL=$(cat /etc/opt/shacache/shacache.cfg | grep 'download-cache-url' | cut -d ' ' -f3)
         MD5SUM=$(cat MD5SUM.txt | grep packer-{{ item.distro }}-{{ item.size }}G-{{ item.name }}.gz | cut -d ' ' -f1)
         echo "packer-{{ item.distro }}-{{ item.size }}G-{{ item.name }}.gz  $BASE_URL/$SHA512SUM   $MD5SUM" >> URL.txt
       with_items:
-        - { name: "vm-bootstrap", size: "200", distro: "debian11"}
-        - { name: "vm-bootstrap", size: "50", distro: "debian11"}
-        - { name: "vm-bootstrap", size: "25", distro: "debian11"}
-        - { name: "vm-bootstrap", size: "50", distro: "debian12"}
-        - { name: "vm-bootstrap", size: "200", distro: "centos8"}
-        - { name: "vm-bootstrap", size: "50", distro: "centos8"}
-        - { name: "vm-bootstrap", size: "25", distro: "centos8"}
-        - { name: "vm-bootstrap", size: "200", distro: "ubuntu-20.04-server"}
-        - { name: "vm-bootstrap", size: "50", distro: "ubuntu-20.04-server"}
-        - { name: "vm-bootstrap", size: "25", distro: "ubuntu-20.04-server"}
-        - { name: "vm-bootstrap", size: "200", distro: "ubuntu-22.04-server"}
-        - { name: "vm-bootstrap", size: "50", distro: "ubuntu-22.04-server"}
-        - { name: "vm-bootstrap", size: "25", distro: "ubuntu-22.04-server"}
-        - { name: "vm-bootstrap", size: "100", distro: "ubuntu-24.04-server"}
+        - { name: "vm-bootstrap", size: "200", distro: "debian11", distribution: "debian", version: "11"}
+        - { name: "vm-bootstrap", size: "50", distro: "debian11", distribution: "debian", version: "11"}
+        - { name: "vm-bootstrap", size: "25", distro: "debian11", distribution: "debian", version: "11"}
+        - { name: "vm-bootstrap", size: "50", distro: "debian12", distribution: "debian", version: "12"}
+        - { name: "vm-bootstrap", size: "200", distro: "centos8", distribution: "centos", version: "8"}
+        - { name: "vm-bootstrap", size: "50", distro: "centos8", distribution: "centos", version: "8"}
+        - { name: "vm-bootstrap", size: "25", distro: "centos8", distribution: "centos", version: "8"}
+        - { name: "vm-bootstrap", size: "200", distro: "ubuntu-20.04-server", distribution: "ubuntu", version: "20.04"}
+        - { name: "vm-bootstrap", size: "50", distro: "ubuntu-20.04-server", distribution: "ubuntu", version: "20.04"}
+        - { name: "vm-bootstrap", size: "25", distro: "ubuntu-20.04-server", distribution: "ubuntu", version: "20.04"}
+        - { name: "vm-bootstrap", size: "200", distro: "ubuntu-22.04-server", distribution: "ubuntu", version: "22.04"}
+        - { name: "vm-bootstrap", size: "50", distro: "ubuntu-22.04-server", distribution: "ubuntu", version: "22.04"}
+        - { name: "vm-bootstrap", size: "25", distro: "ubuntu-22.04-server", distribution: "ubuntu", version: "22.04"}
+        - { name: "vm-bootstrap", size: "100", distro: "ubuntu-24.04-server", distribution: "ubuntu", version: "24.04"}
       when: shacache_config.stat.exists == True and  upload_shacache == "yes"
 
 #### End of uploading to shacache
