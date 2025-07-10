@@ -1,225 +1,9 @@
 #!/bin/bash
 
-IPRODUCT="$(lsusb -d 0403:6014 -v 2> /dev/null |sed -n 's/^  iProduct.*ORS \(.*\)$/\1/gp')"
-ISERIAL="$(lsusb -d 0403:6014 -v 2> /dev/null |sed -n 's/^  iSerial *[0-9]* \(.*\)$/\1/gp')"
-
-if [ -z "$IPRODUCT" ]; then
-  ORS="$(hostname | sed 's/ors\(.*\)/\1/g')"
-  case "$ORS" in
-    0)
-      TDD="TDD";BAND="B39";VERSION="3.2";ISERIAL="A0";;
-    1)
-      TDD="TDD";BAND="B39";VERSION="3.2";ISERIAL="A1";;
-    2)
-      TDD="TDD";BAND="B39";VERSION="3.2";ISERIAL="A2";;
-    3)
-      TDD="TDD";BAND="B39";VERSION="3.2";ISERIAL="A3";;
-    4)
-      TDD="TDD";BAND="B39";VERSION="3.2";ISERIAL="A4";;
-    5)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B49";;
-    6)
-      TDD="TDD";BAND="B39";VERSION="3.2";ISERIAL="A7";;
-    8)
-      TDD="TDD";BAND="B39";VERSION="3.2";ISERIAL="A8";;
-    9)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B27";;
-    10)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B22";;
-    11)
-      TDD="TDD";BAND="B42";VERSION="3.4";ISERIAL="B44";;
-    13)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="UNKNOWN";;
-    14)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B24";;
-    15)
-      TDD="TDD";BAND="B42";VERSION="3.4";ISERIAL="B41";;
-    16)
-      TDD="TDD";BAND="B42";VERSION="3.4";ISERIAL="B43";;
-    17)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B46";;
-    18)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B47";;
-    19)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="UNKNOWN";;
-    20)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B33";;
-    21)
-      TDD="TDD";BAND="B42";VERSION="3.4";ISERIAL="B42";;
-    22)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B30";;
-    23)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B48";;
-    24)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B34";;
-    25)
-      TDD="TDD";BAND="B39";VERSION="3.4";ISERIAL="B18";;
-    26)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B31";;
-    27)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B38";;
-    28)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B35";;
-    29)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="UNKNOWN";;
-    30)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B50";;
-    31)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B51";;
-    32)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="UNKNOWN";;
-    33)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="UNKNOWN";;
-    34)
-      TDD="TDD";BAND="B39";VERSION="3.4";ISERIAL="UNKNOWN";;
-    35)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="UNKNOWN";;
-    36)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="UNKNOWN";;
-    37)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B65";;
-    38)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B60";;
-    39)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B61";;
-    40)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B64";;
-    41)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B57";;
-    42)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B26";;
-    43)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B29";;
-    44)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B36";;
-    45)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B37";;
-    46)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B39";;
-    47)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B28";;
-    48)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B66";;
-    49)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B67";;
-    50)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B23";;
-    51)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B59";;
-    52)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B56";;
-    53)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B58";;
-    54)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B68";;
-    55)
-      TDD="TDD";BAND="B43";VERSION="3.4";ISERIAL="B52";;
-    56)
-      TDD="TDD";BAND="B39";VERSION="3.4";ISERIAL="B5";;
-    57)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B25";;
-    58)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B70";;
-    59)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B71";;
-    60)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B72";;
-    61)
-      TDD="TDD";BAND="B39";VERSION="3.2";ISERIAL="A5";;
-    62)
-      TDD="TDD";BAND="B39";VERSION="3.2";ISERIAL="A6";;
-    63)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B73";;
-    64)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B74";;
-    65)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B75";;
-    66)
-      TDD="TDD";BAND="N79";VERSION="4.5";ISERIAL="F4";;
-    67)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B20";;
-    68)
-      TDD="TDD";BAND="B39";VERSION="4.2";ISERIAL="D1";;
-    69)
-      TDD="TDD";BAND="B39";VERSION="3.4";ISERIAL="B3";;
-    70)
-      TDD="TDD";BAND="B39";VERSION="3.4";ISERIAL="B0";;
-    71)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B77";;
-    72)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B78";;
-    73)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B79";;
-    74)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B80";;
-    75)
-      TDD="TDD";BAND="B39";VERSION="4.2";ISERIAL="D2";;
-    76)
-      TDD="TDD";BAND="B39";VERSION="3.4";ISERIAL="B1";;
-    77)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B81";;
-    79)
-      TDD="TDD";BAND="B43";VERSION="4.2";ISERIAL="D24";;
-    80)
-      TDD="TDD";BAND="B38";VERSION="4.2";ISERIAL="D11";;
-    81)
-      TDD="TDD";BAND="B43";VERSION="4.2";ISERIAL="D3";;
-    82)
-      TDD="TDD";BAND="B43";VERSION="4.2";ISERIAL="D23";;
-    83)
-      TDD="TDD";BAND="B43";VERSION="4.2";ISERIAL="D25";;
-    84)
-      TDD="TDD";BAND="B39";VERSION="4.2";ISERIAL="D22";;
-    85)
-      TDD="TDD";BAND="B38";VERSION="4.2";ISERIAL="D12";;
-    86)
-      TDD="TDD";BAND="B39";VERSION="3.4";ISERIAL="UNKNOWN";;
-    87)
-      TDD="TDD";BAND="B38";VERSION="4.2";ISERIAL="D13";;
-    88)
-      TDD="TDD";BAND="B38";VERSION="4.2";ISERIAL="D14";;
-    89)
-      TDD="TDD";BAND="B38";VERSION="4.2";ISERIAL="D18";;
-    90)
-      TDD="TDD";BAND="B42";VERSION="4.2";ISERIAL="D6";;
-    91)
-      TDD="FDD";BAND="B28";VERSION="4.4";ISERIAL="E1";;
-    92)
-      TDD="TDD";BAND="B43";VERSION="4.2";ISERIAL="D29";;
-    93)
-      TDD="TDD";BAND="B43";VERSION="4.2";ISERIAL="D26";;
-    94)
-      TDD="TDD";BAND="B38";VERSION="4.2";ISERIAL="D16";;
-    96)
-      TDD="TDD";BAND="B38";VERSION="4.2";ISERIAL="D19";;
-    97)
-      TDD="TDD";BAND="B38";VERSION="4.2";ISERIAL="D15";;
-    98)
-      TDD="TDD";BAND="B38";VERSION="4.2";ISERIAL="D20";;
-    99)
-      TDD="TDD";BAND="B38";VERSION="4.2";ISERIAL="D17";;
-    100)
-      TDD="TDD";BAND="N77";VERSION="4.5";ISERIAL="F1";;
-    101)
-      TDD="TDD";BAND="N77";VERSION="4.5";ISERIAL="F2";;
-    102)
-      TDD="TDD";BAND="B38";VERSION="3.4";ISERIAL="B76";;
-    103)
-      TDD="TDD";BAND="B39";VERSION="4.4";ISERIAL="E7";;
-    *)
-      TDD="UNKNOWN";BAND="UNKNOWN";VERSION="UNKNOWN";ISERIAL="UNKNOWN";;
-  esac
-else
-  test -z "$ISERIAL" && ISERIAL="UNKNOWN";
-  TDD="${IPRODUCT[@]:0:3}"
-  IPRODUCT="${IPRODUCT[@]:3}"
-  BAND="${IPRODUCT%% *}"
-  VERSION="${IPRODUCT##* }"
-fi
-
 usage() {
   cat << ENDUSAGE
-Usage: $0 [-tbvs]
+Usage: $0 [-c CHANNEL] [-tbvs]
+    -c CHANNEL      SDR channel number (default: 0)
     -t              TDD or FDD
     -b              Band (e.g. B39)
     -v              Version (e.g. v4.2)
@@ -227,25 +11,50 @@ Usage: $0 [-tbvs]
 ENDUSAGE
 1>&2;
 }
-while getopts "tbvsh" opt; do
+CHANNEL=0
+while getopts "c:tbvshm" opt; do
   case "${opt}" in
-    h )
-        usage; exit 1;
-        ;;
-    t )
-        echo -n $TDD;
-        ;;
-    b )
-        echo -n $BAND;
-        ;;
-    v )
-        echo -n $VERSION;
-        ;;
-    s )
-        echo -n $ISERIAL;
-        ;;
+    c )
+        CHANNEL=${OPTARG} ;;
     * )
-        usage; exit 1;
-      ;;
+        true ;;
+  esac
+done
+OPTIND=1
+
+if [ $CHANNEL -eq 0 ] ; then
+  PRODUCT="$(lsusb -d 0403:6014 -v 2> /dev/null |sed -n 's/^  iProduct *[0-9]* \(.*\)$/\1/gp')"
+  SERIAL="$(lsusb -d 0403:6014 -v 2> /dev/null |sed -n 's/^  iSerial *[0-9]* \(.*\)$/\1/gp')"
+fi
+
+if [ -z "$PRODUCT" ] && [ -f /etc/rf-info ]  ; then
+  PRODUCT="$(head -n$((CHANNEL*2+1)) /etc/rf-info | tail -n1)"
+  SERIAL="$(head -n$((CHANNEL*2+2)) /etc/rf-info | tail -n1)"
+fi
+
+: ${SERIAL:=UNKNOWN}
+MODEL="${PRODUCT%% *}"
+PRODUCT="${PRODUCT#* }"
+TDD="${PRODUCT[@]:0:3}"
+PRODUCT="${PRODUCT[@]:3}"
+BAND="${PRODUCT%% *}"
+VERSION="${PRODUCT##* }"
+
+while getopts "c:tbvshm" opt; do
+  case "${opt}" in
+    c )
+        true ;;
+    t )
+        echo -n $TDD ;;
+    b )
+        echo -n $BAND ;;
+    v )
+        echo -n $VERSION ;;
+    s )
+        echo -n $SERIAL ;;
+    m )
+        echo -n $MODEL ;;
+    * )
+        usage; exit 1 ;;
   esac
 done
