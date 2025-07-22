@@ -27,7 +27,7 @@ if [ $CHANNEL -eq 0 ] ; then
   SERIAL="$(lsusb -d 0403:6014 -v 2> /dev/null |sed -n 's/^  iSerial *[0-9]* \(.*\)$/\1/gp')"
 fi
 
-if [ -z "$PRODUCT" ] && [ -f /etc/rf-info ]  ; then
+if [ -f /etc/rf-info ]  ; then
   PRODUCT="$(head -n$((CHANNEL*2+1)) /etc/rf-info | tail -n1)"
   SERIAL="$(head -n$((CHANNEL*2+2)) /etc/rf-info | tail -n1)"
 fi
