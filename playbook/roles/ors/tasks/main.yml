@@ -285,23 +285,10 @@
 
 # SSD image backports
 
-  - stat: path=/opt/upgrader/last-backport
-    register: last_backport
-
-  - stat: path=/opt/upgrader/playbook-tmp/ors_backport_after
-    register: ors_backport_after
-
-  - shell: echo 1 > /opt/upgrader/last-backport
-    when: last_backport.stat.exists == False
-
   - name: Do ors backport
     shell: ansible-playbook ors-image-backports.yml -i hosts 2>>/opt/upgrader/ors_backport.log  >> /opt/upgrader/ors_backport.log
-    when: (ors_backport_after.stat.exists == True) and (lookup('file', '/opt/upgrader/playbook-tmp/ors_backport_after')|int > lookup('file', '/opt/upgrader/last-backport')|int )
     args:
       chdir: /opt/upgrader/playbook-tmp/
-
-  - shell: echo {{ ansible_date_time.epoch }} > /opt/upgrader/last-backport
-    when: (ors_backport_after.stat.exists == True) and (lookup('file', '/opt/upgrader/playbook-tmp/ors_backport_after')|int > lookup('file', '/opt/upgrader/last-backport')|int )
 
 # Radio Hardware
 
