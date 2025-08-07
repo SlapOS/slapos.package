@@ -1,0 +1,10 @@
+---
+
+  - debug:
+      msg: "2025-08-07 Backport"
+
+  - name: Configure Google DNS for CDN to work properly
+    lineinfile: dest=/etc/systemd/resolved.conf regexp="^DNS=(.*)" line="DNS=8.8.8.8" state=present
+
+  - name: Restart systemd-resolved to regenerate resolv.conf
+    systemd: name=systemd-resolved.service enabled=yes state=restarted daemon_reload=true
