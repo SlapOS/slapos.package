@@ -1,8 +1,5 @@
 ---
 
-  - name: Create {{ amarisoft_dir }} directory
-    file: path="{{ amarisoft_dir }}" state=directory mode=0755
-
   - name: Copy init-ue script
     copy: src=init-enb dest={{ amarisoft_dir }}/init-ue owner=root mode=550
 
@@ -119,3 +116,8 @@
       path: "{{ amarisoft_dir }}/{{ version }}"
       state: absent
     when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
+
+# Amarisoft software
+
+  - name: Configure sudoers
+    script: configure-sudoers {{ amarisoft_dir }} {{ version }}.{{ timestamp }}
