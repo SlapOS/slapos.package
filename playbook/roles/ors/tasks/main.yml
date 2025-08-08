@@ -284,11 +284,19 @@
 
 
 # SSD image backports
+#
+  - stat: path="/opt/upgrader/playbook-tmp"
+    register: playbook_tmp_dir
 
   - name: Do ors backport
     shell: ansible-playbook ors-image-backports.yml -i hosts 2>>/opt/upgrader/ors_backport.log  >> /opt/upgrader/ors_backport.log
     args:
       chdir: /opt/upgrader/playbook-tmp/
+    when: playbook_tmp_dir.stat.exists == True
+
+  - name: Do ors backport
+    shell: ansible-playbook ors-image-backports.yml -i hosts 2>>/opt/upgrader/ors_backport.log  >> /opt/upgrader/ors_backport.log
+    when: playbook_tmp_dir.stat.exists == False
 
 # Radio Hardware
 
