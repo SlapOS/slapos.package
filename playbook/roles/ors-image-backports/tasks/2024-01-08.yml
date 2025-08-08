@@ -98,9 +98,13 @@
     systemd: name=systemd-networkd.service enabled=yes state=started
 
 # Configure DHCP timeout
+#
+  - stat: path="/etc/dhcp/dhclient.conf"
+    register: dhclient
 
   - name: Configure dhcp timeout
     lineinfile: dest=/etc/dhcp/dhclient.conf regexp="^timeout (.*)" line="timeout 15" state=present
+    when: dhclient.stat.exists == True
 
 # Reinitialize machine-id for DHCP
 
