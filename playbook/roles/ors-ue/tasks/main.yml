@@ -1,6 +1,14 @@
 ---
 
-# Amarisoft upgrade
+  - name: Create {{ amarisoft_dir }} directory
+    file: path="{{ amarisoft_dir }}" state=directory mode=0755
+
+  - name: Copy init-ue script
+    copy: src=init-enb dest={{ amarisoft_dir }}/init-ue owner=root mode=550
+
+# Download lteue
+
+  - set_fact: cn="{{ ansible_hostname }}"
 
   - name: Configure {{ amarisoft_dir }}/shacache.cfg
     copy: src=shacache.cfg dest={{ amarisoft_dir }}/shacache.cfg owner=root mode=644
@@ -26,89 +34,88 @@
     register: current_timestamp
     when: certificate.stat.exists == True
 
-  - debug:
-      msg: "[{{ ansible_date_time.date }} {{ ansible_date_time.time }}] Current version is {{ current_version.stdout }}.{{ current_timestamp.stdout }}"
-    when: certificate.stat.exists == True
-
-  - name: Download nonce to decrypt new amarisoft version
-    shell: "networkcache-download -c {{ amarisoft_dir }}/shacache.cfg -k file-private:amarisoft 'version==\"{{ current_version.stdout }}\"' 'timestamp==\"{{ current_timestamp.stdout }}\"' --list | grep nonce | cut -d\\\" -f4 > {{ amarisoft_dir }}/download/nonce"
-    register: nonce
-    when: (certificate.stat.exists == True)
-
   - set_fact: version="{{ current_version.stdout }}"
     when: (certificate.stat.exists == True)
+  - set_fact: timestamp="{{ current_timestamp.stdout }}"
+    when: (certificate.stat.exists == True)
+  - set_fact:
+      amarisoft_path: "{{ amarisoft_dir }}/v{{ version }}.{{ timestamp }}"
+
+  - debug:
+      msg: "[{{ ansible_date_time.date }} {{ ansible_date_time.time }}] Current version is {{ version }}.{{ timestamp }}"
+    when: certificate.stat.exists == True
+
+  - stat: path="{{ amarisoft_path }}/ue"
+    register: ue_path
+
+  - name: Download nonce to decrypt new amarisoft version
+    shell: "networkcache-download -c {{ amarisoft_dir }}/shacache.cfg -k file-private:amarisoft 'version==\"{{ version }}\"' 'timestamp==\"{{ timestamp }}\"' --list | grep nonce | cut -d\\\" -f4 > {{ amarisoft_dir }}/download/nonce"
+    register: nonce
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
 
   - name: Download new amarisoft version
-    shell: "networkcache-download -c {{ amarisoft_dir }}/shacache.cfg -k file-private:amarisoft 'version==\"{{ current_version.stdout }}\"' 'timestamp==\"{{ current_timestamp.stdout }}\"' > {{ amarisoft_dir }}/download/amarisoft.tar.gz.enc"
-    when: (certificate.stat.exists == True)
+    shell: "networkcache-download -c {{ amarisoft_dir }}/shacache.cfg -k file-private:amarisoft 'version==\"{{ version }}\"' 'timestamp==\"{{ timestamp }}\"' > {{ amarisoft_dir }}/download/amarisoft.tar.gz.enc"
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
 
   - name: Download encrypted symmetric key for new amarisoft version
-    shell: "networkcache-download -c {{ amarisoft_dir }}/shacache.cfg -k key-private:amarisoft 'cn==\"{{ cn }}\"' 'version==\"{{ new_version.stdout }}\"' 'timestamp==\"{{ new_timestamp.stdout }}\"' > {{ amarisoft_dir }}/download/symmetric_key.bin.enc"
-    when: (certificate.stat.exists == True)
+    shell: "networkcache-download -c {{ amarisoft_dir }}/shacache.cfg -k key-private:amarisoft 'cn==\"{{ cn }}\"' 'version==\"{{ version }}\"' 'timestamp==\"{{ timestamp }}\"' > {{ amarisoft_dir }}/download/symmetric_key.bin.enc"
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
 
   - name: Create directory if it does not exist
     file: path={{ amarisoft_dir }}/{{ version }} state=directory mode=0755
-    when: (certificate.stat.exists == True) and (new_version_found == True)
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
 
   - name: Create directory if it does not exist
     file: path={{ amarisoft_dir }}/_{{ version }} state=directory mode=0755
-    when: (certificate.stat.exists == True) and (new_version_found == True)
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
 
   - name: Decrypt key
     shell: 'openssl pkeyutl -decrypt -in {{ amarisoft_dir }}/download/symmetric_key.bin.enc -inkey /opt/private-key/{{ cn }}.key -out /opt/private-key/symmetric_key-{{ version }}.key'
-    when: (certificate.stat.exists == True) and (new_version_found == True)
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
 
   - name: Decrypt archive
     script: encrypt-data.sh /opt/private-key/symmetric_key-{{ version }}.key {{ amarisoft_dir }}/download/nonce decrypt {{ amarisoft_dir }}/download/amarisoft.tar.gz.enc {{ amarisoft_dir }}/amarisoft.tar.gz
-    when: (certificate.stat.exists == True) and (new_version_found == True)
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
 
   - name: Extract archive
     unarchive:
       src: "{{ amarisoft_dir }}/amarisoft.tar.gz"
       dest: "{{ amarisoft_dir }}"
-    when: (certificate.stat.exists == True) and (new_version_found == True)
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
 
   - name: Extract lteue archive
     unarchive:
       src: "{{ amarisoft_dir }}/{{ version }}/lteue-linux-{{ version }}.tar.gz"
       dest: "{{ amarisoft_dir }}/_{{ version }}"
-    when: (certificate.stat.exists == True) and (new_version_found == True)
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
 
   - name: Create a symbolic link for lteue
     file:
       src: "lteue-linux-{{ version }}"
       dest: "{{ amarisoft_dir }}/_{{ version }}/ue"
       state: link
-    when: (certificate.stat.exists == True) and (new_version_found == True)
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
 
   - name: Copy trx_sdr libraries
-    shell: 'cp {{ amarisoft_dir }}/_{{ version }}/trx_sdr/*.so* {{ amarisoft_dir }}/_{{ version }}/ue/'
-    when: (certificate.stat.exists == True) and (new_version_found == True)
+    shell: 'cp {{ amarisoft_path }}/trx_sdr/*.so* {{ amarisoft_dir }}/_{{ version }}/ue/'
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
 
   - name: Copy libraries to ue
     shell: 'cp {{ amarisoft_dir }}/{{ version }}/libs/*.so* {{ amarisoft_dir }}/_{{ version }}/ue/'
-    when: (certificate.stat.exists == True) and (new_version_found == True)
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
     ignore_errors: True
 
   - name: Copy libraries to ue
     shell: 'cp {{ amarisoft_dir }}/{{ version }}/libs/linux/*.so* {{ amarisoft_dir }}/_{{ version }}/ue/'
-    when: (certificate.stat.exists == True) and (new_version_found == True)
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
     ignore_errors: True
 
   - name: Move ue to amarisoft folder
-    shell: 'mv {{ amarisoft_dir }}/_{{ version }}/* {{ amarisoft_dir }}/v{{ version }}.{{ new_timestamp.stdout }}/'
-    when: (certificate.stat.exists == True) and (new_version_found == True)
+    shell: 'mv {{ amarisoft_dir }}/_{{ version }}/* {{ amarisoft_path }}/'
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
 
   - name: Remove extraction folder
     file: 
       path: "{{ amarisoft_dir }}/{{ version }}"
       state: absent
-    when: (certificate.stat.exists == True) and (new_version_found == True)
-
-  - name: Get Amarisoft version
-    shell: '{{ amarisoft_dir }}/get-amarisoft-info -v'
-    register: amarisoft_version
-
-  - set_fact:
-      amarisoft_path: "{{ amarisoft_dir }}/v{{ amarisoft_version.stdout }}"
-
+    when: (certificate.stat.exists == True) and (ue_path.stat.exists == False)
