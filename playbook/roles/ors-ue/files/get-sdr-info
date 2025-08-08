@@ -1,0 +1,60 @@
+#!/bin/bash
+
+usage() {
+  cat << ENDUSAGE
+Usage: $0 [-c CHANNEL] [-tbvs]
+    -c CHANNEL      SDR channel number (default: 0)
+    -t              TDD or FDD
+    -b              Band (e.g. B39)
+    -v              Version (e.g. v4.2)
+    -s              Serial number (e.g. B53)
+ENDUSAGE
+1>&2;
+}
+CHANNEL=0
+while getopts "c:tbvshm" opt; do
+  case "${opt}" in
+    c )
+        CHANNEL=${OPTARG} ;;
+    * )
+        true ;;
+  esac
+done
+OPTIND=1
+
+if [ $CHANNEL -eq 0 ] ; then
+  PRODUCT="$(lsusb -d 0403:6014 -v 2> /dev/null |sed -n 's/^  iProduct *[0-9]* \(.*\)$/\1/gp')"
+  SERIAL="$(lsusb -d 0403:6014 -v 2> /dev/null |sed -n 's/^  iSerial *[0-9]* \(.*\)$/\1/gp')"
+fi
+
+if [ -f /etc/rf-info ]  ; then
+  PRODUCT="$(head -n$((CHANNEL*2+1)) /etc/rf-info | tail -n1)"
+  SERIAL="$(head -n$((CHANNEL*2+2)) /etc/rf-info | tail -n1)"
+fi
+
+: ${SERIAL:=UNKNOWN}
+MODEL="${PRODUCT%% *}"
+PRODUCT="${PRODUCT#* }"
+TDD="${PRODUCT[@]:0:3}"
+PRODUCT="${PRODUCT[@]:3}"
+BAND="${PRODUCT%% *}"
+VERSION="${PRODUCT##* }"
+
+while getopts "c:tbvshm" opt; do
+  case "${opt}" in
+    c )
+        true ;;
+    t )
+        echo -n $TDD ;;
+    b )
+        echo -n $BAND ;;
+    v )
+        echo -n $VERSION ;;
+    s )
+        echo -n $SERIAL ;;
+    m )
+        echo -n $MODEL ;;
+    * )
+        usage; exit 1 ;;
+  esac
+done

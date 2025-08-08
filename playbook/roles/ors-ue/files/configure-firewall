@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# Enable ipv4 and ipv6 forwarding for core network
+echo 1 > /proc/sys/net/ipv4/conf/all/forwarding
+echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
+
+# Set correct iptables rules
+mkdir -p /etc/iptables
+IF_LIST=()
+CONFV4="/etc/iptables/rules.v4"
+TMPV4="/tmp/rules.v4.$(date +%s)"
+CONFV6="/etc/iptables/rules.v6"
+TMPV6="/tmp/rules.v6.$(date +%s)"
+
+## Get sorted list of physical network interfaces
+cd /sys/class/net;
+for IF in $(find . -type l -printf "%f\n"); do
+  # If interface is not virtual
+  if ! realpath $(readlink $IF) | grep -q "^/sys/devices/virtual"; then
+    IF_LIST+=($IF);
+  fi
+done
+IFS=$'\n' IF_LIST_SORTED=($(sort <<<"${IF_LIST[*]}"))
+unset IFS
+
+## Write target IPv4 rules
+cat > $TMPV4 << EOF
+*nat
+:PREROUTING ACCEPT
+:INPUT ACCEPT
+:OUTPUT ACCEPT
+:POSTROUTING ACCEPT
+-A PREROUTING -p udp -m udp --dport 53 -j DNAT --to-destination :5353
+-A POSTROUTING -p udp -m udp --sport 5353 -j SNAT --to-source :53
+EOF
+for IF in "${IF_LIST_SORTED[@]}"; do
+  cat >> $TMPV4 << EOF
+-A POSTROUTING -o $IF -j MASQUERADE
+EOF
+done
+cat >> $TMPV4 << EOF
+COMMIT
+*filter
+:INPUT ACCEPT
+:FORWARD ACCEPT
+:OUTPUT ACCEPT
+COMMIT
+EOF
+## Write target IPv6 rules
+cat > $TMPV6 << EOF
+*nat
+:PREROUTING ACCEPT
+:INPUT ACCEPT
+:OUTPUT ACCEPT
+:POSTROUTING ACCEPT
+COMMIT
+*filter
+:INPUT ACCEPT
+:FORWARD ACCEPT
+:OUTPUT ACCEPT
+COMMIT
+EOF
+
+## Reconfigure iptables if current rules doens't match target rules
+touch $CONFV4 $CONFV6
+if ! diff $TMPV4 $CONFV4; then
+  cp $TMPV4 $CONFV4
+  iptables-restore $CONFV4
+fi
+if ! diff $TMPV6 $CONFV6; then
+  cp $TMPV6 $CONFV6
+  ip6tables-restore $CONFV6
+fi
+rm -f $TMPV4 $TMPV6

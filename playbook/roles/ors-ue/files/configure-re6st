@@ -1,0 +1,26 @@
+#!/bin/bash
+
+CONF="/etc/re6stnet/re6stnet.conf"
+TMP="/tmp/re6stnet.conf.$(date +%s)"
+REPLACE=0
+
+cp $CONF $TMP;
+
+for IF in $(ls -1 /sys/class/net/ | grep -v "^lo\|^re6stnet\|^slap"); do
+  if ! grep -q "^interface $IF" $TMP; then
+    REPLACE=1
+  fi
+done
+
+echo $REPLACE
+
+# Reconfigure re6st if configuration not correct
+if (( $REPLACE )); then
+  sed -i '/^interface/d' $TMP
+  for IF in $(ls -1 /sys/class/net/ | grep -v "^lo\|^re6stnet\|^slap"); do
+    echo "interface $IF" >> $TMP
+  done
+  mv $TMP $CONF;
+  systemctl restart re6stnet
+fi
+rm -rf $TMP;

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# set the "performance" governor for all CPUs to have the highest
+# clock frequency
+if [ -e "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor" ] ; then
+    CPUS0=$(ls /sys/devices/system/cpu/ | grep -oP "cpu\K\d+")
+    CPUS1=""
+    for cpu in $CPUS0 ; do
+        if [ -e "/sys/devices/system/cpu/cpu${cpu}/online" ] ; then
+            if [ "$(cat /sys/devices/system/cpu/cpu${cpu}/online)" = "0" ] ; then continue; fi
+        fi
+        CPUS1="$CPUS1 $cpu"
+    done
+    echo "Set performance scaling governor for cpus$CPUS1"
+    for cpu in $CPUS1 ; do
+        echo performance > /sys/devices/system/cpu/cpu${cpu}/cpufreq/scaling_governor
+    done
+fi
