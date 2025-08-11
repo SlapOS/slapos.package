@@ -1,6 +1,29 @@
 ---
   - import_tasks: debian9-gcc-4.9.yml
- 
+
+  - name: Switch Debian Buster sources to archive.debian.org
+    become: yes
+    when:
+      - ansible_distribution == "Debian"
+      - ansible_distribution_release == "buster"
+    block:
+      - name: Set sources.list to archive.debian.org
+        copy:
+          dest: /etc/apt/sources.list
+          content: |
+            deb http://archive.debian.org/debian buster main contrib non-free
+            deb http://archive.debian.org/debian-security buster/updates main contrib non-free
+
+      - name: Disable APT valid-until check
+        copy:
+          dest: /etc/apt/apt.conf.d/99no-check-valid-until
+          content: |
+            Acquire::Check-Valid-Until "false";
+
+      - name: Update APT cache
+        apt:
+          update_cache: yes
+
   - name: Install iptables
     apt:
       pkg:
