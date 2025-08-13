@@ -13,9 +13,9 @@
       content: |
         Acquire::Check-Valid-Until "false";
 
-    - name: Update APT cache
-      apt:
-        update_cache: yes
+  - name: Update APT cache
+    apt:
+      update_cache: yes
 
   - name: Allow release-info to change for APT repositories
     command: apt-get update -y --allow-releaseinfo-change
