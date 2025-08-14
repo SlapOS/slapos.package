@@ -1,3 +1,24 @@
+  - name: Ensure Debian Buster uses archive.debian.org sources
+    block:
+      - name: Replace sources.list with archive.debian.org for Buster
+        copy:
+          dest: /etc/apt/sources.list
+          content: |
+            deb http://archive.debian.org/debian buster main contrib non-free
+            deb http://archive.debian.org/debian-security buster/updates main contrib non-free
+
+      - name: Disable APT valid-until check for Buster
+        copy:
+          dest: /etc/apt/apt.conf.d/99no-check-valid-until
+          content: |
+            Acquire::Check-Valid-Until "false";
+
+      - name: Update APT cache for Buster
+        apt:
+          update_cache: yes
+    when:
+      - ansible_distribution == "Debian"
+      - ansible_distribution_release == "buster"
 
   - name: Allow release-info to change for APT repositories
     command: apt-get update -y --allow-releaseinfo-change
