@@ -5,6 +5,7 @@ name = 'standalone-shared-tests'
 
 setup(name=name,
       version=version,
+      packages=find_packages(),
       tests_require=['requests'],
       test_suite='tests'
     )
