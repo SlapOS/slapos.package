@@ -3,7 +3,7 @@
   connection: local
 
   vars:
-    - re6st_fingerprint: nofingerprint
+    re6st_fingerprint: nofingerprint
 
   vars_prompt:
     - name: "re6st_registry_url"

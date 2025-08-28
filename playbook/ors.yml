@@ -3,9 +3,9 @@
   connection: local
 
   vars:
-    - upgrader_playbook: vifib-upgrade.yml
-    - extra_playbook: ors.yml
-    - repeat_until_success: True
+    upgrader_playbook: vifib-upgrade.yml
+    extra_playbook: ors.yml
+    repeat_until_success: True
 
   vars_files:
     - settings/vifib.yml

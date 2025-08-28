@@ -11,7 +11,7 @@
 
   - name: Remove {{ base_open_build_url }} key (and add later) on every upgrade, as expiration date is quite short (2 months) for Debian.
     apt_key: id=94A63987 state=absent
-    when: ansible_distribution == "Debian"
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version|int <= 12
 
   - name: Remove {{ base_open_build_url }} key (and add later) on every upgrade, as expiration date is quite short (2 months) for Fedora.
     rpm_key: key=2c5d475c state=absent
@@ -19,10 +19,6 @@
 
   - file: path=/etc/apt/sources.list.d/re6stnet.list state=absent
     when: ansible_distribution == "Debian"
-
-  - name: Install Debian 13 repository key
-    apt_key: url={{ base_open_build_url }}/Debian_13/Release.key state=present
-    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "13"
 
   - name: Install Debian 12 repository key
     apt_key: url={{ base_open_build_url }}/Debian_12/Release.key state=present
@@ -39,10 +35,6 @@
   - name: Install Debian 9 repository key
     apt_key: url={{ base_open_build_url }}/Debian_9.0/Release.key state=present
     when: ansible_distribution == "Debian" and ansible_distribution_major_version == "9"
-
-  - name: Install Debian 13 repository
-    apt_repository: repo='deb {{ base_open_build_url }}/Debian_13/ ./' state=present
-    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "13"
 
   - name: Install Debian 12 repository
     apt_repository: repo='deb {{ base_open_build_url }}/Debian_12/ ./' state=present
@@ -110,7 +102,8 @@
 
   - name: Install with DEB822
     include_tasks: deb822.yml
-    when: ansible_distribution == "Ubuntu" and ansible_distribution_version >= "24.04"
+    when: (ansible_distribution == "Debian" and ansible_distribution_major_version|int >= 13) or
+          (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 24)
 
   - name: Install CentOS 7 Repository
     get_url: url={{ base_open_build_url }}/CentOS_7/home:VIFIBnexedi.repo dest=/etc/yum.repos.d/slapos.repo mode=0440

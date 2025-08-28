@@ -3,9 +3,9 @@
   connection: local
 
   vars:
-    - computer_name: noname
-    - re6st_fingerprint: "sha256:3dfbc7a2daaa34214c92e52d45edf6056aa9cb4ad3b498f255f51609c1302de3"
-    - re6st_registry_url: "https://re6st-registry.nxdcdn.com/"
+    computer_name: noname
+    re6st_fingerprint: "sha256:3dfbc7a2daaa34214c92e52d45edf6056aa9cb4ad3b498f255f51609c1302de3"
+    re6st_registry_url: "https://re6st-registry.nxdcdn.com/"
 
   vars_prompt:
     - name: "re6sttoken"

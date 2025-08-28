@@ -8,7 +8,7 @@
   connection: local
 
   vars:
-    - iptables_rules: |
+    iptables_rules: |
         # We send data to Wendelin via HTTP or HTTPS
 
         # Only accept packets on the INPUT chain that are ESTABLISHED or RELATED to a current connection

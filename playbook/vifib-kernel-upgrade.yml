@@ -3,8 +3,8 @@
   connection: local
 
   vars:
-    - computer_name: noname
-    - slapostoken: notoken 
+    computer_name: noname
+    slapostoken: notoken
 
   vars_files:
     - settings/vifib.yml

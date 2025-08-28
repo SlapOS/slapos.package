@@ -6,7 +6,7 @@
     - settings/gnet.yml
 
   vars:
-    - computer_name: noname
+    computer_name: noname
 
   vars_prompt:
     - name: "re6sttoken"

@@ -1,6 +1,17 @@
-  - name: Install Ubuntu 24.04 repository
+  - name: Install Debian 13 repository (with DEB822)
     ansible.builtin.deb822_repository:
-      name: download_opensuse_org_repositories_home_VIFIBnexedi_xUbuntu_24.04
+      name: download_opensuse_org_repositories_home_VIFIBnexedi
+      types: [deb]
+      uris: "{{ base_open_build_url }}/Debian_13"
+      suites: ./
+      signed_by: "{{ base_open_build_url }}/Debian_13/Release.key"
+      state: present
+      enabled: true
+    when: ansible_distribution == "Debian" and ansible_distribution_major_version == "13"
+
+  - name: Install Ubuntu 24.04 repository (with DEB822)
+    ansible.builtin.deb822_repository:
+      name: download_opensuse_org_repositories_home_VIFIBnexedi
       types: [deb]
       uris: "{{ base_open_build_url }}/xUbuntu_24.04"
       suites: ./

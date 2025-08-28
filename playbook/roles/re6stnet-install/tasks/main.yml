@@ -15,12 +15,12 @@
   - name: Update Facts
     set_fact:
       location_option: "--location {{ location }}"
-    when: "{{ location | length | int }} > 0"
+    when: location | length | int > 0
 
   - name: Update Facts
     set_fact:
       location_option: ""
-    when: "{{ location | length | int }} == 0"
+    when: location | length | int == 0
 
   - name: Update Facts
     set_fact: 

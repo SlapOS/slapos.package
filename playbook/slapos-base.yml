@@ -3,10 +3,10 @@
   connection: local
 
   vars:
-    - computer_name: noname
-    - slapostoken: notoken
-    - interface_name: lo
-    - partition_number: 10
+    computer_name: noname
+    slapostoken: notoken
+    interface_name: lo
+    partition_number: 10
 
   vars_files:
     - settings/slapos-master.yml

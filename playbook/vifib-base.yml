@@ -3,9 +3,9 @@
   connection: local
 
   vars:
-    - upgrader_playbook: vifib-upgrade.yml
-    - computer_name: noname
-    - slapostoken: notoken
+    upgrader_playbook: vifib-upgrade.yml
+    computer_name: noname
+    slapostoken: notoken
 
   vars_files:
     - settings/vifib.yml

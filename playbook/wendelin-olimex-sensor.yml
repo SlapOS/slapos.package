@@ -8,7 +8,7 @@
   connection: local
 
   vars:
-    - iptables_rules: |
+    iptables_rules: |
         # To allow connection to SlapOS master
         # (for requesting Fluentd instance)
 
