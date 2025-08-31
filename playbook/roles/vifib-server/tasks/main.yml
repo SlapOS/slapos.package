@@ -31,6 +31,10 @@
     sysctl: name="net.ipv4.ping_group_range" value="0 2147483647" sysctl_set=yes state=present reload=yes
 
   - import_tasks: kvm.yml
+  - include_tasks: ssh_nopassword.yml
+    when: extra_playbook != "ors.yml"
+  - include_tasks: ssh_withrootpassword.yml
+    when: extra_playbook == "ors.yml"
   - import_tasks: shuttle-modprobe.yml
 
   - name: Increase ulimit
