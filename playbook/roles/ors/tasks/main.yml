@@ -357,14 +357,6 @@
   - name: Create .amarisoft directory for SR
     file: path={{ amarisoft_dir }}/.amarisoft state=directory
 
-  - name: Create /root/.amarisoft directory
-    file: path="/root/.amarisoft" state=directory mode=0755
-    ignore_errors: yes
-
-  - name: Copy keys for SR
-    copy: src=/root/.amarisoft dest={{ amarisoft_dir }} owner=root mode=644
-    ignore_errors: yes
-
   - name: Configure sudoers
     script: configure-sudoers {{ amarisoft_dir }} {{ amarisoft_version.stdout }} {{ sdr_dir }}
 
