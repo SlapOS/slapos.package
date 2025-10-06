@@ -414,14 +414,6 @@
     systemd: name=ondemand.service enabled=no state=stopped
     ignore_errors: yes
 
-# SSH
-
-  - name: Configure ssh
-    lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin (.*)" line="PermitRootLogin yes" state=present
-
-  - name: Configure ssh
-    lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication (.*)" line="PasswordAuthentication yes" state=present
-
 # Schedule and upgrade playbook
 
   - name: Install upgrader
