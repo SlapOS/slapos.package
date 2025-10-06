@@ -11,7 +11,7 @@ dependencies:
   - { role: package, package_name: ioping, package_state: latest }
   - { role: package, package_name: fuse, package_state: latest }
   - { role: package, package_name: exim4-base, package_state: absent }
-  - { role: package, package_name: slapos-node, package_state: latest }
+  - { role: package, package_name: slapos-node, package_state: present }
   - { role: package, package_name: re6st-node, package_state: present }
   - { role: upgrade-apt, when: ansible_os_family == 'Debian' }
   - { role: re6stnet-ensure-running }
