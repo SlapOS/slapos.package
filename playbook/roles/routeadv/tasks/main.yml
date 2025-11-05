@@ -8,7 +8,7 @@
   lineinfile:
     dest: /etc/re6stnet/re6stnet.conf
     insertafter: '^key'
-    line: 'daemon "exec dnsmasq -k8 - -i $re6stnet_iface -F ${re6stnet_subnet%/*},ra-only,${re6stnet_subnet#*/},1d"'
+    line: 'daemon "exec dnsmasq -k8 - -i $re6stnet_iface -F ${re6stnet_subnet%/*},ra-only,$((${re6stnet_subnet#*/}>64 ? ${re6stnet_subnet#*/} : 64)),1d"'
   notify:
     - restart re6stnet
 - name: configure re6stnet main interface
