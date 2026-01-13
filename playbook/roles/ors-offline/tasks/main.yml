@@ -24,8 +24,8 @@
 
   - name: Render bouture_configure
     template:
-      src: bouture_failover.j2
-      dest: "{{ bouture_opt }}/bouture_failover"
+      src: bouture_configure.j2
+      dest: "{{ bouture_opt }}/bouture_configure"
       mode: '0755'
 
   - name: Render bouture_graft
