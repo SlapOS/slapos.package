@@ -54,3 +54,6 @@
 
   - name: Set slapos main interface
     lineinfile: dest=/etc/opt/slapos/slapos.cfg regexp="^interface_name" line="interface_name = {{ ansible_default_ipv4.interface }}" state=present
+
+  - name: Configure /etc/systemd/network/dhcp.network
+    copy: src=systemd-dhcp-network dest=/etc/systemd/network/dhcp.network owner=root mode=644
