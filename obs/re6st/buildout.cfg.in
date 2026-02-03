@@ -71,11 +71,9 @@ prefix = %(TARGET)s/parts/${:_buildout_section_name_}
 make-options +=
   INSTALL_PREFIX=%(ROOT)s
   DESTDIR=%(ROOT)s
-
-[curl]
-environment =
-  PATH=${perl:location}/bin:${xz-utils:location}/bin:%%(PATH)s
-  LDFLAGS=-Wl,-rpath=${zlib:location}/lib -Wl,-rpath=${:OPENSSL}/lib -Wl,-rpath=${nghttp2:location}/lib -Wl,-rpath=${zstd:location}/lib ${:LDFLAGS}
+# make sure the pkgconfig path points to the currently existing dir
+post-install =
+  sed -i 's@${:prefix}@${:location}@' ${:location}/lib/pkgconfig/*.pc
 
 [file]
 # For old GCC like 4.8.5 on SLE 12 SP5.
