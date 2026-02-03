@@ -14,15 +14,21 @@ How to build one VM?
 
     mkdir /opt/packer/
     cd /opt/packer/
-    wget https://releases.hashicorp.com/packer/1.10.1/packer_1.10.1_linux_amd64.zip
-    unzip packer_1.10.1_linux_amd64.zip
+    wget https://releases.hashicorp.com/packer/1.14.3/packer_1.14.3_linux_amd64.zip
+    unzip packer_1.14.3_linux_amd64.zip
     PATH=/opt/packer:$PATH packer plugins install github.com/hashicorp/qemu
 
-2) Building one VM (example)::
+2) Check and install qemu
+
+  Packer use qemu to build vm images, you need to install it first.
+
+  apt-get install qemu-system-x86
+
+3) Building one VM (example)::
   
     PATH=$PATH:/opt/packer packer build debian8.json
 
-3) You can watch qemu working on a linux machine (with X running), you just 
+You can watch qemu working on a linux machine (with X running), you just
 have to edit the json. Replace '"headless": true' by '"headless": false'
 
 How to build all VMs?

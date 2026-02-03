@@ -1,0 +1,55 @@
+{
+  "builders": [
+    {
+      "accelerator": "kvm",
+      "boot_command": [
+        "<esc><wait><wait><wait><wait>",
+        "auto preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian13.cfg ",
+        "debian-installer=en_US.UTF-8 locale=en_US keymap=fr ",
+        "netcfg/get_hostname={{ .Name }} ",
+        "netcfg/get_domain={{ user `domain`}} ",
+        "fb=false debconf/frontend=noninteractive ",
+        "passwd/user-fullname={{user `user`}} ",
+        "passwd/user-password={{user `password`}} ",
+        "passwd/user-password-again={{user `password`}} ",
+        "passwd/username={{user `user`}} ",
+        "<enter>"
+      ],
+      "boot_wait": "5s",
+      "disk_size": "{{ user `disk_size`}}000",
+      "format": "qcow2",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum": "sha256:c9f09d24b7e834e6834f2ffa565b33d6f1f540d04bd25c79ad9953bc79a8ac02",
+      "iso_url": "https://shacache.nxdcdn.com/1ada40e4c938528dd8e6b9c88c19b978a0f8e2a6757b9cf634987012d37ec98503ebf3e05acbae9be4c0ec00b52e8852106de1bda93a2399d125facea45400f8",
+      "name": "debian13-{{ user `disk_size`}}G-{{ user `name`}}",
+      "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -h now",
+      "ssh_password": "{{user `password`}}",
+      "ssh_timeout": "3600s",
+      "ssh_username": "{{user `user`}}",
+      "type": "qemu"
+    }
+  ],
+  "provisioners": [
+    {
+      "execute_command": "echo '{{user `password`}}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+      "scripts": [
+        "scripts/update.sh",
+        "scripts/packages.sh",
+        "scripts/network-debian.sh",
+        "scripts/cleanup.sh",
+        "{{ user `custom_script` }}"
+      ],
+      "type": "shell"
+    }
+  ],
+  "variables": {
+    "custom_script": "scripts/empty.sh",
+    "disk_size": "100",
+    "domain": "",
+    "name": "image",
+    "password": "slapos",
+    "user": "slapos"
+  }
+}
+

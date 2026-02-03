@@ -4,4 +4,4 @@ curl
 vim
 sudo
 "
-aptitude -y install --without-recommends $PACKAGES
+apt -y install $PACKAGES
