@@ -2,3 +2,9 @@
   service:
     name: sshd
     state: reloaded
+  when: ansible_distribution == "Fedora"
+- name: Reload ssh
+  service:
+    name: ssh
+    state: reloaded
+  when: ansible_distribution != "Fedora"

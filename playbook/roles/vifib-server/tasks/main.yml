@@ -39,7 +39,7 @@
       state: present
       dest: /etc/ssh/sshd_config
       validate: sshd -t -f %s
-    notify: [ 'Reload sshd' ]
+    notify: [ 'Reload sshd', 'Reload ssh' ]
   - include_tasks: ssh_nopassword.yml
     when: extra_playbook is undefined or extra_playbook != "ors.yml"
   - include_tasks: ssh_withrootpassword.yml
