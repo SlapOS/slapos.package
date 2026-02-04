@@ -1,0 +1,59 @@
+---
+
+  - name: Get slapproxy ipv6
+    shell: 'sed -n "s/^ipv6-random = \(.*\)/\1/gp" $(dirname $(grep -lR "software_release_url = .*software/slapproxy/software.cfg" $(find /srv/slapgrid -type f -name "buildout.cfg")))/.installed.cfg'
+    register: slapproxy_ipv6
+
+  - name: Create {{ bouture_etc }} directory
+    file: path="{{ bouture_etc }}" state=directory mode=0755
+
+  - name: Create {{ bouture_log }} directory
+    file: path="{{ bouture_log }}" state=directory mode=0755
+
+  - name: Create {{ bouture_run }} directory
+    file: path="{{ bouture_run }}" state=directory mode=0755
+
+  - name: Create {{ bouture_opt }} directory
+    file: path="{{ bouture_opt }}" state=directory mode=0755
+
+  - name: Render bouture_failover
+    template:
+      src: bouture_failover.j2
+      dest: "{{ bouture_opt }}/bouture_failover"
+      mode: '0755'
+
+  - name: Render bouture_configure
+    template:
+      src: bouture_configure.j2
+      dest: "{{ bouture_opt }}/bouture_configure"
+      mode: '0755'
+
+  - name: Render bouture_graft
+    template:
+      src: bouture_graft.j2
+      dest: "{{ bouture_opt }}/bouture_graft"
+      mode: '0755'
+
+  - name: Render bouture_instance
+    template:
+      src: bouture_instance.j2
+      dest: "{{ bouture_opt }}/bouture_instance"
+      mode: '0755'
+
+  - name: Clone slapos.core
+    git:
+      repo: https://lab.nexedi.com/xavier_thompson/slapos.core.git
+      dest: "{{ bouture_opt }}/slapos.core"
+      version: bouture-0.1
+
+  - name: Run bouture_configure
+    shell: '{{ bouture_opt }}/bouture_configure'
+
+  - name: Add slapos bouture failover in cron
+    lineinfile: dest=/etc/cron.d/slapos-node regexp="slapos node instance" line="* * * * * root {{ bouture_opt }}/bouture_failover >> {{ bouture_log }}/slapos-node-bouture.log 2>&1" state=present
+
+  - name: Set slapos main interface
+    lineinfile: dest=/etc/opt/slapos/slapos.cfg regexp="^interface_name" line="interface_name = {{ ansible_default_ipv4.interface }}" state=present
+
+  - name: Configure /etc/systemd/network/dhcp.network
+    copy: src=systemd-dhcp-network dest=/etc/systemd/network/dhcp.network owner=root mode=644
