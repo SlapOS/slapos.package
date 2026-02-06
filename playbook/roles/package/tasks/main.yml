@@ -1,5 +1,5 @@
   - name: Try to update apt cache
-    apt: update_cache=yes cache_valid_time=3600
+    apt: update_cache=yes
     when: ansible_os_family == "Debian" or ansible_os_family == "Linuxmint" or ansible_os_family == "Kylin"
     ignore_errors: true
 
