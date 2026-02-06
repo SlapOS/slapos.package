@@ -1,8 +1,3 @@
-  - name: Try to update apt cache
-    apt: update_cache=yes
-    when: ansible_os_family == "Debian" or ansible_os_family == "Linuxmint" or ansible_os_family == "Kylin"
-    ignore_errors: true
-
   - name: Install {{ package_name }} (latest) using apt
     # We use update_cache=yes without ignoring errors (Unlike the "Try to update apt cache" task above),
     # because if `latest` package is requested it is an error if we can not update the cache.

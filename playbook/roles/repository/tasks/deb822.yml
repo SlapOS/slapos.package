@@ -1,3 +1,6 @@
+  - name: install python3-debian (latest)
+    apt: name=python3-debian state=latest
+
   - name: Install repository (with DEB822)
     ansible.builtin.deb822_repository:
       name: obs_VIFIBnexedi

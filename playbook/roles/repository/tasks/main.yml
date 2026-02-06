@@ -126,3 +126,9 @@
   - name: Install Fedora 40 repository
     yum_repository: name='home_VIFIBnexedi' description='SlapOS-Node (Fedora_40)' baseurl='https://download.opensuse.org/repositories/home:/VIFIBnexedi/Fedora_40/' gpgkey='https://download.opensuse.org/repositories/home:/VIFIBnexedi/Fedora_40/repodata/repomd.xml.key' gpgcheck=yes enabled=yes
     when: ansible_distribution == "Fedora"
+
+  - name: Update apt cache after installing new repository
+    apt: update_cache=yes
+    when: ansible_os_family == "Debian" or ansible_os_family == "Linuxmint" or ansible_os_family == "Kylin"
+    ignore_errors: true
+
