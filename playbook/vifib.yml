@@ -33,6 +33,7 @@
   roles:
     - { role: re6stnet-install, package_state: present }
     - { role: slapos, package_state: present } 
+    - unbound
     - vifib-team-ssh-key
     - upgrader
     - vifib-server
