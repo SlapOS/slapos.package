@@ -1,0 +1,18 @@
+---
+  - name: Configure unbound
+    copy: src="unbound.conf" dest="/etc/unbound/unbound.conf" mode=0644 owner=root group=root
+    notify: [ 'Restart unbound' ]
+  - name: Disable resolv.conf in dhcpcd.conf
+    lineinfile:
+      regexp: "^nohook resolv.conf$"
+      line: "nohook resolv.conf"
+      state: present
+      dest: /etc/dhcpcd.conf
+  - name: Disable 20-resolv.conf in dhcpcd.conf
+    lineinfile:
+      regexp: "^nohook 20-resolv.conf$"
+      line: "nohook 20-resolv.conf"
+      state: present
+      dest: /etc/dhcpcd.conf
+  - name: Configure resolv.conf
+    copy: src="resolv.conf" dest="/etc/resolv.conf" mode=0644 owner=root group=root

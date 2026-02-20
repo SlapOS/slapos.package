@@ -1,5 +1,5 @@
 ---
-
+  - import_tasks: unbound.yml
   - stat: path=/proc/sys/kernel/unprivileged_userns_clone
     register: unprivileged_userns_clone
   - name: Allow unprivileged CLONE_NEWUSER
