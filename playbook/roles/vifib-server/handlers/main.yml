@@ -2,3 +2,7 @@
   service:
     name: sshd
     state: reloaded
+- name: Restart unbound
+  service:
+    name: unbound
+    state: restarted
