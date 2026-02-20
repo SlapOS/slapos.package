@@ -1,0 +1,8 @@
+- name: Restart unbound
+  service:
+    name: unbound
+    state: restarted
+- name: Restart systemd-resolved
+  service:
+    name: systemd-resolved
+    state: restarted
