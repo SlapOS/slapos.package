@@ -19,10 +19,12 @@
     when: ifcfg_eth0.stat.exists == True and gateway_file.stat.exists == True
 
   - name: Disable network default route on interface eth0/Debian-Ubuntu
-    lineinfile:
+    ansible.builtin.blockinfile:
       dest: /etc/network/interfaces
       state: present
-      line: "post-up route del default dev eth0"
+      block: |
+        post-up route del default dev eth0
+        post-up /etc/opt/netconfig.sh || true
       insertafter: "iface eth0 inet dhcp"
     when: iface_config.stat.exists == True and gateway_file.stat.exists == True
 
