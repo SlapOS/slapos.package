@@ -1,0 +1,17 @@
+---
+  - name: Configure unbound
+    copy: src="unbound.conf" dest="/etc/unbound/unbound.conf" mode=0644 owner=root group=root
+    notify: [ 'Restart unbound' ]
+  - name: Configure resolv.conf
+    copy: src="resolv.conf" dest="/etc/resolv.conf" mode=0644 owner=root group=root
+  - name: Assure unbound is used
+    ansible.builtin.systemd_service:
+      enabled: true
+      masked: false
+      name: unbound
+  - name: Assure systemd-resolved is not used
+    ansible.builtin.systemd_service:
+      enabled: false
+      state: stopped
+      masked: true
+      name: systemd-resolved
