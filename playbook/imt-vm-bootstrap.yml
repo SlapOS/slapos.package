@@ -31,3 +31,5 @@
     - name: Remove periodical call of the upload log
       file: path=/etc/cron.d/ansible-upload-log state=absent
 
+    - name: Remove totally eth0
+      ansible.builtin.import_tasks: roles/vm-bootstrap/tasks/network_remove_eth0.yml

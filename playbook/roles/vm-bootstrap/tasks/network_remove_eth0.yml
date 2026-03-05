@@ -1,0 +1,32 @@
+---
+
+  - stat: path=/etc/sysconfig/network-scripts/ifcfg-eth0
+    register: ifcfg_eth0
+
+  - name: Remove configuration of interface eth0/CentOS
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 state=present line="DEFROUTE=no"
+    when: ifcfg_eth0.stat.exists == True and gateway_file.stat.exists == True
+
+  - stat: path=/etc/network/interfaces
+    register: iface_config
+
+  - name: Remove configuration of interface eth0/Debian-Ubuntu
+    ansible.builtin.lineinfile:
+      dest: /etc/network/interfaces
+      state: absent
+      regexp: 'eth0'
+    when: iface_config.stat.exists == True and gateway_file.stat.exists == True
+
+  - name: Check default route
+    shell: /sbin/ip route list | grep default
+    register: default_route
+    ignore_errors: True
+
+  - name: Delete eth0 interface
+    ansible.builtin.command: /sbin/ip link set dev eth0 down
+
+  - name: Make sure 8.8.8.8 is in resolv.conf
+    ansible.builtin.lineinfile:
+      dest: /etc/resolv.conf
+      state: present
+      line: "nameserver 8.8.8.8"

@@ -8,26 +8,6 @@
     stat: path=/etc/opt/gateway
     register: gateway_file
 
-  - stat: path=/etc/sysconfig/network-scripts/ifcfg-eth0
-    register: ifcfg_eth0
-
-  - stat: path=/etc/network/interfaces
-    register: iface_config
-
-  - name: Disable network default route on interface eth0/CentOS
-    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 state=present line="DEFROUTE=no"
-    when: ifcfg_eth0.stat.exists == True and gateway_file.stat.exists == True
-
-  - name: Disable network default route on interface eth0/Debian-Ubuntu
-    ansible.builtin.blockinfile:
-      dest: /etc/network/interfaces
-      state: present
-      block: |
-        post-up route del default dev eth0
-        post-up /etc/opt/netconfig.sh || true
-      insertafter: "iface eth0 inet dhcp"
-    when: iface_config.stat.exists == True and gateway_file.stat.exists == True
-
   - name: Check default route
     shell: /sbin/ip route list | grep default
     register: default_route
@@ -37,10 +17,6 @@
     shell: /sbin/ifconfig eth1 | grep eth1 | wc -l
     register: iface_eth1
     ignore_errors: True
-
-  - name: Delete default route to eth0
-    command: /sbin/ip route del default
-    when: gateway_file.stat.exists == True and iface_eth1.stdout == '1' and 'eth0' in default_route.stdout
 
   - name: Set eth1 as default route
     command: /sbin/ip route add default via {{ lookup('file', '/etc/opt/gateway') }} dev eth1
