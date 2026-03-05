@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script compiles python3.7 if current python3 is older than this
+# This script compiles python3.9 if current python3 is older than this
 # It returns the path of the python3 executable to use
 
 version=$(python3 --version | sed 's/Python 3.//' | sed 's/\..*//')
@@ -13,7 +13,7 @@ fi
 build_dir=.build
 
 # TODO:how to get this from buildout ?
-python3_url=https://www.python.org/ftp/python/3.9.22/Python-3.9.22.tar.xz
+python3_url=https://www.python.org/ftp/python/3.9.25/Python-3.9.25.tar.xz
 
 
 md5sum=$(echo -n $python3_url | md5sum | cut -d ' ' -f 1)
