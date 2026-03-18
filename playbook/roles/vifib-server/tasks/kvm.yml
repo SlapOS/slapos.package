@@ -17,22 +17,24 @@
     register: dev_kvm
 
   - name: Set 666 on /dev/kvm
-    shell: chmod 666 /dev/kvm
+    file: path=/dev/kvm mode=0666
     when: dev_kvm.stat.exists == True
-
 
   - name: Insert vhost-net module
     modprobe: name=vhost-net state=present
     ignore_errors: True
 
-  - pause: seconds=2
+  - pause: seconds=1
 
   - stat: path=/dev/vhost-net
     register: dev_vhost
 
-  - name: Set 666 on /dev/vhost-net
-    shell: chmod 666 /dev/vhost-net
+  - name: chmod 666 /dev/vhost-net
+    file: path=/dev/vhost-net mode=0666
     when: dev_vhost.stat.exists == True
+
+  - name: chmod 666 /dev/net/tun
+    file: path=/dev/net/tun mode=0666
 
   - name: Check if configuration exists already
     stat: path=/etc/opt/slapos/slapos.cfg

@@ -52,15 +52,27 @@
 
   - name: Insert kvm_intel module
     modprobe: name=kvm_intel state=present
+    ignore_errors: True
+
+  - stat: path=/dev/kvm
+    register: dev_kvm
+
+  - name: Set 666 on /dev/kvm
+    file: path=/dev/kvm mode=0666
+    when: dev_kvm.stat.exists == True
 
   - name: Insert vhost-net module
     modprobe: name=vhost-net state=present
+    ignore_errors: True
 
-  - name: chmod 666 /dev/kvm
-    file: path=/dev/kvm mode=0666
+  - pause: seconds=1
+
+  - stat: path=/dev/vhost-net
+    register: dev_vhost
 
   - name: chmod 666 /dev/vhost-net
     file: path=/dev/vhost-net mode=0666
+    when: dev_vhost.stat.exists == True
 
   - name: chmod 666 /dev/net/tun
     file: path=/dev/net/tun mode=0666
