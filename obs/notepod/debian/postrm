@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = remove ]; then
+
+  for x in /etc/grub.d/00_header /usr/sbin/grub-install /usr/bin/unattended-upgrade
+  do dpkg-divert --package $DPKG_MAINTSCRIPT_PACKAGE --remove --rename $x
+  done
+
+  [ ! -e /boot/grub/grub.cfg ] || update-grub
+
+fi
+
+#DEBHELPER#

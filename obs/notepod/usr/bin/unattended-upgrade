@@ -1,0 +1,32 @@
+#!/usr/bin/python3
+"""
+WKRD: Unfortunately, unattended-upgrades can't be configured to define a
+      white list that only applies to a specific origin.
+"""
+import ast
+
+filename = __file__ + ".distrib"
+with open(filename) as x:
+  root = ast.parse(x.read(), filename)
+
+# Patching only is_in_allowed_origin is not enough for --download-only.
+def get_allowed_origins(orig):
+  global ppa
+  ppa = substitute('o=LP-PPA-xtradeb-apps,a=${distro_codename}')
+  return lambda: orig() + [ppa]
+
+def is_in_allowed_origin(orig):
+  return lambda ver, allowed_origins:  orig(ver, allowed_origins) and (
+    ver.source_name == "ungoogled-chromium" or not orig(ver, (ppa,)))
+
+patches = [x.__name__ for x in (get_allowed_origins, is_in_allowed_origin)]
+for node in root.body:
+  if isinstance(node, ast.FunctionDef):
+    try:
+      patches.remove(node.name)
+    except ValueError:
+      continue
+    node.decorator_list.insert(0, ast.Name(node.name, lineno=0, col_offset=0))
+
+assert not patches, patches
+exec(compile(root, filename, 'exec'))
