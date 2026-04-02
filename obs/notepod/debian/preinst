@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = install ]; then
+
+  divert="dpkg-divert --package $DPKG_MAINTSCRIPT_PACKAGE --rename"
+  $divert --divert /usr/share/grub/00_header /etc/grub.d/00_header
+
+  for x in /usr/sbin/grub-install /usr/bin/unattended-upgrade
+  do $divert $x
+  done
+
+fi
+
+#DEBHELPER#

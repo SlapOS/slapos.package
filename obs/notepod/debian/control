@@ -1,0 +1,39 @@
+Source: notepod
+Section: admin
+Standards-Version: 4.7.3
+Maintainer: Julien Muchembled <jm@nexedi.com>
+Build-Depends: debhelper-compat (= 13)
+Homepage: https://notepod.nexedi.com/
+Vcs-Git: https://lab.nexedi.com/nexedi/slapos.package [obs/notepod]
+
+Package: notepod
+Architecture: all
+Depends: ${misc:Depends}, grub-efi-amd64, unattended-upgrades
+Description: NotePOD is a Nexedi flavor of Ubuntu with a focus on security
+ This package applies the following changes:
+ .
+  - grub-install: Always use options --no-nvram --removable, as a way to stay
+    as far away as possible from buggy closed-source UEFIs, and make it
+    possible to move easily the storage device from one computer to another.
+    Should we enable secure boot (more a tool against users than anything else),
+    systemd-boot looks better than grub for that.
+ .
+  - upgrade-grub: Disable quick-boot (like on Debian) because it breaks hidden
+    menu. Also sets a few defaults in /etc/default/grub.d/00-notepod.cfg
+ .
+  - unattended-upgrades: Auto-upgrade Ungoogled Chromium if installed. This
+    package is provided by a PPA and we don't want other packages from PPA
+    to be upgraded automatically. On the other side, using Package-Whitelist
+    would break auto-upgrade for official repositories.
+ .
+  - apt: Enable xtradeb PPA (Ungoogled Chromium). Make sure official
+    repositories have higher priority.
+ .
+  - systemd: Enable SYSTEMD_SULOGIN_FORCE.
+ .
+  - firefox: Policies with some settings from LibreWolf, uBlock Origin and
+    a few other extensions.
+ .
+  - gnome-initial-setup: Disable first login dialog.
+ .
+ Uninstalling this package reverts the system to a standard Ubuntu one.

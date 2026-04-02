@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_install:
+	set debian/notepod/etc/apt/apt.conf.d Unattended-Upgrade::Origins-Pattern:: && \
+	mkdir -p $$1 && sed -rn 's,^URIs: .+(/home:)/(.+),'$$2' "o=obs://build.opensuse.org\1\2";,p' \
+	etc/apt/sources.list.d/obs-vifibnexedi.sources >$$1/80obs-vifibnexedi
+
+override_dh_installdeb:
+	dh_installdeb
+# Make sure just removing (i.e. not purging) restores the behaviour of anything
+# we altered, like grub. Basically, we remove drop-in files from conffiles
+# because the user can customize without touching them.
+	sed -i '\,/etc/apt/\|\.json$$,!d' debian/notepod/DEBIAN/conffiles
