@@ -1,0 +1,2 @@
+#!/bin/sh -e
+exec "$0.distrib" --no-nvram --removable "$@"

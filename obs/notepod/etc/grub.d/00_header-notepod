@@ -1,0 +1,8 @@
+#!/bin/sh -e
+orig=/usr/share/grub/00_header
+eval `grep ^quick_boot= $orig`
+[ "$quick_boot" = 1 ] || {
+  echo $0 patch is out-of-date >&2
+  exit 1
+}
+sed 's/^quick_boot=.*/echo "function recordfail {\n  true\n}"/' $orig |/bin/sh

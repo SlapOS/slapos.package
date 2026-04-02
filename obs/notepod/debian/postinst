@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = configure ]; then
+
+  [ -e /boot/grub/grub.cfg ] && update-grub
+
+fi
+
+#DEBHELPER#
