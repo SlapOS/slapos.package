@@ -8,5 +8,6 @@
     playbook_name: theia
     request_instance_template: request-theia.j2
     request_frontend_template: request-erp5-frontend.j2
+    slapos_local_partition_amount: 3
   roles:
     - standalone-shared
