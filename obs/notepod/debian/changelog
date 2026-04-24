@@ -1,3 +1,9 @@
+notepod (2) resolute; urgency=medium
+
+  * gnome-initial-setup: Skip questions about location services and telemetry.
+
+ -- Julien Muchembled <jm@nexedi.com>  Sat, 25 Apr 2026 00:51:37 +0200
+
 notepod (1) questing; urgency=medium
 
   * Initial revision.
