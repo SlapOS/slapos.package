@@ -3,8 +3,7 @@
   connection: local
 
   vars:
-    software_release_url: https://lab.nexedi.com/nexedi/slapos/raw/1.0.364.2/software/slapos-master/software.cfg
-    bt5_list: erp5_full_text_myisam_catalog slapos_configurator
+    software_release_url: https://lab.nexedi.com/nexedi/slapos/raw/1.0.477/software/slapos-master/software.cfg
     startup_playbook_id: slapos-master-standalone.yml
     playbook_name: slapos-master
     request_instance_template: request-slapos-master.j2
@@ -12,7 +11,6 @@
     backend_instance_reference: instance-of-slapos-master
 
   pre_tasks:
-
     - file: path=/etc/slapos-ssl owner=root group=root mode=0777 state=directory
 
   roles:
