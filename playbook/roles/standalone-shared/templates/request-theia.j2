@@ -2,13 +2,12 @@ import json
 
 software_url = '{{ software_release_url }}'
 # Choose a SlapOS Node
-# If you are deploying SlapOS Master with Webrunner, then computer_id is 'slaprunner'
 computer_id = 'local_computer'
 
 supply(software_url, computer_id)
 
 parameter_dict = {
-  'instance-amount': 30,
+  'instance-amount': 20,
 }
 
 # Choose a title
