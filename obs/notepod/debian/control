@@ -34,6 +34,7 @@ Description: NotePOD is a Nexedi flavor of Ubuntu with a focus on security
   - firefox: Policies with some settings from LibreWolf, uBlock Origin and
     a few other extensions.
  .
-  - gnome-initial-setup: Disable first login dialog.
+  - gnome-initial-setup: Skip questions about location services and telemetry.
+    Disable first login dialog.
  .
  Uninstalling this package reverts the system to a standard Ubuntu one.
