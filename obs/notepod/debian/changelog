@@ -1,3 +1,9 @@
+notepod (4) resolute; urgency=medium
+
+  * slapos: add audit_encryption helper for the system-audit SR.
+
+ -- Julien Muchembled <jm@nexedi.com>  Mon, 27 Apr 2026 11:49:09 +0200
+
 notepod (3) resolute; urgency=medium
 
   * apt: switch OBS repository to 25.10 (the installer will still get

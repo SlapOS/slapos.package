@@ -2,13 +2,14 @@ Source: notepod
 Section: admin
 Standards-Version: 4.7.3
 Maintainer: Julien Muchembled <jm@nexedi.com>
-Build-Depends: debhelper-compat (= 13)
+Build-Depends: debhelper-compat (= 13), cargo,
+  librust-nix-dev, librust-regex-lite-dev, librust-serde-json-dev
 Homepage: https://notepod.nexedi.com/
 Vcs-Git: https://lab.nexedi.com/nexedi/slapos.package [obs/notepod]
 
 Package: notepod
-Architecture: all
-Depends: ${misc:Depends}, grub-efi-amd64, unattended-upgrades
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, grub-efi-amd64, unattended-upgrades
 Description: NotePOD is a Nexedi flavor of Ubuntu with a focus on security
  This package applies the following changes:
  .
@@ -38,3 +39,7 @@ Description: NotePOD is a Nexedi flavor of Ubuntu with a focus on security
     Disable first login dialog.
  .
  Uninstalling this package reverts the system to a standard Ubuntu one.
+ .
+ It also includes a setuid-root helper for the
+ https://lab.nexedi.com/nexedi/slapos/-/blob/master/software/system-audit/software.cfg
+ SlapOS Software Release.

@@ -2,10 +2,18 @@
 %:
 	dh $@
 
+override_dh_auto_build:
+	CARGO_HOME=/nonexistent cargo --config \
+		'source.crates-io.directory="/usr/share/cargo/registry"' \
+		build --offline --release
+
 override_dh_auto_install:
 	set debian/notepod/etc/apt/apt.conf.d Unattended-Upgrade::Origins-Pattern:: && \
 	mkdir -p $$1 && sed -rn 's,^URIs: .+(/home:)/(.+),'$$2' "o=obs://build.opensuse.org\1\2";,p' \
 	etc/apt/sources.list.d/obs-vifibnexedi.sources >$$1/80obs-vifibnexedi
+
+execute_after_dh_fixperms:
+	chmod u+s debian/notepod/usr/sbin/audit_encryption
 
 override_dh_installdeb:
 	dh_installdeb
