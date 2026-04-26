@@ -1,3 +1,10 @@
+notepod (3) resolute; urgency=medium
+
+  * apt: switch OBS repository to 25.10 (the installer will still get
+    re6st-node from 24.10 and slapos-node does not build yet on 26.04).
+
+ -- Julien Muchembled <jm@nexedi.com>  Sun, 26 Apr 2026 23:06:28 +0200
+
 notepod (2) resolute; urgency=medium
 
   * gnome-initial-setup: Skip questions about location services and telemetry.

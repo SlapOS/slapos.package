@@ -1,4 +1,4 @@
 Types: deb
-URIs: https://download.opensuse.org/repositories/home:/VIFIBnexedi/xUbuntu_24.10
+URIs: https://download.opensuse.org/repositories/home:/VIFIBnexedi/xUbuntu_25.10
 Suites: ./
 Signed-By: /etc/apt/keyrings/obs-vifibnexedi.asc
