@@ -1,6 +1,7 @@
 ---
 dependencies:
   - { role: package, package_name: unbound, package_state: latest }
+  - { role: package, package_name: resolvconf, package_state: latest }
   - { role: package, package_name: dnsmasq, package_state: absent }
   - { role: package, package_name: bind9, package_state: absent }
   - { role: package, package_name: systemd-resolved, package_state: latest }
