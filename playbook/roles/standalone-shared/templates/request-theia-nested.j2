@@ -9,16 +9,16 @@ supply(software_url, computer_id)
 default_nested_parameter = '{}'
 initial_embedded_instance = json.dumps({
   'software-url': '{{ nested_software_release_url }}',
-  'software-type': '{{ nested_software_release_url }}',
-  'instance-parameters': default_nested_parameter,
+  'software-type': '{{ nested_software_type }}',
+  'instance-parameters': default_nested_parameter
   })
 
 
 
 parameter_dict = {
   'embeded-instance-amount': 20,
-  'autrun': 'running'
-  'initial-embedded-instance': '{{ nested_software_release_url }}'
+  'autrun': 'running',
+  'initial-embedded-instance': initial_embedded_instance
 }
 
 # Choose a title
@@ -27,5 +27,5 @@ title = "instance-of-{{ playbook_name }}"
 request(software_url,
   title,
   filter_kw={'computer_guid': computer_id},
-  partition_parameter_kw=parameter_dict}
+  partition_parameter_kw=parameter_dict
 )
