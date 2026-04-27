@@ -3,7 +3,7 @@
   connection: local
 
   vars:
-    software_release_url: https://lab.node.vifib.com/nexedi/slapos/-/raw/1.0.477/software/theia/software.cfg
+    software_release_url: https://lab.nexedi.com/nexedi/slapos/-/raw/1.0.477/software/theia/software.cfg
     startup_playbook_id: theia-standalone.yml
     playbook_name: theia
     request_instance_template: request-theia.j2
