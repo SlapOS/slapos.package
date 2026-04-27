@@ -23,6 +23,7 @@
 
   - name: create frontend request script
     template: src={{ request_frontend_template }} dest=/tmp/playbook-request-frontend-{{ playbook_name }} mode=0700
+    when: request_frontend_template is defined
 
   - name: Supply and Request ERP5 Frontend
     cron:
@@ -31,6 +32,7 @@
       name="ERP5 Frontend Request"
       minute=*/5
       job="/usr/bin/slapos console '/tmp/playbook-request-frontend-{{ playbook_name }}' > /dev/null 2>&1"
+    when: request_frontend_template is defined
 
   - name: Create firewall script
     template: src={{ firewall_setup_template }} dest=/tmp/playbook-firewall-setup-{{ playbook_name }} mode=0700
