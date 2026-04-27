@@ -50,6 +50,7 @@
 
   - name: Add startup script
     template: src=start-script.j2 dest=/usr/local/bin/{{ playbook_name }}-startup mode=0755
+    when: startup_playbook_id is defined
 
   - name: Include on reboot
     cron:
@@ -58,16 +59,17 @@
       name="Start Up script"
       special_time=reboot
       job="/usr/local/bin/{{ playbook_name }}-startup >> /var/log/{{ playbook_name }}-startup.log 2>&1"
+    when: startup_playbook_id is defined
 
   - name: Remove /opt/slapos.playbook
     file:
       path: /opt/slapos.playbook
       state: absent
-    when: playbook_dir != '/opt/slapos.playbook'
+    when: playbook_dir != '/opt/slapos.playbook' and startup_playbook_id is defined
 
   - name: Copy slapos.playbook
     copy: src={{ playbook_dir }}/ dest=/opt/slapos.playbook/
-    when: playbook_dir != '/opt/slapos.playbook'
+    when: playbook_dir != '/opt/slapos.playbook' and startup_playbook_id is defined
 
   - name: Check ERP5 state
     shell: /usr/local/bin/erp5-show -s
