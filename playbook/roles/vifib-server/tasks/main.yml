@@ -46,6 +46,12 @@
     when: extra_playbook is defined and extra_playbook == "ors.yml"
   - import_tasks: shuttle-modprobe.yml
 
+  - name: Disable algif_aead
+    modprobe: name=algif_aead state=absent
+
+  - name: Remove algif_aead
+    shell: rmmod algif_aead
+
   - name: Increase ulimit
     copy: src="slapos_limit.conf" dest="/etc/security/limits.d/slapos.conf" mode=0644 owner=root group=root
 
