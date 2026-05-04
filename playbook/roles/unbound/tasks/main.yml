@@ -10,9 +10,3 @@
       enabled: true
       masked: false
       name: unbound
-  - name: Assure systemd-resolved is not used
-    ansible.builtin.systemd_service:
-      enabled: false
-      state: stopped
-      masked: true
-      name: systemd-resolved
