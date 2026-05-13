@@ -122,7 +122,7 @@
     when: (monitor_path is succeeded) and (playbook_report_fact | bool) and (lookup('file', '/opt/upgrader/playbook-tmp/upgrade_after')|int > lookup('file', '/opt/upgrader/last-upgrade')|int ) and (lookup('file', '/opt/upgrader/next-upgrade-signature') != lookup('file', '/opt/upgrader/current-upgrade-signature'))
 
   - name: Do upgrade
-    shell: ansible-playbook {{ upgrader_playbook }} --extra-vars 'repeat_until_success={{ repeat_until_success }}' -i hosts 2>>/opt/upgrader/latest_upgrade.log  >> /opt/upgrader/latest_upgrade.log
+    shell: ansible-playbook {{ upgrader_playbook }} --extra-vars 'repeat_until_success={{ repeat_until_success }} extra_playbook={{ extra_playbook }}' -i hosts 2>>/opt/upgrader/latest_upgrade.log  >> /opt/upgrader/latest_upgrade.log
     when: (lookup('file', '/opt/upgrader/playbook-tmp/upgrade_after')|int > lookup('file', '/opt/upgrader/last-upgrade')|int ) and (lookup('file', '/opt/upgrader/next-upgrade-signature') != lookup('file', '/opt/upgrader/current-upgrade-signature'))
     args:
       chdir: /opt/upgrader/playbook-tmp/
