@@ -137,3 +137,10 @@
       line: "blacklist mei"
       state: present
       create: yes
+
+  - name: Allow users to share FUSE Servers to support wendelin.core v2 on SlapOS
+    lineinfile:
+      dest: /etc/fuse.conf
+      line: "user_allow_other"
+      state: present
+      create: yes
