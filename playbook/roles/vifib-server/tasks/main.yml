@@ -86,6 +86,16 @@
     shell:
       cmd: "rmmod rxrpc 2>/dev/null || true"
 
+  - name: Prevent loading cifs
+    lineinfile:
+      dest: "/etc/modprobe.d/disable-cifs.conf"
+      line: "install cifs /bin/false"
+      create: yes
+
+  - name: Remove cifs module if already loaded
+    shell:
+      cmd: "rmmod cifs 2>/dev/null || true"
+
   - name: Increase ulimit
     copy: src="slapos_limit.conf" dest="/etc/security/limits.d/slapos.conf" mode=0644 owner=root group=root
 
