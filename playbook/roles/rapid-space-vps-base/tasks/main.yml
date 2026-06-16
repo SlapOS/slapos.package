@@ -7,7 +7,7 @@
       option: manager_list
       value: devperm,prerm
 
-  - name: "Setup download-from-binary-cache-force-url-list (1/3): key"
+  - name: "Setup download-from-binary-cache-force-url-list (1/5): key"
     lineinfile:
       path: /etc/opt/slapos/slapos.cfg
       state: present
@@ -15,7 +15,7 @@
       regexp: '^#(download-from-binary-cache-force-url-list.*)'
       line: '\1'
 
-  - name: "Setup download-from-binary-cache-force-url-list (2/3): entry"
+  - name: "Setup download-from-binary-cache-force-url-list (2/5): entry"
     lineinfile:
       path: /etc/opt/slapos/slapos.cfg
       state: present
@@ -23,10 +23,26 @@
       regexp: '^#(  https://lab.nexedi.com/nexedi/slapos/raw/1.0.)'
       line: '\1'
 
-  - name: "Setup download-from-binary-cache-force-url-list (3/3): entry"
+  - name: "Setup download-from-binary-cache-force-url-list (3/5): entry"
     lineinfile:
       path: /etc/opt/slapos/slapos.cfg
       state: present
       backrefs: yes
       regexp: '^#(  https://lab.node.vifib.com/nexedi/slapos/raw/1.0.)'
+      line: '\1'
+
+  - name: "Setup download-from-binary-cache-force-url-list (4/5): entry"
+    lineinfile:
+      path: /etc/opt/slapos/slapos.cfg
+      state: present
+      backrefs: yes
+      regexp: '^#(  https://lab.nexedi.com/nexedi/slapos/-/raw/1.0.)'
+      line: '\1'
+
+  - name: "Setup download-from-binary-cache-force-url-list (5/5): entry"
+    lineinfile:
+      path: /etc/opt/slapos/slapos.cfg
+      state: present
+      backrefs: yes
+      regexp: '^#(  https://lab.node.vifib.com/nexedi/slapos/-/raw/1.0.)'
       line: '\1'
