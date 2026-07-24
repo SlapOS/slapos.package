@@ -15,3 +15,16 @@
         'xUbuntu_' + ansible_distribution_version
         if ansible_distribution == 'Ubuntu' else
         ansible_distribution + '_' + ansible_distribution_major_version }}"
+
+  - name: Install Backward compatible Repository for Ubuntu 26.04
+     ansible.builtin.deb822_repository:
+       name: obs_VIFIBnexedi_2404
+       types: [deb]
+       uris: "{{ base_open_build_url }}xUbuntu_24.04"
+       suites: ./
+       signed_by: "{{ base_open_build_url }}xUbuntu_24.04/Release.key"
+       state: present
+       enabled: true
+     when:
+       - ansible_distribution == "Ubuntu"
+       - ansible_distribution_version == "26.04"
