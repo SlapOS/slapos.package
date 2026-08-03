@@ -24,10 +24,10 @@ with urlopen(url) as x:
 policies = root['policies']
 for x in list(policies):
   if x.startswith('Disable'):
-    if x[7:] in ('FirefoxStudies', 'Pocket', 'Telemetry'):
+    if x[7:] in ('FirefoxStudies', 'Telemetry'):
       continue
-  elif x not in ('AppUpdateURL', 'NoDefaultBookmarks', 'SupportMenu',
-                  'WebsiteFilter'):
+  elif x not in ('AIControls', 'AppUpdateURL', 'NoDefaultBookmarks',
+                 'SupportMenu', 'WebsiteFilter'):
     continue
   del policies[x]
 x = extensions

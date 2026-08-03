@@ -1,10 +1,12 @@
 {
   "__COMMENT__ More Information": "https://github.com/mozilla/policy-templates/blob/master/README.md",
   "policies": {
-    "DefaultSerialGuardSetting": 3,
     "DisableFirefoxStudies": true,
-    "DisablePocket": true,
     "DisableTelemetry": true,
+    "DontCheckDefaultBrowser": true,
+    "EncryptedMediaExtensions": {
+      "Enabled": false
+    },
     "ExtensionSettings": {
       "jid1-tfBgelm3d4bLkQ@jetpack": {
         "install_url": "https://addons.mozilla.org/firefox/downloads/latest/jid1-tfBgelm3d4bLkQ@jetpack/latest.xpi",
@@ -22,8 +24,25 @@
         "private_browsing": true
       }
     },
+    "FirefoxHome": {
+      "Highlights": false,
+      "SponsoredStories": false,
+      "SponsoredTopSites": false,
+      "Stories": false,
+      "TopSites": false,
+      "Weather": false
+    },
+    "FirefoxSuggest": {
+      "ImproveSuggest": false,
+      "SponsoredSuggestions": false,
+      "WebSuggestions": false
+    },
     "HttpsOnlyMode": "enabled",
-    "OverrideFirstRunPage": "",
+    "LocalNetworkAccess": {
+      "BlockTrackers": true,
+      "EnablePrompting": true,
+      "Enabled": true
+    },
     "OverridePostUpdatePage": "",
     "SearchEngines": {
       "Add": [
@@ -85,6 +104,12 @@
         "Perplexity"
       ]
     },
-    "SkipTermsOfUse": true
+    "SkipTermsOfUse": true,
+    "UserMessaging": {
+      "FirefoxLabs": false,
+      "MoreFromMozilla": false,
+      "SkipOnboarding": true,
+      "UrlbarInterventions": false
+    }
   }
 }

@@ -1,3 +1,9 @@
+notepod (5) resolute; urgency=medium
+
+  * Update firefox policies.
+
+ -- Julien Muchembled <jm@nexedi.com>  Mon, 03 Aug 2026 12:05:31 +0200
+
 notepod (4) resolute; urgency=medium
 
   * slapos: add audit_encryption helper for the system-audit SR.
