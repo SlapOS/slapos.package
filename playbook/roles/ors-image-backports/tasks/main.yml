@@ -14,5 +14,9 @@
     include_tasks: 2025-08-07.yml
     when: 1754561058 > lookup('file', '/opt/upgrader/last-backport')|int
 
+  - name: Run 2026-08-12 backport
+    include_tasks: 2026-08-12.yml
+    when: 1786535656 > lookup('file', '/opt/upgrader/last-backport')|int
+
   - shell: echo {{ ansible_date_time.epoch }} > /opt/upgrader/last-backport
     when: 1754561058 > lookup('file', '/opt/upgrader/last-backport')|int
