@@ -2,8 +2,9 @@
 Name=en*
 
 [Network]
-DHCP=yes
+DHCP=ipv4
 DNSSEC=no
+IPv6AcceptRA=no
 
 [DHCP]
 UseDNS=false

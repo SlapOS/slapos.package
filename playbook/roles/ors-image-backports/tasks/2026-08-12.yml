@@ -1,0 +1,10 @@
+---
+
+  - debug:
+      msg: "2026-08-12 Backport"
+
+  - name: Disable native IPv6
+    copy: src=systemd-dhcp-network dest=/etc/systemd/network/dhcp.network owner=root mode=644
+
+  - name: Start systemd-networkd
+    systemd: name=systemd-networkd.service enabled=yes state=restarted
