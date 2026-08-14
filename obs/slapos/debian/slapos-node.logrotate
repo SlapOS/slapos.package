@@ -76,3 +76,15 @@
     notifempty
 }
 
+/srv/slapgrid/var/log/supervisord.log {
+    compress
+    dateext
+    daily
+    rotate 30
+    missingok
+    notifempty
+    sharedscripts
+    postrotate
+      kill -SIGUSR2 $(cat /srv/slapgrid/var/run/supervisord.pid)
+    endscript
+}
