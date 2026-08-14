@@ -1,0 +1,49 @@
+---
+
+  - file: path=/opt/kdbox state=directory mode=0755
+
+  - stat: path="/opt/kdbox/kdbox_ok"
+    register: kdbox_is_ok
+
+  - name: register needed variables
+    set_fact:
+      computer_id: "{{ lookup('ini','computer_id section=slapos file=/etc/opt/slapos/slapos.cfg') }}"
+      domain_name: "{{ lookup('file', '/opt/kdbox/cdn_domain_name') }}"
+      custom_domain: "{{ lookup('file', '/opt/kdbox/cdn_custom_domain') }}"
+      kdbox_ok: "{{ kdbox_is_ok.stat.exists }}"
+
+  - include: deploy.yml
+
+  - name: Check if client configuration exists already
+    stat: path=/etc/opt/slapos/slapos.cfg
+    register: slapos_cfg
+    failed_when: slapos_cfg.stat.exists == False
+
+  - name: check if request is done
+    stat: path=/opt/kdbox/request_is_done
+    register: request_done
+
+  - include: webrunner.yml
+  - include: frontend.yml
+  - include: frontend-slave-instance.yml
+
+  # find Caddy ip to be used for port forwarding
+  - name: Get Caddy local IP
+    shell: grep bind /srv/slapgrid/slappart*/etc/Caddyfile | cut -d ' ' -f4 | head -n1 
+    register: caddy_ip
+    failed_when: caddy_ip.stdout == ""
+
+  # execute port-forwarding script in /files/port-forwarding
+  - name: "port 80 forwarding to {{ caddy_ip.stdout }}:8080"
+    shell: "{{ role_path }}/files/port-forwarding 80 {{ caddy_ip.stdout }} 8080"
+    register: forward_result
+    changed_when: forward_result.stdout != "port forwarding process already running"
+
+  - name: "port 443 forwarding to {{ caddy_ip.stdout }}:4443"
+    shell: "{{ role_path }}/files/port-forwarding 443 {{ caddy_ip.stdout }} 4443"
+    register: forward_result
+    changed_when: forward_result.stdout != "port forwarding process already running"
+
+  # generate signed certificate with letsencrypt
+  - include: dehydrated.yml
+
