@@ -1,0 +1,85 @@
+#!/usr/bin/python3
+import os, subprocess, sys, tarfile
+from hashlib import sha512
+from io import BytesIO
+from urllib.request import urlopen
+from debian.changelog import format_date, Changelog
+from debian.deb822 import Deb822
+
+UPSTREAM_VERSION = "2.4.12"
+VERSION = UPSTREAM_VERSION + "-1"
+SHA512 = ("4c8418c869a7cdce880d3c08e825dfccbced2694f0604532476598d2ab0299f1"
+          "bbb77d91b2212394e08507cfe97f661ec45bdcd8e314b0ad0715106ed5664ba3")
+
+def read_check(fileobj, checksum):
+    with fileobj:
+        data = fileobj.read()
+    if sha512(data).hexdigest() == checksum:
+        return data
+
+def main():
+    source = f"openvpn-{UPSTREAM_VERSION}.tar.xz"
+    try:
+        data = read_check(open(source, 'rb'), SHA512)
+    except FileNotFoundError:
+        data = None
+    if not data:
+        data = read_check(urlopen(
+            "https://build.openvpn.net/downloads/releases/" + source), SHA512)
+        if not data:
+            return source + ": invalid checksum"
+        with open(source, "wb") as x:
+            x.write(data)
+    print(source)
+
+    mtime = int(subprocess.check_output(
+        ("git", "log", "-1", "--format=%ct", os.path.dirname(__file__))))
+    dsc = Deb822()
+    dsc["Version"] = VERSION
+
+    def tarfilter(tarinfo):
+        tarinfo.uid = tarinfo.gid = 0
+        tarinfo.uname = tarinfo.gname = "root"
+        tarinfo.mtime = mtime
+        name = tarinfo.name
+        if name == "debian/control":
+            with open(name, 'rb') as x:
+                x = BytesIO(x.read())
+            wtar.addfile(tarinfo, x)
+            x.seek(0)
+            s = Deb822(x)
+            b = Deb822(x)
+            for x in "Source", "Build-Depends":
+                dsc[x] = s[x]
+            dsc["Architecture"] = b["Architecture"]
+            x = Changelog()
+            x.new_block(
+                package=s["Source"],
+                version=VERSION,
+                distributions="nexedi",
+                author=s["Maintainer"],
+                date=format_date(mtime),
+                changes=[""],
+            )
+            tarinfo.name = "debian/changelog"
+            x = str(x)
+        elif name == "debian/source/format":
+            with open(name) as x:
+                x = x.read()
+            dsc["Format"] = x.strip()
+        else:
+            return tarinfo
+        x = x.encode()
+        tarinfo.size = len(x)
+        wtar.addfile(tarinfo, BytesIO(x))
+    name = "debian.tar.xz"
+    with tarfile.open(name, "w:xz") as wtar:
+        wtar.add("debian", filter=tarfilter)
+    print(name)
+
+    with open(dsc["Source"] + ".dsc", 'w') as x:
+        x.write(str(dsc))
+    print(x.name)
+
+if __name__ == '__main__':
+    sys.exit(main())
