@@ -1,5 +1,5 @@
-/dist/
-/re6stnet/
-/slapos/
-/osc
-/debian/changelog
+/debian.tar.xz
+/GeoLite2-Country.tar.gz
+/re6stnet
+/re6stnet.dsc
+/re6stnet_*.tar.xz
