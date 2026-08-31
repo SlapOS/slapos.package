@@ -13,7 +13,7 @@ fi
 build_dir=.build
 
 # TODO:how to get this from buildout ?
-python3_url=https://www.python.org/ftp/python/3.9.25/Python-3.9.25.tar.xz
+python3_url=https://www.python.org/ftp/python/3.11.15/Python-3.11.15.tar.xz
 
 
 md5sum=$(echo -n $python3_url | md5sum | cut -d ' ' -f 1)
