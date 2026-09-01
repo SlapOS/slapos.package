@@ -1,0 +1,52 @@
+#!/usr/bin/python3
+import sys, tarfile
+from hashlib import sha512
+from urllib.request import urlopen
+from debian.changelog import Changelog
+from debian.deb822 import Deb822
+
+SHA512 = ("4c8418c869a7cdce880d3c08e825dfccbced2694f0604532476598d2ab0299f1"
+          "bbb77d91b2212394e08507cfe97f661ec45bdcd8e314b0ad0715106ed5664ba3")
+
+def read_check(fileobj, checksum):
+    with fileobj:
+        data = fileobj.read()
+    if sha512(data).hexdigest() == checksum:
+        return data
+
+def main():
+    source = "openvpn-2.4.12.tar.xz"
+    try:
+        data = read_check(open(source, 'rb'), SHA512)
+    except FileNotFoundError:
+        data = None
+    if not data:
+        data = read_check(urlopen(
+            "https://build.openvpn.net/downloads/releases/" + source), SHA512)
+        if not data:
+            return source + ": invalid checksum"
+        with open(source, "wb") as x:
+            x.write(data)
+
+    with tarfile.open("debian.tar.xz", "w:xz") as x:
+        x.add("debian")
+
+    dsc = Deb822()
+    with open("debian/changelog") as x:
+        dsc["Version"] = str(Changelog(x).version)
+
+    with open("debian/control") as x:
+        s = Deb822(x)
+        b = Deb822(x)
+
+    with open("debian/source/format") as x:
+        dsc["Format"] = x.read().strip()
+
+    for x in "Source", "Build-Depends":
+        dsc[x] = s[x]
+    dsc["Architecture"] = b["Architecture"]
+    with open(dsc["Source"] + ".dsc", 'w') as x:
+        x.write(str(dsc))
+
+if __name__ == '__main__':
+    sys.exit(main())

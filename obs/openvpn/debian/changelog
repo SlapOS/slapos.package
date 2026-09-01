@@ -1,0 +1,5 @@
+openvpn-re6stnet (2.4.12-1) nexedi; urgency=medium
+
+  * Initial release.
+
+ -- Julien Muchembled <jm@nexedi.com>  Wed, 19 Aug 2026 19:48:29 +0200
