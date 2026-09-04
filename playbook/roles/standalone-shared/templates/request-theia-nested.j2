@@ -5,6 +5,7 @@ software_url = '{{ software_release_url }}'
 computer_id = 'local_computer'
 
 supply(software_url, computer_id)
+supply('{{ nested_software_release_url }}', computer_id)
 
 default_nested_parameter = '{}'
 initial_embedded_instance = json.dumps({
@@ -16,6 +17,7 @@ initial_embedded_instance = json.dumps({
 
 
 parameter_dict = {
+  'disable-local-software': True,
   'embedded-partition-amount': 20,
   'autorun': 'running',
   'initial-embedded-instance': initial_embedded_instance
