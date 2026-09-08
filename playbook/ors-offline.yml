@@ -1,0 +1,15 @@
+- name: a play that runs entirely on the ansible host
+  hosts: 127.0.0.1
+  connection: local
+
+  vars:
+    computer_name: "noname"
+    re6sttoken: "notoken"
+    location: ""
+    enable_router_advertisement: 'no'
+    re6st_fingerprint: "sha256:3dfbc7a2daaa34214c92e52d45edf6056aa9cb4ad3b498f255f51609c1302de3"
+    re6st_registry_url: "https://re6st-registry.nxdcdn.com/"
+
+  roles:
+#   - routeadv
+    - ors-offline

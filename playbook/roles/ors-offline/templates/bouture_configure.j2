@@ -1,0 +1,4 @@
+exec {{ bouture_opt }}/slapos.core/slapos/slapy {{ bouture_opt }}/slapos.core/slapos/bouture.py configure \
+  --original-cfg /etc/opt/slapos/slapos.cfg \
+  --new-cfg {{ bouture_etc }}/slapos.cfg \
+  --new-master-url https://[{{ slapproxy_ipv6.stdout }}]:4000
