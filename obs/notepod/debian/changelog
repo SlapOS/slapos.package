@@ -1,3 +1,11 @@
+notepod (6) resolute; urgency=medium
+
+  * apt: switch OBS repository to 26.04.
+  * apt: increase priority of OBS packages (required for babeld).
+  * Update firefox policies.
+
+ -- Julien Muchembled <jm@nexedi.com>  Tue, 15 Sep 2026 20:00:56 +0200
+
 notepod (5) resolute; urgency=medium
 
   * Update firefox policies.

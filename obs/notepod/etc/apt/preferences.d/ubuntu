@@ -1,3 +1,7 @@
 Package: *
 Pin: release o=Ubuntu
 Pin-Priority: 510
+
+Package: *
+Pin: release o=obs://build.opensuse.org/home:VIFIBnexedi/*
+Pin-Priority: 510
