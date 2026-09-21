@@ -3,16 +3,6 @@
   - name: Create /opt/upgrader where some logs will be stored
     file: path=/opt/upgrader state=directory mode=0755
 
-  - name: Get monitor private directory path
-    shell: 'realpath $(dirname $(grep -lR "software_release_url = .*software/monitor/software.cfg" $(find /srv/slapgrid -type f -name "buildout.cfg")))/srv/monitor/private'
-    register: monitor_path
-    when: playbook_report | bool
-    ignore_errors: yes
-
-  - name: Create directory if it does not exist
-    file: path="{{ monitor_path.stdout }}/playbook-report" state=directory mode=0755
-    when: (monitor_path is succeeded) and (playbook_report | bool)
-
 # Amarisoft scripts
 
   - name: Create {{ amarisoft_dir }} directory
@@ -68,14 +58,6 @@
   - name: Generate public key
     shell: 'openssl rsa -in {{ pk_dir }}/{{ cn }}.key -outform PEM -pubout -out {{ pk_dir }}/{{ cn }}.pub'
     when: private_key.stat.exists == True and public_key.stat.exists == False
-
-  - stat: path="{{ pk_dir }}/{{ cn }}.pub"
-    register: public_key
-    when: (monitor_path is succeeded) and (playbook_report | bool)
-
-  - name: Copy public key
-    copy: src="{{ pk_dir }}/{{ cn }}.pub" dest="{{ monitor_path.stdout }}/playbook-report/{{ cn }}.pub" owner=root mode=774
-    when: (monitor_path is succeeded) and (playbook_report | bool) and (public_key.stat.exists == True)
 
 # Amarisoft upgrade
 
@@ -249,40 +231,6 @@
   - set_fact:
       amarisoft_path: "{{ amarisoft_dir }}/v{{ amarisoft_version.stdout }}"
 
-# Log to playbook report
-
-  - name: Get monitor private directory path
-    shell: 'realpath $(dirname $(grep -lR "software_release_url = .*software/monitor/software.cfg" $(find /srv/slapgrid -type f -name "buildout.cfg")))/srv/monitor/private'
-    register: monitor_path
-    when: playbook_report | bool
-    ignore_errors: yes
-
-  - name: Create {{ monitor_path.stdout }}/playbook-report directory
-    file: path="{{ monitor_path.stdout }}/playbook-report" state=directory mode=0755
-    when: (monitor_path is succeeded) and (playbook_report | bool)
-
-  - name: Check registry URL
-    shell: "grep registry /etc/re6stnet/re6stnet.conf | awk '{ print $2; }'"
-    register: registry_url
-    ignore_errors: yes
-
-  - name: Setting playbook report message
-    set_fact:
-      playbook_report_message: "Starting ors playbook"
-      playbook_report_progress: "30"
-      data: { 'registry_url': "{{ registry_url.stdout }}", 'amarisoft_version': "{{ amarisoft_version.stdout }}"}
-
-  - name: Render log template
-    template:
-      src: playbook-report.j2
-      dest: /tmp/playbook-report-tmp.log
-    when: (monitor_path is succeeded) and (playbook_report | bool)
-
-  - name: Append to log
-    shell: 'cat /tmp/playbook-report-tmp.log >> {{ monitor_path.stdout }}/playbook-report/report.log'
-    when: (monitor_path is succeeded) and (playbook_report | bool) and (extra_playbook | length > 0)
-
-
 # SSD image backports
 #
   - stat: path="/opt/upgrader/playbook-tmp"
@@ -417,7 +365,7 @@
 # Schedule and upgrade playbook
 
   - name: Install upgrader
-    shell: ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }} playbook_report={{ playbook_report }}' -i hosts 2>>/opt/upgrader/latest_daily_upgrade.log >> /opt/upgrader/latest_daily_upgrade.log
+    shell: ansible-playbook upgrader-run.yml --extra-vars 'extra_playbook={{ extra_playbook }} upgrader_playbook={{ upgrader_playbook }} repeat_until_success={{ repeat_until_success }} upgrade_kernel={{ upgrade_kernel | default(False) == True }}' -i hosts 2>>/opt/upgrader/latest_daily_upgrade.log >> /opt/upgrader/latest_daily_upgrade.log
     when: launch_upgrader | bool
 
   - name: Add format-ims script to cron after slapos node boot
