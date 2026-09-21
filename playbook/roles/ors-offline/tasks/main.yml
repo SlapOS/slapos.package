@@ -44,7 +44,7 @@
     git:
       repo: https://lab.nexedi.com/xavier_thompson/slapos.core.git
       dest: "{{ bouture_opt }}/slapos.core"
-      version: bouture-0.1
+      version: bouture-0.2
 
   - name: Run bouture_configure
     shell: '{{ bouture_opt }}/bouture_configure'
