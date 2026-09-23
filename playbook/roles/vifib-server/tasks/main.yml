@@ -32,14 +32,53 @@
 
   - import_tasks: kvm.yml
 
-  - name: SSH disallow slapsoft group
+  - name: SSH AllowUsers count
+    command:
+      argv:
+        - egrep
+        - -c
+        - ^AllowUsers root$
+        - /etc/ssh/sshd_config
+    ignore_errors: true
+    register: allowuserscount
+
+  - name: SSH AllowUsers cleanup
     lineinfile:
-      regexp: "^DenyGroups slapsof$"
-      line: "DenyGroups slapsoft"
-      state: present
       dest: /etc/ssh/sshd_config
+      regexp: "AllowUsers"
+      state: absent
+      validate: sshd -t -f %s
+    when: allowuserscount.stdout != "1"
+    notify: [ 'Reload sshd' ]
+
+  - name: SSH AllowUsers setup
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: "^AllowUsers root$"
+      line: "AllowUsers root"
+      state: present
       validate: sshd -t -f %s
     notify: [ 'Reload sshd' ]
+
+  - name: SSH DenyGroups count
+    command:
+      argv:
+        - egrep
+        - -c
+        - DenyGroups
+        - /etc/ssh/sshd_config
+    ignore_errors: true
+    register: denygroupscount
+
+  - name: SSH DenyGroups cleanup
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: "DenyGroups"
+      state: absent
+      validate: sshd -t -f %s
+    when: denygroupscount.stdout != "0"
+    notify: [ 'Reload sshd' ]
+
   - include_tasks: ssh_nopassword.yml
     when: extra_playbook is undefined or extra_playbook != "ors.yml"
   - include_tasks: ssh_withrootpassword.yml
