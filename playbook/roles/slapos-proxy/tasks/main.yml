@@ -34,7 +34,7 @@
     register: slapos_cfg
 
   - name: Configure SlapOS with slapos configure local
-    shell: "slapos configure local"
+    shell: "slapos configure local --partition-number {{ slapos_local_partition_amount }} "
     when: slapos_cfg.stat.exists == False 
 
   - name: Disable multimaster
