@@ -266,7 +266,7 @@
 # Re6st
 
   - name: Configure re6st
-    script: configure-re6st
+    script: configure-re6st.py
 
 # Slapos
 
@@ -320,7 +320,7 @@
 # Network
 
   - name: Configure firewall
-    script: configure-firewall
+    script: configure-firewall.py
 
   - name: Configure IPv4 forwarding
     lineinfile: dest=/etc/sysctl.conf regexp="^net.ipv4.conf.all.forwarding=(.*)" line="net.ipv4.conf.all.forwarding=1" state=present
@@ -363,7 +363,7 @@
     lineinfile: dest=/etc/systemd/journald.conf regexp="^SystemMaxUse=(.*)" line="SystemMaxUse=1G" state=present
 
   - name: Add kernel parameter
-    script: configure-grub
+    script: configure-grub.py
 
 # eNB performance
 
