@@ -257,7 +257,7 @@
 # Re6st
 
   - name: Configure re6st
-    script: configure-re6st
+    script: configure-re6st.py
 
 # Slapos
 
@@ -311,7 +311,7 @@
 # Network
 
   - name: Configure firewall
-    script: configure-firewall
+    script: configure-firewall.py
 
   - name: Configure IPv4 forwarding
     lineinfile: dest=/etc/sysctl.conf regexp="^net.ipv4.conf.all.forwarding=(.*)" line="net.ipv4.conf.all.forwarding=1" state=present
