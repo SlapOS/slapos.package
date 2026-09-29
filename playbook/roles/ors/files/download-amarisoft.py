@@ -92,6 +92,23 @@ if version > current_version or (version == current_version and timestamp > curr
     log(f'Decrypting Amarisoft encrypted tar')
     run(f'openssl enc -d -chacha20 -K {key} -iv {iv} -nosalt -in {amarisoft_dir}/download/amarisoft.tar.gz.enc -out {amarisoft_dir}/amarisoft.tar.gz')
 
+    # Download fpga
+    log(f'Downloading FPGA encrypted bin')
+    meta = [
+      f'version=="{version}"',
+      f'timestamp=="{timestamp}"',
+    ]
+    identifier = 'file-private:fpga'
+    data_list = NetworkcacheFilter(meta)(list(nc.select(identifier)))
+    fpga_version = data_list[0]['fpga_version']
+    # Download encrypted FPGA bin
+    with open(f'{amarisoft_dir}/download/fpga.bin.enc', 'wb+') as f:
+        shutil.copyfileobj(nc.download(data_list[0]['sha512']),
+            getattr(f, 'buffer', f)) # Py3
+    # Decrypt FPGA bin
+    log(f'Decrypting FPGA encrypted bin')
+    run(f'openssl enc -d -chacha20 -K {key} -iv {iv} -nosalt -in {amarisoft_dir}/download/fpga.bin.enc -out {amarisoft_dir}/fpga-{fpga_version}.{version}.{timestamp}.bin')
+
     os.makedirs(amarisoft_dir / version, exist_ok=True)
     os.makedirs(amarisoft_dir / f'_{version}', exist_ok=True)
 
@@ -120,5 +137,6 @@ if version > current_version or (version == current_version and timestamp > curr
     run(f'rm -rf {amarisoft_dir}/{version}')
 
     log(f'New Amarisoft version has been installed in {amarisoft_dir}/v{version}.{timestamp}')
+    log(f'FPGA binary has been installed in {amarisoft_dir}/fpga-{fpga_version}.{version}.{timestamp}.bin')
 else:
     log('Amarisoft version from shacache is not newer than current version')
