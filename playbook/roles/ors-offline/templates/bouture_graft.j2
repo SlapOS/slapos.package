@@ -1,0 +1,4 @@
+exec {{ bouture_opt }}/slapos.core/slapos/slapy {{ bouture_opt }}/slapos.core/slapos/bouture.py graft \
+  --cfg /etc/opt/slapos/slapos.cfg \
+  --new-master-url https://[{{ slapproxy_ipv6.stdout }}]:4000 \
+  --new-monitor-url https://[{{ slapproxy_ipv6.stdout }}]:4001/#page=ojsm_landing
