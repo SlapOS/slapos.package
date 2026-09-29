@@ -3,6 +3,15 @@
   - name: Create /opt/upgrader where some logs will be stored
     file: path=/opt/upgrader state=directory mode=0755
 
+  - name: Delete simpleran-maintenance directory if present
+    file: path=/root/simpleran-maintenance state=absent
+
+  - name: Delete ors-utils-private directory if present
+    file: path=/root/ors-utils-private state=absent
+
+  - name: Delete slapos-device-configuration directory if present
+    file: path=/root/slapos-device-configuration state=absent
+
 # Amarisoft scripts
 
   - name: Create {{ amarisoft_dir }} directory
