@@ -8,3 +8,5 @@ IPv6AcceptRA=no
 
 [DHCP]
 UseDNS=false
+CriticalConnection=yes
+KeepConfiguration=yes

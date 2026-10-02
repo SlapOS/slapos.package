@@ -1,0 +1,10 @@
+---
+
+  - debug:
+      msg: "2026-10-02 Backport"
+
+  - name: Prevent systemd-networkd from deleting Re6st or slapOS Address
+    copy: src=systemd-dhcp-network dest=/etc/systemd/network/dhcp.network owner=root mode=644
+
+  - name: Start systemd-networkd
+    systemd: name=systemd-networkd.service enabled=yes state=restarted
