@@ -1,0 +1,4 @@
+bouture_etc: /etc/opt/slapos/bouture
+bouture_log: /opt/slapos/log
+bouture_run: /opt/slapos
+bouture_opt: /opt/bouture
