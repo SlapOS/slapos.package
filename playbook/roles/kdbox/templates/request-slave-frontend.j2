@@ -1,0 +1,21 @@
+parameters = {
+  "custom_domain": "{{ custom_domain }}",
+  "enable_cache": "true",
+  "path": "erp5/",
+  "type": "zope",
+  "url": "{{ erp5_url.stdout }}",
+  "https-only": "true"
+}
+
+parameters["ssl_key"] = """{{ ssl_key_content }}"""
+parameters["ssl_crt"] = """{{ ssl_crt_content }}"""
+parameters["ssl_ca_crt"] = """{{ ssl_ca_crt_content }}"""
+
+request(
+  "{{ frontend_software_release_url }}",
+  "{{ custom_domain }}-slave",
+  partition_parameter_kw=parameters,
+  shared=True,
+  software_type='custom-personal',
+  filter_kw={'computer_guid':'{{ computer_id }}'}
+)
