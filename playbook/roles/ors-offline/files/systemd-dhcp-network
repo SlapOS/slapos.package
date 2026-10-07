@@ -1,0 +1,13 @@
+[Match]
+Name=en*
+
+[Network]
+DHCP=yes
+DNSSEC=no
+
+[DHCP]
+UseDNS=false
+
+[Link]
+# Prevents system-networkd from deleting re6st address when interface goes down
+ActivationPolicy=always-up
