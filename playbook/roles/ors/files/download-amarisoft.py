@@ -6,7 +6,7 @@ from slapos.libnetworkcache import NetworkcacheClient
 from slapos.libnetworkcache import NetworkcacheFilter
 
 def run(cmd, *args, text=True, **kw):
-    return subprocess.run(cmd.split(' '), *args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=text, **kw)
+    return subprocess.run(cmd, *args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=text, shell=True, **kw)
 
 def log(s, *args, **kw):
     print(f'[{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] {s}', *args, **kw)
@@ -110,6 +110,7 @@ if version > current_version or (version == current_version and timestamp > curr
     run(f'openssl enc -d -chacha20 -K {key} -iv {iv} -nosalt -in {amarisoft_dir}/download/fpga.bin.enc -out {amarisoft_dir}/fpga-{fpga_version}.{version}.{timestamp}.bin')
 
     os.makedirs(amarisoft_dir / version, exist_ok=True)
+    run(f'rm -rf {amarisoft_dir}/_{version}')
     os.makedirs(amarisoft_dir / f'_{version}', exist_ok=True)
 
     log(f'Extracting Amarisoft tar files')
