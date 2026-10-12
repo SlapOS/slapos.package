@@ -4,7 +4,7 @@
 # It returns the path of the python3 executable to use
 
 version=$(python3 --version | sed 's/Python 3.//' | sed 's/\..*//')
-if [ $version -ge 7 ]
+if [ $version -ge 8 ]
 then
 	echo $(which python3)
 	exit 0
