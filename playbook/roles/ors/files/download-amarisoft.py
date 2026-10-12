@@ -25,19 +25,17 @@ if not private_key.is_file() or not public_key.is_file():
 run(f'rm -rf {amarisoft_dir}/download')
 os.makedirs(amarisoft_dir / 'download', exist_ok=True)
 
-out = run(f'{amarisoft_dir}/get-amarisoft-info -e')
-license_expiration = out.stdout if not out.returncode else '0000-00-00'
 out = run(f'{amarisoft_dir}/get-amarisoft-info -v')
-current_version, current_timestamp = out.stdout.split('.') if not out.returncode else ('0000-00-00', 0)
+out = out.stdout.split('.') if not out.returncode else ('0000-00-00', 0)
+current_version, current_timestamp = out[0], out[1] if len(out) > 1 else 0
 
-log(f'License will expire on {license_expiration}, current version is {current_version}.{current_timestamp}')
+log(f'Current version is {current_version}.{current_timestamp}')
 
 shacache_file = open(shacache_cfg, 'r')
 nc = NetworkcacheClient(shacache_file)
 
 meta = [
   f'cn=="{cn}"',
-  f'version<="{license_expiration}"',
   'timestamp>="0"',
   'version>>"0"',
   'timestamp>>"0"',
