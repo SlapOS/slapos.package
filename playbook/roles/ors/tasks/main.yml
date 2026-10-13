@@ -80,9 +80,6 @@
     shell: '{{ amarisoft_dir }}/get-amarisoft-info -v'
     register: amarisoft_version
 
-  - set_fact:
-      amarisoft_path: "{{ amarisoft_dir }}/v{{ amarisoft_version.stdout }}"
-
 # SSD image backports
 #
   - stat: path="/opt/upgrader/playbook-tmp"
@@ -126,33 +123,6 @@
     copy: src=format-ims dest={{ simpleran_dir }} owner=root mode=550
 
 # Amarisoft software
-
-  - name: Check if lteenb has capabilities
-    shell: 'getcap {{ amarisoft_path }}/enb/lteenb | grep -q cap_sys_nice'
-    ignore_errors: yes
-    register: lteenb_cap
-
-  - name: Set capabilities on lteenb
-    shell: 'patchelf --set-rpath {{ amarisoft_path }}/enb {{ amarisoft_path }}/enb/lteenb && setcap cap_sys_nice=+pe {{ amarisoft_path }}/enb/lteenb'
-    when: lteenb_cap.rc != 0
-
-  - name: Check if lteenb-avx2 has capabilities
-    shell: 'getcap {{ amarisoft_path }}/enb/lteenb-avx2 | grep -q cap_sys_nice'
-    ignore_errors: yes
-    register: lteenb_avx2_cap
-
-  - name: Set capabilities on lteenb-avx2
-    shell: 'patchelf --set-rpath {{ amarisoft_path }}/enb {{ amarisoft_path }}/enb/lteenb-avx2 && setcap cap_sys_nice=+pe {{ amarisoft_path }}/enb/lteenb-avx2'
-    when: lteenb_avx2_cap.rc != 0
-
-  - name: Check if lteims has capabilities
-    shell: 'getcap {{ amarisoft_path }}/mme/lteims | grep cap_sys_admin | grep -q cap_net_raw'
-    ignore_errors: yes
-    register: lteims_cap
-
-  - name: Set capabilities on lteims
-    shell: 'patchelf --set-rpath {{ amarisoft_path }}/mme {{ amarisoft_path }}/mme/lteims && setcap cap_sys_admin,cap_net_raw=+pe {{ amarisoft_path }}/mme/lteims'
-    when: lteims_cap.rc != 0
 
   - name: Create .amarisoft directory for SR
     file: path={{ amarisoft_dir }}/.amarisoft state=directory
