@@ -56,26 +56,6 @@
     shell:
       cmd: "rmmod algif_aead 2>/dev/null || true"
 
-  - name: Prevent loading esp4
-    lineinfile:
-      dest: "/etc/modprobe.d/disable-esp4.conf"
-      line: "install esp4 /bin/false"
-      create: yes
-
-  - name: Remove esp4 module if already loaded
-    shell:
-      cmd: "rmmod esp4 2>/dev/null || true"
-
-  - name: Prevent loading esp6
-    lineinfile:
-      dest: "/etc/modprobe.d/disable-esp6.conf"
-      line: "install esp6 /bin/false"
-      create: yes
-
-  - name: Remove esp6 module if already loaded
-    shell:
-      cmd: "rmmod esp6 2>/dev/null || true"
-
   - name: Prevent loading rxrpc
     lineinfile:
       dest: "/etc/modprobe.d/disable-rxrpc.conf"
