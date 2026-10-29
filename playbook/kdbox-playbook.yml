@@ -1,0 +1,76 @@
+---
+
+- name: a play that runs entirely on the ansible host
+  hosts: 127.0.0.1
+  connection: local
+  vars_files:
+  - settings/kdbox.yml
+  vars:
+    - interface_name: lo
+    - computer_name: noname
+
+  vars_prompt:
+    - name: "re6sttoken"
+      prompt: "\n\n  You are running the KDBox Installer\n\n
+              Please request a re6stnet token on https://slapos.vifib.com. \n\n
+              You will also need computer and account token, please get them on https://slapos.vifib.com. \n\n
+              A domain name will be required for kdbox slave frontend, to access erp5 later. \n\n
+              Enter your re6stnet token: "
+
+      private: no 
+      default: "notoken"
+
+    - name: "slapos_master_url"
+      prompt: "What is the url to the SlapOS Master API?  (ignore if you already have a configured re6st and slapos):"
+      private: no
+      default: "https://slap.vifib.com/"
+
+    - name: "slapos_web_master_url"
+      prompt: "What is the url to the SlapOS Master Website?  (ignore if you already have a configured re6st and slapos):"
+      private: no
+      default: "https://slapos.vifib.com/"
+
+    - name: "computer_name"
+      prompt: "What is this computer name?  (ignore if you already have a configured re6st and slapos):"
+      private: no
+      default: "noname"
+
+    - name: "slapostoken"
+      prompt: "What is the server token ?:"
+      private: no
+      default: "notoken"
+
+    - name: "Token"
+      prompt: "What is your credential account token"
+      private: no 
+      default: "notoken"
+
+    - name: "domain_name"
+      prompt: "Enter domain name for CDN main instance"
+      private: no
+      default: "kdbox.slapos-example.com"
+
+    - name: "custom_domain"
+      prompt: "Enter custom domain name for CDN slave instance"
+      private: no
+      default: ""
+
+  pre_tasks:
+    - file: path=/opt/kdbox state=directory mode=0755
+    - copy: content="{{ domain_name }}" dest=/opt/kdbox/cdn_domain_name
+      when:
+        domain_name != ""
+    - copy: content="{{ custom_domain }}" dest=/opt/kdbox/cdn_custom_domain
+      when:
+        custom_domain != ""
+
+  roles:
+    - re6stnet
+    - role: routeadv
+    # desactiver le RADVD
+      when: enable_router_advertisement == True
+    - { role: slapos, package_state: present }
+    - { role: package, package_name: ntp, package_state: present }
+    - slapos-client
+    - kdbox
+

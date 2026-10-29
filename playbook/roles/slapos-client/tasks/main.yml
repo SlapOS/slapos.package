@@ -1,0 +1,7 @@
+---
+    - name: Check if client configuration exists already
+      stat: path=~/.slapos/slapos-client.cfg
+      register: client_cfg
+    - name: "install slapos client"
+      shell: slapos configure client  --token {{Token}}
+      when : client_cfg.stat.exists == False and "{{Token}}" != "notoken"
