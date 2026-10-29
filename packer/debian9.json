@@ -6,7 +6,7 @@
         "<esc><wait><wait>",
         "install auto ",
         "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-debian9.cfg ",
-        "debian-installer=en_US locale=en_US keymap=fr ",
+        "debian-installer=en_US locale=en_US ",
         "netcfg/get_hostname={{ .Name }} ",
         "netcfg/get_domain={{ user `domain`}} ",
         "fb=false debconf/frontend=noninteractive ",
