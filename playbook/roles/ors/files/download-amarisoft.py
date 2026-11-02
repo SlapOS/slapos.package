@@ -11,6 +11,10 @@ def run(cmd, *args, text=True, **kw):
 def log(s, *args, **kw):
     print(f'[{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] {s}', *args, **kw)
 
+def chacha20_decrypt_shell(key, nonce, input_file_path, output_file_path):
+    print(repr((key, nonce, input_file_path, output_file_path)))
+    run(f'openssl enc -d -chacha20 -K {key} -iv {nonce} -nosalt -in {input_file_path} -out {output_file_path}')
+
 amarisoft_dir = Path('/opt/amarisoft')
 shacache_cfg  = amarisoft_dir / 'shacache.cfg'
 key_dir       = Path('/opt/private-key')
@@ -62,15 +66,13 @@ for data in sorted(data_list, key=lambda x:x["version"])[-5:]:
     if download_amarisoft or download_fpga:
 
         log(f'Downloading encrypted key')
-        # Download encrypted key
-        with open(f'{amarisoft_dir}/download/symmetric_key.bin.enc', 'wb+') as f:
-            shutil.copyfileobj(nc.download(data['sha512']),
-                getattr(f, 'buffer', f)) # Py3
+        encrypted_key = nc.download(data['sha512']).read()
         log(f'Decrypting key')
         # Decrypt key
-        run(f'openssl pkeyutl -decrypt -in {amarisoft_dir}/download/symmetric_key.bin.enc -inkey /opt/private-key/{cn}.key -out /opt/private-key/symmetric_key-{version}.key')
-        key = run(f'od -An -v -tx1 /opt/private-key/symmetric_key-{version}.key').stdout
-        key = key.replace(' ', '').replace('\n', '')
+        private_symmetric_key = run(f'openssl pkeyutl -decrypt -inkey /opt/private-key/{cn}.key',
+          text=False, input=encrypted_key).stdout
+        private_symmetric_key = run(f'od -An -v -tx1 -', text=False, input=private_symmetric_key).stdout.decode()
+        private_symmetric_key = private_symmetric_key.replace(' ', '').replace('\n', '')
     
         # Download new amarisoft version
         meta = [
@@ -79,14 +81,12 @@ for data in sorted(data_list, key=lambda x:x["version"])[-5:]:
         ]
         identifier = 'file-private:amarisoft'
         file_data_list = NetworkcacheFilter(meta)(list(nc.select(identifier)))
-        # Get Nonce
-        with open(f'{amarisoft_dir}/download/nonce', 'w+') as f:
-            f.write(file_data_list[0]['nonce'])
-        with open(f'{amarisoft_dir}/download/nonce.bin', 'wb+') as f:
-            f.write(run(f'openssl base64 -A -in {amarisoft_dir}/download/nonce -d', text=False).stdout)
-        iv = run(f'openssl base64 -A -in {amarisoft_dir}/download/nonce -d', text=False).stdout
-        iv = run(f'od -An -v -tx1 {amarisoft_dir}/download/nonce.bin').stdout
-        iv = iv.replace(' ', '').replace('\n', '')
+        # Get Nonce / IV
+        nonce = file_data_list[0]['nonce'].encode()
+        nonce = run(f'openssl base64 -A -d', text=False, input=nonce).stdout
+        nonce = run(f'od -An -v -tx1 -', text=False, input=nonce).stdout.decode()
+        nonce = nonce.replace(' ', '').replace('\n', '')
+
         if download_amarisoft:
             # Download encrypted amarisoft tar
             log(f'Downloading Amarisoft encrypted tar')
@@ -95,8 +95,10 @@ for data in sorted(data_list, key=lambda x:x["version"])[-5:]:
                     getattr(f, 'buffer', f)) # Py3
             # Decrypt amarisoft tar
             log(f'Decrypting Amarisoft encrypted tar')
-            run(f'openssl enc -d -chacha20 -K {key} -iv {iv} -nosalt -in {amarisoft_dir}/download/amarisoft.tar.gz.enc -out {amarisoft_dir}/amarisoft.tar.gz')
-    
+            chacha20_decrypt_shell(private_symmetric_key, nonce,
+              f'{amarisoft_dir}/download/amarisoft.tar.gz.enc',
+              f'{amarisoft_dir}/amarisoft.tar.gz')
+
             os.makedirs(amarisoft_dir / version, exist_ok=True)
             run(f'rm -rf {amarisoft_dir}/_{version}')
             os.makedirs(amarisoft_dir / f'_{version}', exist_ok=True)
@@ -166,7 +168,9 @@ for data in sorted(data_list, key=lambda x:x["version"])[-5:]:
                         getattr(f, 'buffer', f)) # Py3
                 # Decrypt FPGA bin
                 log(f'Decrypting FPGA encrypted bin')
-                run(f'openssl enc -d -chacha20 -K {key} -iv {iv} -nosalt -in {amarisoft_dir}/download/fpga.bin.enc -out {amarisoft_dir}/fpga-{fpga_version}.{version}.{timestamp}.bin')
+                chacha20_decrypt_shell(private_symmetric_key, nonce,
+                  f'{amarisoft_dir}/download/fpga.bin.enc',
+                  f'{amarisoft_dir}/fpga-{fpga_version}.{version}.{timestamp}.bin')
 
         if download_amarisoft:
             log(f'New Amarisoft version has been installed in {amarisoft_dir}/v{version}.{timestamp}')
