@@ -68,18 +68,6 @@
     shell: 'openssl rsa -in {{ pk_dir }}/{{ cn }}.key -outform PEM -pubout -out {{ pk_dir }}/{{ cn }}.pub'
     when: private_key.stat.exists == True and public_key.stat.exists == False
 
-# Amarisoft upgrade
-
-  - name: Configure {{ amarisoft_dir }}/shacache.cfg
-    copy: src=shacache.cfg dest={{ amarisoft_dir }}/shacache.cfg owner=root mode=644
-
-  - name: Download Amarisoft
-    script: download-amarisoft.py
-
-  - name: Get Amarisoft version
-    shell: '{{ amarisoft_dir }}/get-amarisoft-info -v'
-    register: amarisoft_version
-
 # SSD image backports
 #
   - stat: path="/opt/upgrader/playbook-tmp"
@@ -128,7 +116,7 @@
     file: path={{ amarisoft_dir }}/.amarisoft state=directory
 
   - name: Configure sudoers
-    script: configure-sudoers {{ amarisoft_dir }} {{ amarisoft_version.stdout }} {{ sdr_dir }}
+    script: configure-sudoers {{ amarisoft_dir }} {{ sdr_dir }}
 
 # Network
 

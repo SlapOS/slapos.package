@@ -17,7 +17,4 @@ add_commands() {
 }
 
 add_commands $1 rm-tmp-lte init-enb init-mme init-sdr
-add_commands $3 get-sdr-info
-
-c="sdr-util"
-add_line $c "$1/$2/trx_sdr/sdr_util -c 0 version"
+add_commands $2 get-sdr-info
