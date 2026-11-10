@@ -3,9 +3,9 @@
 DIR=$(dirname $(realpath $0))
 AMARISOFT_PATH=$1
 if [ -z "$AMARISOFT_PATH" ] ; then
-  AMARISOFT_PATH={{ amarisoft_dir }}/v$($DIR/get-amarisoft-info -v)
+  AMARISOFT_PATH={{ simpleran_dir }}/v$($DIR/get-amarisoft-info -v)
 fi
-OLD_AMARISOFT_PATH={{ amarisoft_dir }}/v$($DIR/get-amarisoft-info -o)
+OLD_AMARISOFT_PATH={{ simpleran_dir }}/v$($DIR/get-amarisoft-info -o)
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
 lsmod | grep -q sdr && rmmod sdr;

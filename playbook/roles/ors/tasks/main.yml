@@ -14,38 +14,38 @@
 
 # Amarisoft scripts
 
-  - name: Create {{ amarisoft_dir }} directory
-    file: path="{{ amarisoft_dir }}" state=directory mode=0755
+  - name: Create {{ simpleran_dir }} directory
+    file: path="{{ simpleran_dir }}" state=directory mode=0755
 
   - name: Render get-amarisoft-info script
     template:
       src: get-amarisoft-info.j2
-      dest: "{{ amarisoft_dir }}/get-amarisoft-info"
+      dest: "{{ simpleran_dir }}/get-amarisoft-info"
       mode: '0555'
 
   - name: Render get-license-info script for backwards compatibility
     template:
       src: get-amarisoft-info.j2
-      dest: "{{ amarisoft_dir }}/get-license-info"
+      dest: "{{ simpleran_dir }}/get-license-info"
       mode: '0555'
 
   - name: Render init-sdr script
     template:
       src: init-sdr.j2
-      dest: "{{ amarisoft_dir }}/init-sdr"
+      dest: "{{ simpleran_dir }}/init-sdr"
       mode: '0550'
 
   - name: Copy init-enb script
-    copy: src=init-enb dest={{ amarisoft_dir }} owner=root mode=550
+    copy: src=init-enb dest={{ simpleran_dir }} owner=root mode=550
 
   - name: Copy init-mme script
-    copy: src=init-mme dest={{ amarisoft_dir }} owner=root mode=550
+    copy: src=init-mme dest={{ simpleran_dir }} owner=root mode=550
 
   - name: Copy rm-tmp-lte script
-    copy: src=rm-tmp-lte dest={{ amarisoft_dir }} owner=root mode=550
+    copy: src=rm-tmp-lte dest={{ simpleran_dir }} owner=root mode=550
 
   - name: Copy setcap script
-    copy: src=setcap dest={{ amarisoft_dir }} owner=root mode=550
+    copy: src=setcap dest={{ simpleran_dir }} owner=root mode=550
 
 # SSD image backports
 #
@@ -64,11 +64,11 @@
 
 # Radio Hardware
 
-  - name: Create {{ sdr_dir }} directory
-    file: path={{ sdr_dir }} state=directory mode=0755
+  - name: Create {{ simpleran_dir }} directory
+    file: path={{ simpleran_dir }} state=directory mode=0755
 
   - name: Copy get-sdr-info script
-    copy: src=get-sdr-info dest={{ sdr_dir }} owner=root mode=550
+    copy: src=get-sdr-info dest={{ simpleran_dir }} owner=root mode=550
 
 # Re6st
 
@@ -92,10 +92,10 @@
 # Amarisoft software
 
   - name: Create .amarisoft directory for SR
-    file: path={{ amarisoft_dir }}/.amarisoft state=directory
+    file: path={{ simpleran_dir }}/.amarisoft state=directory
 
   - name: Configure sudoers
-    script: configure-sudoers {{ amarisoft_dir }} {{ sdr_dir }}
+    script: configure-sudoers {{ simpleran_dir }}
 
 # Network
 
