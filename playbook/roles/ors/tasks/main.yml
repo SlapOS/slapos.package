@@ -44,6 +44,9 @@
   - name: Copy rm-tmp-lte script
     copy: src=rm-tmp-lte dest={{ amarisoft_dir }} owner=root mode=550
 
+  - name: Copy setcap script
+    copy: src=setcap dest={{ amarisoft_dir }} owner=root mode=550
+
 # Generate key
 
   - set_fact: cn="{{ ansible_hostname }}"

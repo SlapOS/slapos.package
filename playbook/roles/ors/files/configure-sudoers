@@ -16,5 +16,5 @@ add_commands() {
   done
 }
 
-add_commands $1 rm-tmp-lte init-enb init-mme init-sdr
+add_commands $1 rm-tmp-lte init-enb init-mme init-sdr setcap
 add_commands $2 get-sdr-info

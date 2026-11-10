@@ -1,0 +1,31 @@
+#!/bin/bash
+
+SHA512SUM_ACCEPTED_LIST=(
+7e62f673ce23d91a031a4beab3c2b9a1a29eca4a22de7079c89fc3d32594fc560514e5658a0822aded6c5dcc5a5f662d844741ae4899674120879153c66fea70
+3fb9e0d19ff61f5322697efa00510de2c643b9a2e10242114df9d9e85ca888e519fde63fb4bb4b4bf7fac2bc4c222b02689472f6b7397927e1da02031b98f3d5
+6b73eb42b8039e12f89fa8e41ddd056b8d713363709dd9270c07d89297a9db1e578a925cc9b12b155522fccac10fb5906aa10111bd11ed16b28b429b4ec39668
+6751a2953d8fbe00720382e85b47325efc89ad98b3de6e8b7dddb0c1a291f785f9e7cf167cbb9bf3f32e5f2e594faf83ee471ea22628b3e5df6d0e0fb037fb24
+e70d81b505b9f37831898239342f5cbf3d11aa20f2f67eb46fdd87bfa110d0ae9682632be753b7de7a11312019e1650f2859f176f07b8367578a86b20938ce64
+)
+
+check_sha512() {
+  for SHA in "${SHA512SUM_ACCEPTED_LIST[@]}" ; do
+    /bin/cat $1 | /bin/sha512sum --strict -c <(echo $SHA  -) > /dev/null 2>&1 && return 0
+  done
+  return 1
+}
+
+if [ "$#" -le 1 ] ; then
+  echo "Usage: ./setcap BINARY [CAP0 CAP1 ...]" && exit 1
+fi
+
+BINARY=$(realpath $1)
+BINARY_DIR=$(dirname $BINARY)
+CAP_LIST=$2
+
+# Exit if SHA512 is not in list of accepted SHA512SUMs
+check_sha512 $BINARY || exit 1
+
+patchelf --set-rpath $BINARY_DIR $BINARY
+setcap $CAP_LIST=+ep $BINARY
+
