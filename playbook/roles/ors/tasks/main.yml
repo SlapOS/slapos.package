@@ -47,30 +47,6 @@
   - name: Copy setcap script
     copy: src=setcap dest={{ amarisoft_dir }} owner=root mode=550
 
-# Generate key
-
-  - set_fact: cn="{{ ansible_hostname }}"
-
-  - name: Create {{ pk_dir }} directory
-    file: path="{{ pk_dir }}" state=directory mode=0755
-
-  - stat: path="{{ pk_dir }}/{{ cn }}.key"
-    register: private_key
-
-  - name: Generate private key
-    shell: 'openssl genrsa -out {{ pk_dir }}/{{ cn }}.key 4096'
-    when: private_key.stat.exists == False
-
-  - stat: path="{{ pk_dir }}/{{ cn }}.key"
-    register: private_key
-
-  - stat: path="{{ pk_dir }}/{{ cn }}.pub"
-    register: public_key
-
-  - name: Generate public key
-    shell: 'openssl rsa -in {{ pk_dir }}/{{ cn }}.key -outform PEM -pubout -out {{ pk_dir }}/{{ cn }}.pub'
-    when: private_key.stat.exists == True and public_key.stat.exists == False
-
 # SSD image backports
 #
   - stat: path="/opt/upgrader/playbook-tmp"
