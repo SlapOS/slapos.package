@@ -50,7 +50,7 @@
     shell: '{{ bouture_opt }}/bouture_configure'
 
   - name: Add slapos bouture failover in cron
-    lineinfile: dest=/etc/cron.d/slapos-node regexp="slapos node instance" line="* * * * * root {{ bouture_opt }}/bouture_failover >> {{ bouture_log }}/slapos-node-bouture.log 2>&1" state=present
+    lineinfile: dest=/etc/cron.d/slapos-node regexp="slapos node instance" line="* * * * * root {{ bouture_opt }}/bouture_failover >> {{ bouture_log }}/slapos-node-instance.log 2>&1" state=present
 
   - name: Set slapos main interface
     lineinfile: dest=/etc/opt/slapos/slapos.cfg regexp="^interface_name" line="interface_name = {{ ansible_default_ipv4.interface }}" state=present
