@@ -1,0 +1,38 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+  echo "Argument 1 should be instance name and Argument 2 should be 'url' or 'pwd'"
+  exit 3
+fi
+
+for file in `grep -l -R "$1" /srv/slapgrid/slappart*/buildout*.cfg 2>/dev/null`; do
+  Folder=$(dirname $file)
+  # search runner0 partition
+  if [ -f "$Folder/bin/exporter" ]; then
+    PARTITION=$Folder
+  fi
+done
+
+DB="$PARTITION/srv/runner/proxy.db"
+if [ ! -f "$DB" ]; then
+  echo "ERP5 instance not ready"
+  exit 2
+fi
+
+# get parameters from database
+DB_PARTITION_TABLE=$(sqlite3 $DB ".table partition__")
+CONNECTION=$(sqlite3 $DB "select connection_xml from $DB_PARTITION_TABLE where reference='slappart0';")
+
+if [ -z "$CONNECTION" ]; then
+  echo "ERP5 instance not ready"
+  exit 1
+else
+  if [ "$2" == "pwd" ]; then
+    echo $CONNECTION | egrep -o 'inituser-password\"\:\s*\"[a-z,A-Z,0-9]+' | cut -d '"' -f 3
+  elif [ "$2" == "url" ]; then
+    echo $CONNECTION | egrep -o 'family-default-v6\"\:\s*\"https\:\/\/\[.*\]:[0-9]+' | cut -d '"' -f 3
+  else
+    echo "Argument 1 should be instance name and Argument 2 should be 'url' or 'pwd'"
+    exit 3
+  fi
+fi

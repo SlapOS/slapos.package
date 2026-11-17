@@ -1,0 +1,12 @@
+#!/bin/bash
+
+PWD=$({{ role_path }}/files/kdbox-param '{{ webrunner_instance_name }}' pwd)
+
+if [ -z "$PWD" ]; then
+  echo "ERP5 KDBox is not ready yet!"
+  exit 1
+fi
+echo "KDBOX is ready"
+echo "URL: https://{{ custom_domain }}/"
+echo "Init username: zope"
+echo "Init password: $PWD"
