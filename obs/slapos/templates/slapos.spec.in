@@ -96,6 +96,8 @@ make
 
 %install
 cd $RPM_BUILD_DIR/%{slapos_directory}
+# Turn off shebangs mangling, as shebangs are handled by package itself
+%undefine __brp_mangle_shebangs
 make DESTDIR=$RPM_BUILD_ROOT install 
 mkdir -p $RPM_BUILD_ROOT/etc/cron.d/
 cp $RPM_BUILD_DIR/%{slapos_directory}/slapos-node.cron.d $RPM_BUILD_ROOT/etc/cron.d/slapos-node
