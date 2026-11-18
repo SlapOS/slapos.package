@@ -1,0 +1,5 @@
+# The kernel restricts /sys/class/powercap/*/energy_uj to root since
+# CVE-2020-8694/8695. Make RAPL energy counters world-readable so each
+# SlapOS partition's own unprivileged user can read them (scaphandre,
+# software/kvm's energy-monitoring parameter).
+SUBSYSTEM=="powercap", ACTION=="add", RUN+="/bin/chmod -R a+r /sys%p"

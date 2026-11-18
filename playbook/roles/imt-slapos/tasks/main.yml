@@ -77,5 +77,17 @@
   - name: chmod 666 /dev/net/tun
     file: path=/dev/net/tun mode=0666
 
+  - name: Install udev rule to make RAPL energy_uj readable by all (energy-monitoring)
+    copy: src="99-rapl-powercap.rules" dest="/etc/udev/rules.d/99-rapl-powercap.rules" mode=0644 owner=root group=root
+    register: rapl_udev_rule
+
+  - name: Reload udev rules
+    shell: udevadm control --reload-rules
+    when: rapl_udev_rule.changed
+
+  - name: Re-trigger powercap udev events to apply RAPL permissions now
+    shell: udevadm trigger --subsystem-match=powercap --action=add
+    when: rapl_udev_rule.changed
+
   - name: sysctl net.ipv6.route.max_size = 262144
     sysctl: name="net.ipv6.route.max_size" value=262144 sysctl_set=yes state=present reload=yes
